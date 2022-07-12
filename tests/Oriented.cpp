@@ -64,6 +64,7 @@ class Base
 { //声明基类Base
 public:
     int i;
+    int j;
     Base(int x) //基类Base的构造函数
     {
         i = x;
@@ -74,7 +75,7 @@ public:
     }
     void show() //成员函数
     {
-        cout << "i=" << i << endl;
+        cout << "i=" << i << ", j=" << j << endl;
     }
 };
 class Derived : public Base
@@ -105,6 +106,7 @@ int main()
     b2.show();
 
     Derived d3(33); //定义派生类对象d3
+    d3.j = 10;
     Base *b3 = &d3; //把派生类对象的地址&d3赋值给指向基类对象的指针b3
     b3->show();
 
