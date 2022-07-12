@@ -49,6 +49,7 @@ int main()
 {
 
     Son *oriented_test = new Son();
+    cout << oriented_test->money;
     // oriented_test->func();
     test(oriented_test);
 
