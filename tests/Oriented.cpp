@@ -41,7 +41,7 @@ public:
 
 void test(Father *p)
 {
-    cout << p->money << "\n";
+    p->func();
 };
 
 int main()
@@ -49,7 +49,7 @@ int main()
 
     Father *oriented_test = new Son();
 
-    if (oriented_test->money == 10)
+    if (oriented_test->money == 20)
     {
         oriented_test = new Father();
     }
