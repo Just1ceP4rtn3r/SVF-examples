@@ -32,6 +32,7 @@
 #include "Util/SVFBasicTypes.h"
 #include "MemoryModel/PointerAnalysisImpl.h"
 #include "SVF-FE/SVFIRBuilder.h"
+#include "llvm/Support/raw_ostream.h"
 #include <set>
 
 using namespace llvm;
@@ -84,7 +85,11 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                 //        << "Type: "
                 //        << *(vNode->getValue()->getType()) << "\n";
 
+                std::string Str;
+                raw_string_ostream OS(Str);
+                vNode->getValue()->printAsOperand(OS, false);
                 SVFUtil::outs()
+                    << "Value: " << OS.str() << "\n"
                     << "VFG: " << *(vNode) << "\n";
                 while (!worklist.empty())
                 {
@@ -108,7 +113,9 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                 }
                 for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
                 {
-
+                    std::string Str;
+                    raw_string_ostream OS(Str);
+                    (*vit)->getValue()->printAsOperand(OS, false);
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
                     // errs() << "Value: "
@@ -116,6 +123,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                     //        << "Type: "
                     //        << *((*vit)->getValue()->getType()) << "\n";
                     SVFUtil::outs()
+                        << "Value: " << OS.str() << "\n"
                         << "VFG: " << *(*vit) << "\n";
                     //    << "Edge: "
                     //    << edge->getEdgeKind() << "\n";

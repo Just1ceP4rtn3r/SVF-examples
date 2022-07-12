@@ -17,17 +17,17 @@ public:
 int main()
 {
     bool flag = true; // true调用Father false调用Son
-    Father *key_var;
+    Father *text;
     if (flag)
     {
         Father father;
-        key_var = &father;
+        text = &father;
     }
     else
     {
         Son son;
-        key_var = &son;
+        text = &son;
     }
-    key_var->Fun();
+    text->Fun();
     return 0;
 }
