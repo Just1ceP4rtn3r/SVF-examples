@@ -74,6 +74,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
     {
         PAGNode *pNode = lit->second;
 
+        errs() << "1\n";
         if (svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = svfg->getDefSVFGNode(pNode);
