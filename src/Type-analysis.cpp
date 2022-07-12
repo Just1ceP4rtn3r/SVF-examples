@@ -77,31 +77,32 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
         if (svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = svfg->getDefSVFGNode(pNode);
-            if (vNode->getValue() != nullptr)
+            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str() == "oriented_test")
             {
                 useSet.insert(vNode);
-            }
-            for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
-                                                                         vNode->OutEdgeEnd();
-                 it != eit; ++it)
-            {
-                VFGEdge *edge = *it;
-                VFGNode *succNode = edge->getDstNode();
-                if (succNode->getValue() && useSet.find(succNode) == useSet.end())
+
+                for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
+                                                                             vNode->OutEdgeEnd();
+                     it != eit; ++it)
                 {
-                    useSet.insert(succNode);
+                    VFGEdge *edge = *it;
+                    VFGNode *succNode = edge->getDstNode();
+                    if (succNode->getValue() && useSet.find(succNode) == useSet.end())
+                    {
+                        useSet.insert(succNode);
+                    }
                 }
-            }
 
-            SVFUtil::outs() << "---------------------\n";
-            for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
-            {
+                SVFUtil::outs() << "---------------------\n";
+                for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
+                {
 
-                // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
-                // const SVF::Value *val = pN->getValue();
-                SVFUtil::outs()
-                    << (*vit)->getValue()->getName().str() << "\n"
-                    << "LLVM IR: " << *(*vit) << "\n";
+                    // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
+                    // const SVF::Value *val = pN->getValue();
+                    SVFUtil::outs()
+                        << (*vit)->getValue()->getName().str() << "\n"
+                        << "LLVM IR: " << *(*vit) << "\n";
+                }
             }
         }
     }
