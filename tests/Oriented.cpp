@@ -5,10 +5,11 @@ using namespace std;
 class Father
 {
 public:
-    int money;
+    int money = 5;
     void func()
     {
-        cout << "Father\n";
+        cout << "Father\n"
+             << money << "\n";
     }
 };
 
@@ -16,13 +17,17 @@ public:
 class Son : public Father // 继承
 {
 public:
-    int money; // 与基类同名成员变量
+    int money = 10; // 与基类同名成员变量
     void func()
+    {
+        cout << "Son\n"
+             << money << "\n";
+    }
+
+    void myFunc()
     {
         cout << "Son\n";
     }
-
-    void myFunc();
 };
 
 int main()

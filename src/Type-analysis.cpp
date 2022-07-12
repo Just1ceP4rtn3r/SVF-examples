@@ -96,7 +96,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             SVFUtil::outs() << "---------------------\n";
             for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
             {
-                
+
                 // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                 // const SVF::Value *val = pN->getValue();
                 SVFUtil::outs()
