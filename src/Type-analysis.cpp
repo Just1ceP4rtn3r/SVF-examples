@@ -89,7 +89,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                 {
                     VFGEdge *edge = *it;
                     VFGNode *succNode = edge->getDstNode();
-                    if (succNode->getValue() && useSet.find(succNode) == useSet.end())
+                    if (succNode->getValue())
                     {
                         useSet.insert(succNode);
                         errs() << "Value: "
