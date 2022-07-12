@@ -81,9 +81,9 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             {
                 // useSet.insert(vNode);
 
-                SVFUtil::outs() << "Value: " << vNode->getValue()->getName().str() << "\n"
-                                << "Type: "
-                                << vNode->getValue()->getType() << "\n";
+                errs() << "Value: " << vNode->getValue()->getName().str() << "\n"
+                       << "Type: "
+                       << vNode->getValue()->getType() << "\n";
                 for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
                                                                              vNode->OutEdgeEnd();
                      it != eit; ++it)
@@ -96,19 +96,19 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                     }
                 }
 
-                SVFUtil::outs() << "---------------------\n";
                 for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
                 {
 
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
-                    SVFUtil::outs() << "Value: "
-                                    << (*vit)->getValue()->getName().str() << "\n"
-                                    << "Type: "
-                                    << (*vit)->getValue()->getType() << "\n";
+                    errs() << "Value: "
+                           << *((*vit)->getValue()) << "\n"
+                           << "Type: "
+                           << *((*vit)->getValue()->getType()) << "\n";
 
                     // << "LLVM IR: " << *(*vit) << "\n";
                 }
+                errs() << "---------------------\n";
             }
         }
     }
