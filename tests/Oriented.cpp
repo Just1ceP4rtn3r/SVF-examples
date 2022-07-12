@@ -50,10 +50,10 @@ int main()
 {
 
     Son *oriented_test = new Son();
-    oriented_test->j = 20;
+    oriented_test->money = 20;
 
     Father *fa = oriented_test;
-    cout << fa->j;
+    cout << fa->money;
 
     // test(oriented_test);
 
