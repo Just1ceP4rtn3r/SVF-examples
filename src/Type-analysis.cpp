@@ -92,6 +92,12 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                     if (succNode->getValue() && useSet.find(succNode) == useSet.end())
                     {
                         useSet.insert(succNode);
+                        errs() << "Value: "
+                               << *(succNode->getValue()) << "\n"
+                               << "Type: "
+                               << *(succNode->getValue()->getType()) << "\n"
+                               << "Edge: "
+                               << edge->getEdgeKind() << "\n";
                     }
                 }
 
@@ -100,10 +106,6 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
 
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
-                    errs() << "Value: "
-                           << *((*vit)->getValue()) << "\n"
-                           << "Type: "
-                           << *((*vit)->getValue()->getType()) << "\n";
 
                     // << "LLVM IR: " << *(*vit) << "\n";
                 }
