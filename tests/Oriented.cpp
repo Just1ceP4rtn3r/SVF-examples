@@ -25,7 +25,7 @@ public:
     int money; // 与基类同名成员变量
     Son(int a)
     {
-        money = a;
+        money = 20;
     }
     void func()
     {
