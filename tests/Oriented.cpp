@@ -49,7 +49,7 @@ int main()
 
     Father *oriented_test = new Son();
 
-    if (oriented_test->money == 20)
+    if (oriented_test->money == 10)
     {
         oriented_test = new Father();
     }
