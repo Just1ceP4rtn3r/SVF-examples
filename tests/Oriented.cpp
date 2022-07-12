@@ -5,7 +5,12 @@ using namespace std;
 class Father
 {
 public:
-    int money = 5;
+    int money;
+    Father(int a)
+    {
+        money = a;
+    }
+
     void func()
     {
         cout << "Father\n"
@@ -17,13 +22,16 @@ public:
 class Son : public Father // 继承
 {
 public:
-    int money = 10; // 与基类同名成员变量
+    int money; // 与基类同名成员变量
+    Son(int a)
+    {
+        money = a;
+    }
     void func()
     {
         cout << "Son\n"
              << money << "\n";
     }
-
     void myFunc()
     {
         cout << "Son\n";
@@ -39,7 +47,7 @@ int main()
 {
 
     Son *oriented_test;
-    oriented_test = new Son();
+    oriented_test = new Son(100);
     // oriented_test->func();
     test(oriented_test);
 
