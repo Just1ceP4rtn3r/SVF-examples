@@ -80,7 +80,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             {
                 worklist.push(vNode);
 
-                errs() << "Value: " << *(vNode->getValue()) << "\n"
+                outs() << "Value: " << *(vNode->getValue()) << "\n"
                        << "Type: "
                        << *(vNode->getValue()->getType()) << "\n";
                 while (!worklist.empty())
@@ -108,11 +108,12 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
 
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
-                    SVFUtil::outs() << "Value: "
-                                    << (*vit)->getValue()->getName().str() << "\n"
-                                    << "Type: "
-                                    << *((*vit)->getValue()->getType()) << "\n"
-                                    << "VFG: " << *(*vit) << "\n";
+                    outs() << "Value: "
+                           << *((*vit)->getValue()) << "\n"
+                           << "Type: "
+                           << *((*vit)->getValue()->getType()) << "\n";
+                    SVFUtil::outs()
+                        << "VFG: " << *(*vit) << "\n";
                     //    << "Edge: "
                     //    << edge->getEdgeKind() << "\n";
                     //
