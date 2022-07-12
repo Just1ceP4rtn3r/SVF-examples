@@ -51,6 +51,9 @@ int main()
     Son *oriented_test = new Son();
     cout << oriented_test->money;
 
+    Father *fa = oriented_test;
+    cout << fa->money;
+
     // test(oriented_test);
 
     delete oriented_test;
