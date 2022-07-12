@@ -33,11 +33,13 @@ public:
 int main()
 {
 
-    Father *oriented_test;
+    Son *oriented_test;
     oriented_test = new Son();
-    oriented_test->func();
+    // oriented_test->func();
+    test(oriented_test);
 
     delete oriented_test;
 
     return 0;
 }
+
