@@ -48,6 +48,12 @@ int main()
 {
 
     Father *oriented_test = new Son();
+
+    if (oriented_test->money = 20)
+    {
+        oriented_test = new Father();
+    }
+
     test(oriented_test);
 
     delete oriented_test;
