@@ -89,7 +89,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                 {
                     VFGEdge *edge = *it;
                     VFGNode *succNode = edge->getDstNode();
-                    if (succNode->getValue())
+                    if (succNode->getValue() && useSet.find(succNode) == useSet.end())
                     {
                         useSet.insert(succNode);
                         errs() << "Value: "
@@ -110,6 +110,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                     // << "LLVM IR: " << *(*vit) << "\n";
                 }
                 errs() << "---------------------\n";
+                useSet.clear();
             }
         }
     }
