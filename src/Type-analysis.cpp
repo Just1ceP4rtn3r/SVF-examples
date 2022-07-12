@@ -80,9 +80,9 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             {
                 worklist.push(vNode);
 
-                SVFUtil::outs() << "Value: " << *(vNode->getValue()) << "\n"
-                                << "Type: "
-                                << *(vNode->getValue()->getType()) << "\n";
+                errs() << "Value: " << *(vNode->getValue()) << "\n"
+                       << "Type: "
+                       << *(vNode->getValue()->getType()) << "\n";
                 while (!worklist.empty())
                 {
                     const VFGNode *vNode = worklist.pop();
@@ -109,7 +109,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
                     SVFUtil::outs() << "Value: "
-                                    << *((*vit)->getValue()) << "\n"
+                                    << (*vit)->getValue()->getName().str() << "\n"
                                     << "Type: "
                                     << *((*vit)->getValue()->getType()) << "\n"
                                     << "VFG: " << *(*vit) << "\n";
