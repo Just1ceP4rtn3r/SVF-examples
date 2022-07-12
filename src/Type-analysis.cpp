@@ -78,38 +78,46 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             const VFGNode *vNode = svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr && vNode->getValue()->getName().str().find("key_var") != std::string::npos)
             {
-                // useSet.insert(vNode);
+                worklist.push(vNode);
 
                 errs() << "Value: " << *(vNode->getValue()) << "\n"
                        << "Type: "
                        << *(vNode->getValue()->getType()) << "\n";
-                for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
-                                                                             vNode->OutEdgeEnd();
-                     it != eit; ++it)
+                while (!worklist.empty())
                 {
-                    VFGEdge *edge = *it;
-                    VFGNode *succNode = edge->getDstNode();
-                    if (succNode->getValue() && useSet.find(succNode) == useSet.end())
+                    const VFGNode *vNode = worklist.pop();
+                    if (vNode->getValue() != nullptr)
                     {
-                        useSet.insert(succNode);
-                        errs() << "Value: "
-                               << *(succNode->getValue()) << "\n"
-                               << "Type: "
-                               << *(succNode->getValue()->getType()) << "\n"
-                               << "Edge: "
-                               << edge->getEdgeKind() << "\n";
+                        // useSet.insert(vNode);
+                        for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
+                                                                                     vNode->OutEdgeEnd();
+                             it != eit; ++it)
+                        {
+                            VFGEdge *edge = *it;
+                            VFGNode *succNode = edge->getDstNode();
+                            if (succNode->getValue() && useSet.find(succNode) == useSet.end())
+                            {
+                                useSet.insert(succNode);
+                                worklist.push(succNode);
+                            }
+                        }
                     }
                 }
-
                 for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
                 {
 
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
-
+                    errs() << "Value: "
+                           << *((*vit)->getValue()) << "\n"
+                           << "Type: "
+                           << *((*vit)->getValue()->getType()) << "\n"
+                    //    << "Edge: "
+                    //    << edge->getEdgeKind() << "\n";
                     // << "LLVM IR: " << *(*vit) << "\n";
                 }
                 errs() << "---------------------\n";
+                worklist.clear();
                 useSet.clear();
             }
         }
