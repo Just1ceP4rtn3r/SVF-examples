@@ -6,6 +6,7 @@ class Father
 {
 public:
     int money;
+    int j;
     Father()
     {
         cout << "Father construct\n";
@@ -49,10 +50,10 @@ int main()
 {
 
     Son *oriented_test = new Son();
-    cout << oriented_test->money;
+    oriented_test->j = 20;
 
     Father *fa = oriented_test;
-    cout << fa->money;
+    cout << fa->j;
 
     // test(oriented_test);
 
