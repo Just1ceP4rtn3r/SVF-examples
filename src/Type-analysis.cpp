@@ -81,9 +81,9 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             {
                 // useSet.insert(vNode);
 
-                errs() << "Value: " << vNode->getValue()->getName().str() << "\n"
+                errs() << "Value: " << *(vNode->getValue()) << "\n"
                        << "Type: "
-                       << vNode->getValue()->getType() << "\n";
+                       << *(vNode->getValue()->getType()) << "\n";
                 for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
                                                                              vNode->OutEdgeEnd();
                      it != eit; ++it)
