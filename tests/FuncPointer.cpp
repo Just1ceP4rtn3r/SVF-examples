@@ -15,12 +15,13 @@ int test2(int a)
 int main()
 {
     bool flag = false;
+    int key_var2 = 10;
     int (*key_var)(int a);
     key_var = test;
     if (flag)
     {
         key_var = test2;
     }
-    cout << key_var(2) << endl;
+    cout << key_var(key_var2) << endl;
     return 0;
 }
