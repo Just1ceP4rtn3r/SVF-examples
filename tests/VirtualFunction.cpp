@@ -4,30 +4,30 @@ using namespace std;
 
 class Father
 {
-    public:
-        virtual void Fun(){ cout << "Father::Fun" << endl ; }
+public:
+    virtual void Fun() { cout << "Father::Fun" << endl; }
 };
 
-class Son: public Father
+class Son : public Father
 {
-    public:
-        virtual void Fun(){ cout << "Son::Fun" << endl ; }
+public:
+    virtual void Fun() { cout << "Son::Fun" << endl; }
 };
 
 int main()
 {
-    bool flag = true;//true调用Father false调用Son
-    Father *text;
-    if(flag)
+    bool flag = true; // true调用Father false调用Son
+    Father *key_var;
+    if (flag)
     {
-        Father father; 
-        text = &father;
+        Father father;
+        key_var = &father;
     }
-    else 
+    else
     {
         Son son;
-        text = &son;
+        key_var = &son;
     }
-    text->Fun();
+    key_var->Fun();
     return 0;
 }
