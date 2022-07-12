@@ -30,6 +30,11 @@ public:
     }
 };
 
+void test(Father *p)
+{
+    cout << p->money << "\n";
+};
+
 int main()
 {
 
@@ -42,4 +47,3 @@ int main()
 
     return 0;
 }
-
