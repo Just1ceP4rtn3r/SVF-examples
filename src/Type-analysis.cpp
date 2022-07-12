@@ -77,7 +77,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
         if (svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = svfg->getDefSVFGNode(pNode);
-            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str() == "oriented_test")
+            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str() == "key_var")
             {
                 // useSet.insert(vNode);
 
