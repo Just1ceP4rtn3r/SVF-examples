@@ -111,10 +111,11 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
                     errs() << "Value: "
                            << *((*vit)->getValue()) << "\n"
                            << "Type: "
-                           << *((*vit)->getValue()->getType()) << "\n";
+                           << *((*vit)->getValue()->getType()) << "\n"
+                           << "VFG: " << *(*vit) << "\n";
                     //    << "Edge: "
                     //    << edge->getEdgeKind() << "\n";
-                    // << "LLVM IR: " << *(*vit) << "\n";
+                    //
                 }
                 errs() << "---------------------\n";
                 worklist.clear();
