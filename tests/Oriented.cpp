@@ -23,8 +23,6 @@ public:
 class Son : public Father // 继承
 {
 public:
-    int money; // 与基类同名成员变量
-
     Son()
     {
         money = 10;
@@ -49,13 +47,8 @@ void test(Father *p)
 int main()
 {
 
-    Son *oriented_test = new Son();
-    oriented_test->money = 20;
-
-    Father *fa = oriented_test;
-    cout << fa->money;
-
-    // test(oriented_test);
+    Father *oriented_test = new Son();
+    test(oriented_test);
 
     delete oriented_test;
 
