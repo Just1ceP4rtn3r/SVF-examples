@@ -6,9 +6,9 @@ class Father
 {
 public:
     int money;
-    Father(int a)
+    Father()
     {
-        money = a;
+        cout << "Father construct\n";
     }
 
     void func()
@@ -23,10 +23,12 @@ class Son : public Father // 继承
 {
 public:
     int money; // 与基类同名成员变量
-    Son(int a)
+
+    Son()
     {
-        money = 20;
+        money = 10;
     }
+
     void func()
     {
         cout << "Son\n"
@@ -46,8 +48,7 @@ void test(Father *p)
 int main()
 {
 
-    Son *oriented_test;
-    oriented_test = new Son(100);
+    Son *oriented_test = new Son();
     // oriented_test->func();
     test(oriented_test);
 
