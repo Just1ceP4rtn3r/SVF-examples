@@ -79,8 +79,11 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
             const VFGNode *vNode = svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr && vNode->getValue()->getName().str() == "oriented_test")
             {
-                useSet.insert(vNode);
+                // useSet.insert(vNode);
 
+                SVFUtil::outs() << "Value: " << vNode->getValue()->getName().str() << "\n"
+                                << "Type: "
+                                << vNode->getValue()->getType() << "\n";
                 for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
                                                                              vNode->OutEdgeEnd();
                      it != eit; ++it)
@@ -99,9 +102,12 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
 
                     // const PAGNode *pN = svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
-                    SVFUtil::outs()
-                        << (*vit)->getValue()->getName().str() << "\n"
-                        << "LLVM IR: " << *(*vit) << "\n";
+                    SVFUtil::outs() << "Value: "
+                                    << (*vit)->getValue()->getName().str() << "\n"
+                                    << "Type: "
+                                    << (*vit)->getValue()->getType() << "\n";
+
+                    // << "LLVM IR: " << *(*vit) << "\n";
                 }
             }
         }
