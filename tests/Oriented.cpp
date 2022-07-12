@@ -47,12 +47,12 @@ void test(Father *p)
 int main()
 {
 
-    Son *oriented_test = new Son();
+    Father *oriented_test = new Son();
 
-    // if (oriented_test->money == 20)
-    // {
-    //     oriented_test = new Father();
-    // }
+    if (oriented_test->money == 20)
+    {
+        oriented_test = new Father();
+    }
 
     test(oriented_test);
 
