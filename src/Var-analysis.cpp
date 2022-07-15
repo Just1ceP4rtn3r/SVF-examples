@@ -23,7 +23,7 @@ void findVariable(PointerAnalysis *pta, std::string str)
 
     pta->dumpAllTypes();
 
-    SVFUtil::outs() << pta->getPAG()->getGNode(46);
+    SVFUtil::outs() << *(pta->getPAG()->getGNode(46));
 
     // FIFOWorkList<const ICFGNode *> worklist;
     // Set<const ICFGNode *> visited;
