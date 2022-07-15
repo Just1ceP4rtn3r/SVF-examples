@@ -153,5 +153,16 @@ int main(int argc, char **argv)
 
     findVariable(ander, "123");
 
+    svfg->dump("./svfg.dot");
+    pag->dump("./pag.dot");
+    icfg->dump("./icfg.dot");
+
+    delete svfg;
+    delete pag;
+    delete icfg;
+
+    SVF::LLVMModuleSet::releaseLLVMModuleSet();
+    llvm::llvm_shutdown();
+
     return 0;
 }
