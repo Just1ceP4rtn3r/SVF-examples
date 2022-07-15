@@ -1,5 +1,6 @@
 #include "SVF-FE/LLVMUtil.h"
 #include "Graphs/SVFG.h"
+#include "Graphs/ICFG.h"
 #include "WPA/Andersen.h"
 #include "Util/Options.h"
 #include "Util/SVFBasicTypes.h"
@@ -12,29 +13,37 @@ using namespace llvm;
 using namespace std;
 using namespace SVF;
 
-void PrintAliasPairs(PointerAnalysis *pta)
+void findVariable(PointerAnalysis *pta, std::string str)
 {
+    ICFG *icfg = pta->getICFG();
 
-    SVFIR *pag = pta->getPAG();
-    for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
-    {
-        PAGNode *node1 = lit->second;
-        PAGNode *node2 = node1;
-        for (SVFIR::iterator rit = lit, erit = pag->end(); rit != erit; ++rit)
-        {
-            node2 = rit->second;
-            if (node1 == node2)
-                continue;
-            const Function *fun1 = node1->getFunction();
-            const Function *fun2 = node2->getFunction();
-            SVF::AliasResult result = pta->alias(node1->getId(), node2->getId());
-            SVFUtil::outs() << (result == SVF::AliasResult::NoAlias ? "NoAlias" : "MayAlias")
-                            << " var" << node1->getId() << "[" << node1->getValueName()
-                            << "@" << (fun1 == nullptr ? "" : fun1->getName().str()) << "] --"
-                            << " var" << node2->getId() << "[" << node2->getValueName()
-                            << "@" << (fun2 == nullptr ? "" : fun2->getName().str()) << "]\n";
-        }
-    }
+    pta->dumpAllPts();
+
+    SVFUtil::outs() << "------------------\n\n\n";
+
+    pta->dumpAllTypes();
+
+    // FIFOWorkList<const ICFGNode *> worklist;
+    // Set<const ICFGNode *> visited;
+    // worklist.push(iNode);
+
+    // /// Traverse along VFG
+    // while (!worklist.empty())
+    // {
+    //     const ICFGNode *iNode = worklist.pop();
+    //     for (ICFGNode::const_iterator it = iNode->OutEdgeBegin(), eit =
+    //                                                                   iNode->OutEdgeEnd();
+    //          it != eit; ++it)
+    //     {
+    //         ICFGEdge *edge = *it;
+    //         ICFGNode *succNode = edge->getDstNode();
+    //         if (visited.find(succNode) == visited.end())
+    //         {
+    //             visited.insert(succNode);
+    //             worklist.push(succNode);
+    //         }
+    //     }
+    // }
 }
 
 void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
@@ -134,6 +143,7 @@ int main(int argc, char **argv)
     /// Build Program Assignment Graph (SVFIR)
     SVFIRBuilder builder;
     SVFIR *pag = builder.build(svfModule);
+    ICFG *icfg = pag->getICFG();
 
     Andersen *ander = new Andersen(pag);
     ander->analyze();
@@ -141,8 +151,7 @@ int main(int argc, char **argv)
     SVFGBuilder svfBuilder;
     SVFG *svfg = svfBuilder.buildFullSVFG(ander);
 
-    // PrintAliasPairs(ander);
-    traverseOnVFG(svfg, ander);
+    findVariable(ander, "123");
 
     return 0;
 }
