@@ -49,7 +49,7 @@ namespace
             {
                 for (llvm::NamedMDNode::op_iterator mdit = (*nmdit).op_begin(); mdit != (*nmdit).op_end(); mdit++)
                 {
-                    errs() << (*mdit) << "\n";
+                    errs() << (*mdit)->getMetadataID() << "\n";
                     // traverseMetadata()
                 }
             }
