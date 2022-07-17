@@ -59,7 +59,7 @@ namespace
 
                     switch (T->getMetadataID())
                     {
-                    case DIBasicTypeKind:
+                    case Metadata::DIBasicTypeKind:
                     {
                         auto *BT = dyn_cast<DIBasicType>(T);
                         auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
@@ -69,7 +69,7 @@ namespace
                             errs() << "unknown-encoding(" << BT->getEncoding() << ')';
                         break;
                     }
-                    case DIDerivedTypeKind:
+                    case Metadata::DIDerivedTypeKind:
                     {
                         auto Tag = dwarf::TagString(T->getTag());
                         if (!Tag.empty())
@@ -78,7 +78,7 @@ namespace
                             errs() << "unknown-tag(" << T->getTag() << ")";
                         break;
                     }
-                    case DICompositeTypeKind:
+                    case Metadata::DICompositeTypeKind:
                     {
                         auto *CT = dyn_cast<DICompositeType>(T);
                         auto Tag = dwarf::TagString(T->getTag());
