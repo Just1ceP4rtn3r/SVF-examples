@@ -32,7 +32,7 @@ namespace
         static char ID;
         std::vector<llvm::StructType *> StructSet;
 
-        traverseMetadata(MDNode *meta_data);
+        void traverseMetadata(MDNode *meta_data);
         VarAnalysis() : ModulePass(ID)
         {
         }
