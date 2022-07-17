@@ -39,9 +39,15 @@ namespace
             for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
             {
                 // M.named_metadata_begin
-                errs() << "Name: " << (*sit)->getName()
+                errs() << "Name: " << (*sit)->getName() << "\n"
                        << *(*sit) << "\n";
             }
+
+            for (llvm::Module::named_metadata_iterator mit = M.named_metadata_begin(); mit != M.named_metadata_end(); mit++)
+            {
+                errs() << (*mit) << "\n";
+            }
+
             return false;
         }
     };
