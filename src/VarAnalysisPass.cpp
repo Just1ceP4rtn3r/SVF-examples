@@ -102,63 +102,6 @@ namespace
             // else
             // {
             // }
-
-            switch (MD->getMetadataID())
-            {
-            case GenericDINodeKind:
-            case DISubrangeKind:
-            case DIEnumeratorKind:
-            case DIBasicTypeKind:
-            case DIDerivedTypeKind:
-            case DICompositeTypeKind:
-            {
-                DICompositeType *comp_node = dynamic_cast<DICompositeType *>(MD);
-                switch (comp_node->getTag())
-                {
-                case dwarf::DW_TAG_structure_type:
-                {
-                    errs() << "DW_TAG_structure_type: " << *comp_node << '\n';
-                    break;
-                }
-                case dwarf::DW_TAG_class_type:
-                {
-                    errs() << "DW_TAG_class_type";
-                    break;
-                }
-                case dwarf::DW_TAG_union_type:
-                {
-                    errs() << "DW_TAG_class_type";
-                    break;
-                }
-                case dwarf::DW_TAG_enumeration_type:
-                {
-                    errs() << "DW_TAG_class_type";
-                    break;
-                }
-                default:
-                    break;
-                }
-                break;
-            }
-            case DISubroutineTypeKind:
-            case DIFileKind:
-            case DICompileUnitKind:
-            case DISubprogramKind:
-            case DILexicalBlockKind:
-            case DILexicalBlockFileKind:
-            case DINamespaceKind:
-            case DICommonBlockKind:
-            case DITemplateTypeParameterKind:
-            case DITemplateValueParameterKind:
-            case DIGlobalVariableKind:
-            case DILocalVariableKind:
-            case DILabelKind:
-            case DIObjCPropertyKind:
-            case DIImportedEntityKind:
-            case DIModuleKind:
-            default:
-                break;
-            }
         }
     };
 }
