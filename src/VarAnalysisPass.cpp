@@ -48,7 +48,7 @@ namespace
 char VarAnalysis::ID = 0;
 
 // Register for opt
-static RegisterPass<VarAnalysis> X("VarAnalysis", "VarAnalysis");
+static RegisterPass<VarAnalysis> X("VarAnalysis", "Var analysis pass");
 
 // Register for clang
 static RegisterStandardPasses Y(PassManagerBuilder::EP_EarlyAsPossible,
