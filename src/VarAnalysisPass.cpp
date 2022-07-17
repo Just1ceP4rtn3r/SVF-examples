@@ -38,7 +38,9 @@ namespace
             StructSet = M.getIdentifiedStructTypes();
             for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
             {
-                errs() << *(*sit) << "\n";
+                // M.named_metadata_begin
+                errs() << "Name: " << (*sit)->getName()
+                       << *(*sit) << "\n";
             }
             return false;
         }
