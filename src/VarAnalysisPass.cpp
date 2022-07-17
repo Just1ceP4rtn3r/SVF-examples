@@ -50,12 +50,11 @@ namespace
 
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);
-            for (const DIType *T : dbgFinder.types())
+            for (const DIType *T : dbgFinder->types())
             {
                 errs() << "Type:";
                 if (!T->getName().empty())
                     errs() << ' ' << T->getName();
-                printFile(errs(), T->getFilename(), T->getDirectory(), T->getLine());
                 if (auto *BT = dyn_cast<DIBasicType>(T))
                 {
                     errs() << " ";
@@ -91,17 +90,6 @@ namespace
             // }
 
             return false;
-        }
-
-        void traverseMetadata(MDNode *MD)
-        {
-            // if (DICompositeType *comp_node = dynamic_cast<DICompositeType *>(MD))
-            // {
-            //     comp_node->getTag()
-            // }
-            // else
-            // {
-            // }
         }
     };
 }
