@@ -45,7 +45,7 @@ namespace
 
             for (llvm::Module::named_metadata_iterator mit = M.named_metadata_begin(); mit != M.named_metadata_end(); mit++)
             {
-                errs() << (*mit) << "\n";
+                errs() << (*mit).getName() << "\n";
             }
 
             return false;
