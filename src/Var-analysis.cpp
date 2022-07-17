@@ -16,6 +16,11 @@ using namespace SVF;
 void findVariable(PointerAnalysis *pta, std::string str)
 {
     ICFG *icfg = pta->getICFG();
+    SVFIR *pag = pta->getPAG();
+
+    for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
+    {
+    }
 
     pta->dumpAllPts();
 
