@@ -20,6 +20,7 @@
 #include "llvm/Analysis/LoopInfo.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/IR/GlobalAlias.h"
+#include "llvm/IR/Metadata.h"
 
 using namespace llvm;
 
@@ -30,6 +31,8 @@ namespace
     public:
         static char ID;
         std::vector<llvm::StructType *> StructSet;
+
+        traverseMetadata(MDNode *meta_data);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -38,14 +41,17 @@ namespace
             StructSet = M.getIdentifiedStructTypes();
             for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
             {
-                // M.named_metadata_begin
                 errs() << "Name: " << (*sit)->getName() << "\n"
                        << *(*sit) << "\n";
             }
 
-            for (llvm::Module::named_metadata_iterator mit = M.named_metadata_begin(); mit != M.named_metadata_end(); mit++)
+            for (llvm::Module::named_metadata_iterator nmdit = M.named_metadata_begin(); nmdit != M.named_metadata_end(); nmdit++)
             {
-                errs() << (*mit).getName() << "\n";
+                for (llvm::NamedMDNode::op_iterator mdit = (*nmdit).op_begin(); mdit != (*nmdit).op_end(); mdit++)
+                {
+                    errs() << (*mdit) << "\n";
+                    // traverseMetadata()
+                }
             }
 
             return false;
