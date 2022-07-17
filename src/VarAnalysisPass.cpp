@@ -52,33 +52,60 @@ namespace
             dbgFinder->processModule(M);
             for (const DIType *T : dbgFinder->types())
             {
-                errs() << "Type:";
                 if (!T->getName().empty())
+                {
+                    errs() << "Type:";
                     errs() << ' ' << T->getName();
-                if (auto *BT = dyn_cast<DIBasicType>(T))
-                {
-                    errs() << " ";
-                    auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
-                    if (!Encoding.empty())
-                        errs() << Encoding;
+                    if (auto *BT = dyn_cast<DIBasicType>(T))
+                    {
+                        errs() << " ";
+                        auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
+                        if (!Encoding.empty())
+                            errs() << Encoding;
+                        else
+                            errs() << "unknown-encoding(" << BT->getEncoding() << ')';
+                    }
                     else
-                        errs() << "unknown-encoding(" << BT->getEncoding() << ')';
+                    {
+                        errs() << ' ';
+                        auto Tag = dwarf::TagString(T->getTag());
+                        if (!Tag.empty())
+                            errs() << Tag;
+                        else
+                            errs() << "unknown-tag(" << T->getTag() << ")";
+                    }
+                    if (auto *CT = dyn_cast<DICompositeType>(T))
+                    {
+                        // switch (T->getTag())
+                        // {
+                        // case dwarf::DW_TAG_structure_type:
+                        // {
+                        //     errs() << "DW_TAG_structure_type: " << *comp_node << '\n';
+                        //     break;
+                        // }
+                        // case dwarf::DW_TAG_class_type:
+                        // {
+                        //     errs() << "DW_TAG_class_type";
+                        //     break;
+                        // }
+                        // case dwarf::DW_TAG_union_type:
+                        // {
+                        //     errs() << "DW_TAG_class_type";
+                        //     break;
+                        // }
+                        // case dwarf::DW_TAG_enumeration_type:
+                        // {
+                        //     errs() << "DW_TAG_class_type";
+                        //     break;
+                        // }
+                        // default:
+                        //     break;
+                        // }
+                        if (auto *S = CT->getRawIdentifier())
+                            errs() << " (identifier: '" << S->getString() << "')";
+                    }
+                    errs() << '\n';
                 }
-                else
-                {
-                    errs() << ' ';
-                    auto Tag = dwarf::TagString(T->getTag());
-                    if (!Tag.empty())
-                        errs() << Tag;
-                    else
-                        errs() << "unknown-tag(" << T->getTag() << ")";
-                }
-                if (auto *CT = dyn_cast<DICompositeType>(T))
-                {
-                    if (auto *S = CT->getRawIdentifier())
-                        errs() << " (identifier: '" << S->getString() << "')";
-                }
-                errs() << '\n';
             }
 
             // for (llvm::Module::named_metadata_iterator nmdit = M.named_metadata_begin(); nmdit != M.named_metadata_end(); nmdit++)
