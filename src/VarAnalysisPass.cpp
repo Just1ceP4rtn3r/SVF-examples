@@ -38,7 +38,7 @@ namespace
             StructSet = M.getIdentifiedStructTypes();
             for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
             {
-                (*sit)->dump();
+                errs() << *(*sit) << "\n";
             }
             return false;
         }
