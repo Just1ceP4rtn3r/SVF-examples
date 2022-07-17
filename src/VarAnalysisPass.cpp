@@ -41,12 +41,12 @@ namespace
         }
         bool runOnModule(Module &M) override
         {
-            StructSet = M.getIdentifiedStructTypes();
-            for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
-            {
-                errs() << "Name: " << (*sit)->getName() << "\n"
-                       << *(*sit) << "\n";
-            }
+            // StructSet = M.getIdentifiedStructTypes();
+            // for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
+            // {
+            //     errs() << "Name: " << (*sit)->getName() << "\n"
+            //            << *(*sit) << "\n";
+            // }
 
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);
@@ -55,54 +55,68 @@ namespace
                 if (!T->getName().empty())
                 {
                     errs() << "Type:";
-                    errs() << ' ' << T->getName();
-                    if (auto *BT = dyn_cast<DIBasicType>(T))
+                    errs() << ' ' << T->getName() << " ";
+
+                    switch (T->getMetadataID())
                     {
-                        errs() << " ";
+                    case DIBasicTypeKind:
+                    {
+                        auto *BT = dyn_cast<DIBasicType>(T);
                         auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
                         if (!Encoding.empty())
                             errs() << Encoding;
                         else
                             errs() << "unknown-encoding(" << BT->getEncoding() << ')';
+                        break;
                     }
-                    else
+                    case DIDerivedTypeKind:
                     {
-                        errs() << ' ';
                         auto Tag = dwarf::TagString(T->getTag());
                         if (!Tag.empty())
                             errs() << Tag;
                         else
                             errs() << "unknown-tag(" << T->getTag() << ")";
+                        break;
                     }
-                    if (auto *CT = dyn_cast<DICompositeType>(T))
+                    case DICompositeTypeKind:
                     {
-                        // switch (T->getTag())
-                        // {
-                        // case dwarf::DW_TAG_structure_type:
-                        // {
-                        //     errs() << "DW_TAG_structure_type: " << *comp_node << '\n';
-                        //     break;
-                        // }
-                        // case dwarf::DW_TAG_class_type:
-                        // {
-                        //     errs() << "DW_TAG_class_type";
-                        //     break;
-                        // }
-                        // case dwarf::DW_TAG_union_type:
-                        // {
-                        //     errs() << "DW_TAG_class_type";
-                        //     break;
-                        // }
-                        // case dwarf::DW_TAG_enumeration_type:
-                        // {
-                        //     errs() << "DW_TAG_class_type";
-                        //     break;
-                        // }
-                        // default:
-                        //     break;
-                        // }
-                        if (auto *S = CT->getRawIdentifier())
-                            errs() << " (identifier: '" << S->getString() << "')";
+                        auto *CT = dyn_cast<DICompositeType>(T);
+                        auto Tag = dwarf::TagString(T->getTag());
+                        if (!Tag.empty())
+                            errs() << Tag;
+                        else
+                            errs() << "unknown-tag(" << CT->getTag() << ")";
+                        switch (CT->getTag())
+                        {
+                        case dwarf::DW_TAG_structure_type:
+                        {
+                            for (auto *field : CT->getElements())
+                            {
+                                if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
+                                {
+                                    errs() << "    ";
+                                    errs() << DerivedT->getName() << "\n";
+                                }
+                            }
+                            break;
+                        }
+                        case dwarf::DW_TAG_class_type:
+                        {
+                            break;
+                        }
+                        case dwarf::DW_TAG_union_type:
+                        {
+                            break;
+                        }
+                        case dwarf::DW_TAG_enumeration_type:
+                        {
+                            break;
+                        }
+                        default:
+                            break;
+                        }
+                        break;
+                    }
                     }
                     errs() << '\n';
                 }
