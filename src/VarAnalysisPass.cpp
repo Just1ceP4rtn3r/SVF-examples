@@ -73,9 +73,9 @@ namespace
                     {
                         auto Tag = dwarf::TagString(T->getTag());
                         if (!Tag.empty())
-                            errs() << Tag;
+                            errs() << Tag << "\n";
                         else
-                            errs() << "unknown-tag(" << T->getTag() << ")";
+                            errs() << "unknown-tag(" << T->getTag() << ")\n";
                         break;
                     }
                     case Metadata::DICompositeTypeKind:
@@ -83,9 +83,9 @@ namespace
                         auto *CT = dyn_cast<DICompositeType>(T);
                         auto Tag = dwarf::TagString(T->getTag());
                         if (!Tag.empty())
-                            errs() << Tag;
+                            errs() << Tag << "\n";
                         else
-                            errs() << "unknown-tag(" << CT->getTag() << ")";
+                            errs() << "unknown-tag(" << CT->getTag() << ")\n";
                         switch (CT->getTag())
                         {
                         case dwarf::DW_TAG_structure_type:
