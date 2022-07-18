@@ -156,7 +156,11 @@ DIType *VarAnalysis::GetBasicType(Metadata *MD)
         ret = CT;
         break;
     }
+    default:
+        break;
     }
+
+    return ret;
 }
 
 char VarAnalysis::ID = 0;
