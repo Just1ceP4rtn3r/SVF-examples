@@ -53,6 +53,7 @@ namespace
                        << *(*sit) << "\n";
             }
             errs() << "----------------------------------\n";
+            errs() << *(M.getTypeByName(StringRef("struct.S2")));
 
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);
