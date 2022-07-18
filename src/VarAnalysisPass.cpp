@@ -46,12 +46,14 @@ namespace
         }
         bool runOnModule(Module &M) override
         {
-            // StructSet = M.getIdentifiedStructTypes();
-            // for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
-            // {
-            //     errs() << "Name: " << (*sit)->getName() << "\n"
-            //            << *(*sit) << "\n";
-            // }
+            StructSet = M.getIdentifiedStructTypes();
+            for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
+            {
+                errs() << "Name: " << (*sit)->getName() << "\n"
+                       << *(*sit) << "\n";
+            }
+            errs() << "----------------------------------\n";
+
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);
             for (const DIType *T : dbgFinder->types())
@@ -99,7 +101,8 @@ namespace
                                 if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                                 {
                                     errs() << "    ";
-                                    errs() << "Name: " << DerivedT->getName() << "Type: " << GetBasicType(DerivedT)->getName()
+                                    errs() << "Name: " << DerivedT->getName() << "    "
+                                           << "Type: " << GetBasicType(DerivedT)->getName()
                                            << "\n";
                                 }
                             }
