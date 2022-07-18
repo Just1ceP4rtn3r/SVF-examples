@@ -29,13 +29,18 @@ using namespace llvm;
 
 namespace
 {
+    class VariableStruct
+    {
+    public:
+    }
+
     class VarAnalysis : public ModulePass
     {
     public:
         static char ID;
         std::vector<llvm::StructType *> StructSet;
 
-        void traverseMetadata(MDNode *MD);
+        DIType *GetBasicType(Metadata *MD);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -47,7 +52,6 @@ namespace
             //     errs() << "Name: " << (*sit)->getName() << "\n"
             //            << *(*sit) << "\n";
             // }
-
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);
             for (const DIType *T : dbgFinder->types())
@@ -56,7 +60,6 @@ namespace
                 {
                     errs() << "Type:";
                     errs() << ' ' << T->getName() << " ";
-
                     switch (T->getMetadataID())
                     {
                     case Metadata::DIBasicTypeKind:
@@ -90,14 +93,17 @@ namespace
                         {
                         case dwarf::DW_TAG_structure_type:
                         {
+                            errs() << "{\n";
                             for (auto *field : CT->getElements())
                             {
                                 if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                                 {
                                     errs() << "    ";
-                                    errs() << DerivedT->getName() << "\n";
+                                    errs() << "Name: " << DerivedT->getName() << "Type: " << GetBasicType(DerivedT)->getName()
+                                           << "\n";
                                 }
                             }
+                            errs() << "}\n";
                             break;
                         }
                         case dwarf::DW_TAG_class_type:
@@ -122,15 +128,33 @@ namespace
                 }
             }
 
-            // for (llvm::Module::named_metadata_iterator nmdit = M.named_metadata_begin(); nmdit != M.named_metadata_end(); nmdit++)
-            // {
-            //     for (llvm::NamedMDNode::op_iterator mdit = (*nmdit).op_begin(); mdit != (*nmdit).op_end(); mdit++)
-            //     {
-            //         traverseMetadata((*mdit));
-            //     }
-            // }
-
             return false;
+        }
+
+        DIType *VarAnalysis::GetBasicType(Metadata *MD)
+        {
+            DIType *ret = nullptr;
+            switch (MD->getMetadataID())
+            {
+            case Metadata::DIBasicTypeKind:
+            {
+                auto *BT = dyn_cast<DIBasicType>(MD);
+                ret = BT;
+                break;
+            }
+            case Metadata::DIDerivedTypeKind:
+            {
+                auto *DerivedT = dyn_cast<DIDerivedType>(MD);
+                ret = DerivedT->getBaseType();
+                break;
+            }
+            case Metadata::DICompositeTypeKind:
+            {
+                auto *CT = dyn_cast<DICompositeType>(MD);
+                ret = CT;
+                break;
+            }
+            }
         }
     };
 }
