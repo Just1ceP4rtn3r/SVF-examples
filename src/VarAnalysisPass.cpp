@@ -130,33 +130,33 @@ namespace
 
             return false;
         }
-
-        DIType *VarAnalysis::GetBasicType(Metadata *MD)
-        {
-            DIType *ret = nullptr;
-            switch (MD->getMetadataID())
-            {
-            case Metadata::DIBasicTypeKind:
-            {
-                auto *BT = dyn_cast<DIBasicType>(MD);
-                ret = BT;
-                break;
-            }
-            case Metadata::DIDerivedTypeKind:
-            {
-                auto *DerivedT = dyn_cast<DIDerivedType>(MD);
-                ret = DerivedT->getBaseType();
-                break;
-            }
-            case Metadata::DICompositeTypeKind:
-            {
-                auto *CT = dyn_cast<DICompositeType>(MD);
-                ret = CT;
-                break;
-            }
-            }
-        }
     };
+}
+
+DIType *VarAnalysis::GetBasicType(Metadata *MD)
+{
+    DIType *ret = nullptr;
+    switch (MD->getMetadataID())
+    {
+    case Metadata::DIBasicTypeKind:
+    {
+        auto *BT = dyn_cast<DIBasicType>(MD);
+        ret = BT;
+        break;
+    }
+    case Metadata::DIDerivedTypeKind:
+    {
+        auto *DerivedT = dyn_cast<DIDerivedType>(MD);
+        ret = DerivedT->getBaseType();
+        break;
+    }
+    case Metadata::DICompositeTypeKind:
+    {
+        auto *CT = dyn_cast<DICompositeType>(MD);
+        ret = CT;
+        break;
+    }
+    }
 }
 
 char VarAnalysis::ID = 0;
