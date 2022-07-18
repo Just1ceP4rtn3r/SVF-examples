@@ -29,10 +29,10 @@ using namespace llvm;
 
 namespace
 {
-    class VariableStruct
-    {
-    public:
-    }
+    // class VariableStruct
+    // {
+    // public:
+    // }
 
     class VarAnalysis : public ModulePass
     {
