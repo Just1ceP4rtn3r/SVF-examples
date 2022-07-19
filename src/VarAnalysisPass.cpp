@@ -191,7 +191,9 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 {
                     if (CT->getElements().size() != named_struct->fields.size())
                     {
-                        errs() << "Error: error struct field count: " << named_struct->typeName << "\n";
+                        errs() << "Error: wrong struct member count: "
+                               << CT->getElements().size() << " != " << named_struct->fields.size() << "\n"
+                               << named_struct->typeName << "\n";
                     }
                     int idx = 0;
                     for (auto *field : CT->getElements())
@@ -218,9 +220,13 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
+                            if (DerivedT->getTag() != dwarf::DW_TAG_member || )
+                            {
+                            }
                             if (idx >= named_struct->fields.size())
                             {
-                                errs() << "ERROR: wrong idx '" << idx << "'\n";
+                                errs() << "ERROR: wrong class member idx: " << idx << "\n"
+                                       << "member size: " << named_struct->fields.size() << "\n";
                             }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();

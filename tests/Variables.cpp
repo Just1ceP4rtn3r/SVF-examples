@@ -24,9 +24,6 @@ namespace test
 
     class Father
     {
-        static Father *static_instance;
-        static int static_var;
-
     public:
         int a;
         int b;
@@ -34,7 +31,6 @@ namespace test
         double d;
         Father()
         {
-            static_var = 10;
             cout << "Father construct\n";
         }
 
@@ -48,6 +44,10 @@ namespace test
     // 派生类
     class Son : public Father // 继承
     {
+        friend class test::GrandSon;
+        static Father *static_instance;
+        static int static_var;
+
     public:
         struct SonStruct
         {
@@ -57,7 +57,7 @@ namespace test
         int e;
         Son()
         {
-            a = 10;
+            static_var = 10;
         }
 
         void func()
