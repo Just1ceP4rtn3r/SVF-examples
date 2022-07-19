@@ -2,22 +2,25 @@
 
 using namespace std;
 
-struct S1
+namespace test
 {
-    /* data */
-    int f;
-};
+    struct S1
+    {
+        /* data */
+        int f;
+    };
 
-struct S2
-{
+    struct S2
+    {
 
-    int a;
-    int b;
-    short c;
-    double d;
-    struct S1 e;
+        int a;
+        int b;
+        short c;
+        double d;
+        struct S1 e;
 
-} field_test;
+    } field_test;
+} // namespace test
 
 class Father
 {
@@ -82,11 +85,11 @@ public:
 
 int main()
 {
-    field_test.a = 1;
-    field_test.b = 2;
-    field_test.c = 2;
-    field_test.d = 2.0;
-    field_test.e = S1();
+    test::field_test.a = 1;
+    test::field_test.b = 2;
+    test::field_test.c = 2;
+    test::field_test.d = 2.0;
+    test::field_test.e = S1();
 
     /////////////////////////////
 
