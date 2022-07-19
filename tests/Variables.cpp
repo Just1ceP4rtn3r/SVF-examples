@@ -42,19 +42,6 @@ namespace test
         }
     };
 
-    class SonFriend : public Father // 继承
-    {
-
-    public:
-        int h;
-        Son *son;
-        SonFriend()
-        {
-        }
-
-        void TestFriend();
-    };
-
     // 派生类
     class Son : public Father // 继承
     {
@@ -88,6 +75,19 @@ namespace test
             cout << "Son\n";
         }
         int f;
+    };
+
+    class SonFriend : public Father // 继承
+    {
+
+    public:
+        int h;
+        test::Son *son;
+        SonFriend()
+        {
+        }
+
+        void TestFriend();
     };
 
     class GrandSon : public Son // 继承
