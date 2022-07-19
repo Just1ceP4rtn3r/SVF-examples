@@ -214,7 +214,8 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             }
                             if (idx >= named_struct->fields.size())
                             {
-                                errs() << "ERROR: wrong member idx: " << idx << "\n"
+                                errs() << "ERROR: wrong member " << named_struct->typeName << "\n"
+                                       << "idx: " << idx << "\n"
                                        << "member size: " << named_struct->fields.size() << "\n";
                             }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
