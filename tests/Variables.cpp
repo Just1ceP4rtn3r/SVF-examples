@@ -92,6 +92,7 @@ int main()
 
     Father *fa = new Father();
     Son *son = new Son();
+    Son2 *son2 = new Son2();
     fa->a = 1;
     fa->b = 2;
 
