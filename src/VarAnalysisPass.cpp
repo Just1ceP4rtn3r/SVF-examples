@@ -200,6 +200,17 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
+                            if (DerivedT->getTag() != dwarf::DW_TAG_member || DerivedT->getTag() != dwarf::DW_TAG_inheritance)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
+                                {
+                                    continue;
+                                }
+                            }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
@@ -220,8 +231,16 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
-                            if (DerivedT->getTag() != dwarf::DW_TAG_member || )
+                            if (DerivedT->getTag() != dwarf::DW_TAG_member || DerivedT->getTag() != dwarf::DW_TAG_inheritance)
                             {
+                                continue;
+                            }
+                            else
+                            {
+                                if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
+                                {
+                                    continue;
+                                }
                             }
                             if (idx >= named_struct->fields.size())
                             {
