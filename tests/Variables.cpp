@@ -45,6 +45,7 @@ namespace test
     {
 
     public:
+        int h;
         SonFriend()
         {
         }
