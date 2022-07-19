@@ -151,7 +151,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
         {
             std::string scope_name = GetScope(T) + T->getName().str();
 
-                        if (named_struct->typeName.find(scope_name) == std::string::npos)
+            if (named_struct->typeName.find(scope_name) == std::string::npos)
             {
                 continue;
             }
