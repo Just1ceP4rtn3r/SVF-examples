@@ -194,6 +194,42 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 switch (CT->getTag())
                 {
                 case dwarf::DW_TAG_structure_type:
+                {
+                    int idx = 0;
+                    for (auto *field : CT->getElements())
+                    {
+                        if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
+                        {
+                            if (DerivedT->getTag() != dwarf::DW_TAG_member)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
+                                {
+                                    continue;
+                                }
+                            }
+                            if (idx >= named_struct->fields.size())
+                            {
+                                errs() << "ERROR: wrong member " << named_struct->typeName << "\n"
+                                       << "idx: " << idx << "\n"
+                                       << "member size: " << named_struct->fields.size() << "\n";
+                            }
+                            NamedField *named_field = *(named_struct->fields.begin() + idx);
+                            named_field->fieldName = DerivedT->getName().str();
+                            named_field->typeMD = DerivedT;
+                            // dbgs()
+                            //     << "    ";
+                            // dbgs() << "Name: " << DerivedT->getName() << "    "
+                            //        << "Type: " << GetBasicDIType(DerivedT)->getName()
+                            //        << "\n";
+                        }
+                        idx++;
+                    }
+                    break;
+                }
                 case dwarf::DW_TAG_class_type:
                 {
                     int idx = 0;
