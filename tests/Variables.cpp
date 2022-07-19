@@ -60,6 +60,26 @@ public:
     int f;
 };
 
+class Son2 : public Son // 继承
+{
+public:
+    int g;
+    Son2()
+    {
+        a = 10;
+    }
+
+    void func()
+    {
+        cout << "Son\n"
+             << a << "\n";
+    }
+    void myFunc()
+    {
+        cout << "Son\n";
+    }
+};
+
 int main()
 {
     field_test.a = 1;
