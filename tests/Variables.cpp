@@ -106,7 +106,7 @@ int main()
 
     test::Father *fa = new test::Father();
     test::Son *son = new test::Son();
-    test::SonFriend *son = new test::SonFriend();
+    test::SonFriend *son_friend = new test::SonFriend();
     test::GrandSon *grandson = new test::GrandSon();
     fa->a = 1;
     fa->b = 2;
