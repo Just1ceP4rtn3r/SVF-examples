@@ -91,7 +91,7 @@ namespace
                 for (auto *named_field : named_struct->fields)
                 {
                     if (named_field->typeMD)
-                        errs() << "    " << named_field->fieldName << " : " << named_field->type << "\n";
+                        errs() << "    " << named_field->fieldName << " : " << *(named_field->type) << "\n";
                 }
                 errs() << "}\n";
             }
