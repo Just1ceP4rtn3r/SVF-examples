@@ -24,21 +24,35 @@
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/BinaryFormat/Dwarf.h"
 #include "llvm/IR/DebugInfo.h"
+#include "llvm/IR/TypeFinder.h"
 
 using namespace llvm;
 
 namespace
 {
-    // class VariableStruct
-    // {
-    // public:
-    // }
+
+    struct NamedField
+    {
+        llvm::Type *type;
+        llvm::DIType *typeMD;
+        std::string fieldName;
+        std::string typeName;
+        int typeID;
+    };
+
+    struct NamedStructType
+    {
+        llvm::StructType *type;
+        llvm::DIType *typeMD;
+        std::string typeName;
+        std::vector<NamedField *> fields;
+    };
 
     class VarAnalysis : public ModulePass
     {
     public:
         static char ID;
-        std::vector<llvm::StructType *> StructSet;
+        std::vector<NamedStructType *> NamedStructTypes;
 
         DIType *GetBasicType(Metadata *MD);
         VarAnalysis() : ModulePass(ID)
@@ -46,14 +60,25 @@ namespace
         }
         bool runOnModule(Module &M) override
         {
+
+            std::vector<llvm::StructType *> StructSet;
             StructSet = M.getIdentifiedStructTypes();
             for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
             {
-                errs() << "Name: " << (*sit)->getName() << "\n"
-                       << *(*sit) << "\n";
+                NamedStructType *named_struct = new NamedStructType();
+                named_struct->type = (*sit);
+                named_struct->typeName = (*sit)->getName();
+                for (auto *element_type : (*sit)->elements())
+                {
+                    NamedField *named_field = new NamedField();
+                    named_field->type = element_type;
+                    named_field->typeID = element_type->getTypeID()
+                }
+                errs()
+                    << "Name: " << (*sit)->getName() << "\n"
+                    << *(*sit) << "\n";
             }
             errs() << "----------------------------------\n";
-            errs() << *(M.getTypeByName(StringRef("struct.S2")));
 
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);

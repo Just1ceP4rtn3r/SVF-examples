@@ -57,6 +57,7 @@ public:
     {
         cout << "Son\n";
     }
+    int f;
 };
 
 int main()
@@ -80,6 +81,7 @@ int main()
     son->d = 6.0;
 
     son->e = 7;
+    son->f = 8;
 
     return 0;
 }
