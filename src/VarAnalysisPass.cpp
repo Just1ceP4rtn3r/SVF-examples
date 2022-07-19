@@ -37,7 +37,6 @@ namespace
         llvm::Type *type;
         llvm::DIType *typeMD;
         std::string fieldName;
-        std::string typeName;
         int typeID;
     };
 
@@ -57,17 +56,20 @@ namespace
 
         DIType *GetBasicType(Metadata *MD);
         std::string GetScope(const DIType *MD);
+        void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         VarAnalysis() : ModulePass(ID)
         {
         }
         bool runOnModule(Module &M) override
         {
-
+            DebugInfoFinder *dbgFinder = new DebugInfoFinder();
+            dbgFinder->processModule(M);
             std::vector<llvm::StructType *> struct_set;
             struct_set = M.getIdentifiedStructTypes();
             for (std::vector<llvm::StructType *>::iterator sit = struct_set.begin(); sit != struct_set.end(); sit++)
             {
                 NamedStructType *named_struct = new NamedStructType();
+                NamedStructTypes.push_back(named_struct);
                 named_struct->type = (*sit);
                 named_struct->typeName = (*sit)->getName().str();
                 // errs() << named_struct->typeName << "\n";
@@ -78,87 +80,21 @@ namespace
                     named_field->typeID = element_type->getTypeID();
                     named_struct->fields.insert(named_struct->fields.end(), named_field);
                 }
-            }
-            errs() << "----------------------------------\n";
 
-            DebugInfoFinder *dbgFinder = new DebugInfoFinder();
-            dbgFinder->processModule(M);
-            for (const DIType *T : dbgFinder->types())
+                GetStructDbgInfo(dbgFinder, named_struct);
+            }
+
+            for (auto *named_struct : NamedStructTypes)
             {
-                if (!T->getName().empty())
+                errs() << named_struct->typeName << "\n{\n";
+                for (auto *named_field : named_struct->fields)
                 {
-                    std::string scope_name = GetScope(T) + T->getName().str();
-
-                    errs() << "Type:";
-                    errs() << ' ' << scope_name << " ";
-                    switch (T->getMetadataID())
-                    {
-                    case Metadata::DIBasicTypeKind:
-                    {
-                        auto *BT = dyn_cast<DIBasicType>(T);
-                        auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
-                        if (!Encoding.empty())
-                            errs() << Encoding;
-                        else
-                            errs() << "unknown-encoding(" << BT->getEncoding() << ')';
-                        break;
-                    }
-                    case Metadata::DIDerivedTypeKind:
-                    {
-                        auto Tag = dwarf::TagString(T->getTag());
-                        if (!Tag.empty())
-                            errs() << Tag << "\n";
-                        else
-                            errs() << "unknown-tag(" << T->getTag() << ")\n";
-                        break;
-                    }
-                    case Metadata::DICompositeTypeKind:
-                    {
-                        auto *CT = dyn_cast<DICompositeType>(T);
-                        auto Tag = dwarf::TagString(T->getTag());
-                        if (!Tag.empty())
-                            errs() << Tag << "\n";
-                        else
-                            errs() << "unknown-tag(" << CT->getTag() << ")\n";
-                        switch (CT->getTag())
-                        {
-                        case dwarf::DW_TAG_structure_type:
-                        {
-                            errs() << "{\n";
-                            for (auto *field : CT->getElements())
-                            {
-                                if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
-                                {
-                                    errs() << "    ";
-                                    errs() << "Name: " << DerivedT->getName() << "    "
-                                           << "Type: " << GetBasicType(DerivedT)->getName()
-                                           << "\n";
-                                }
-                            }
-                            errs() << "}\n";
-                            break;
-                        }
-                        case dwarf::DW_TAG_class_type:
-                        {
-                            break;
-                        }
-                        case dwarf::DW_TAG_union_type:
-                        {
-                            break;
-                        }
-                        case dwarf::DW_TAG_enumeration_type:
-                        {
-                            break;
-                        }
-                        default:
-                            break;
-                        }
-                        break;
-                    }
-                    }
-                    errs() << '\n';
+                    errs() << "    " << named_field->fieldName << " : " << GetBasicType(named_field->typeMD)->getName() << "\n";
                 }
+                errs() << "}\n";
             }
+
+            errs() << "----------------------------------\n";
 
             return false;
         }
@@ -205,6 +141,100 @@ std::string VarAnalysis::GetScope(const DIType *MD)
         scope_node = scope_node->getScope();
     }
     return scope;
+}
+
+void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct)
+{
+    for (const DIType *T : dbgFinder->types())
+    {
+        if (!T->getName().empty())
+        {
+            std::string scope_name = GetScope(T) + T->getName().str();
+
+            if (named_struct->typeName.find(scope_name) == std::string::npos)
+            {
+                continue;
+            }
+
+            errs() << "Type:";
+            errs() << ' ' << scope_name << " ";
+            switch (T->getMetadataID())
+            {
+            // case Metadata::DIBasicTypeKind:
+            // {
+            //     auto *BT = dyn_cast<DIBasicType>(T);
+            //     auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
+            //     if (!Encoding.empty())
+            //         errs() << Encoding;
+            //     else
+            //         errs() << "unknown-encoding(" << BT->getEncoding() << ')';
+            //     break;
+            // }
+            // case Metadata::DIDerivedTypeKind:
+            // {
+            //     auto Tag = dwarf::TagString(T->getTag());
+            //     if (!Tag.empty())
+            //         errs() << Tag << "\n";
+            //     else
+            //         errs() << "unknown-tag(" << T->getTag() << ")\n";
+            //     break;
+            // }
+            case Metadata::DICompositeTypeKind:
+            {
+                auto *CT = dyn_cast<DICompositeType>(T);
+                auto Tag = dwarf::TagString(T->getTag());
+                if (!Tag.empty())
+                    errs() << Tag << "\n";
+                else
+                    errs() << "unknown-tag(" << CT->getTag() << ")\n";
+
+                named_struct->typeMD = CT;
+
+                switch (CT->getTag())
+                {
+                case dwarf::DW_TAG_structure_type:
+                {
+                    if (CT->getElements().size() != named_struct->fields.size())
+                    {
+                        errs() << "Error: error struct field count: " << named_struct->typeName << "\n";
+                    }
+                    for (auto fieldit = CT->getElements().begin(); fieldit != CT->getElements().end(); fieldit++)
+                    {
+                        auto *field = *fieldit;
+                        NamedField *named_field =  *(named_struct->fields.begin() + (fieldit - CT->getElements().begin())));
+                        if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
+                        {
+                            named_field->fieldName = DerivedT->getName();
+                            named_field->typeMD = DerivedT;
+                            // errs()
+                            //     << "    ";
+                            // errs() << "Name: " << DerivedT->getName() << "    "
+                            //        << "Type: " << GetBasicType(DerivedT)->getName()
+                            //        << "\n";
+                        }
+                    }
+                    break;
+                }
+                case dwarf::DW_TAG_class_type:
+                {
+                    break;
+                }
+                case dwarf::DW_TAG_union_type:
+                {
+                    break;
+                }
+                case dwarf::DW_TAG_enumeration_type:
+                {
+                    break;
+                }
+                default:
+                    break;
+                }
+                break;
+            }
+            }
+        }
+    }
 }
 
 char VarAnalysis::ID = 0;
