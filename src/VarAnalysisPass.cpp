@@ -35,7 +35,7 @@ namespace
     struct NamedField
     {
         llvm::Type *type;
-        llvm::DIType *typeMD;
+        const llvm::DIType *typeMD;
         std::string fieldName;
         int typeID;
     };
@@ -43,7 +43,7 @@ namespace
     struct NamedStructType
     {
         llvm::StructType *type;
-        llvm::DIType *typeMD;
+        const llvm::DIType *typeMD;
         std::string typeName;
         std::vector<NamedField *> fields;
     };
@@ -201,10 +201,10 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     for (auto fieldit = CT->getElements().begin(); fieldit != CT->getElements().end(); fieldit++)
                     {
                         auto *field = *fieldit;
-                        NamedField *named_field =  *(named_struct->fields.begin() + (fieldit - CT->getElements().begin())));
+                        NamedField *named_field = *(named_struct->fields.begin() + (fieldit - CT->getElements().begin()));
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
-                            named_field->fieldName = DerivedT->getName();
+                            named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
                             // errs()
                             //     << "    ";
