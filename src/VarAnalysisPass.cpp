@@ -67,7 +67,7 @@ namespace
             {
                 NamedStructType *named_struct = new NamedStructType();
                 named_struct->type = (*sit);
-                named_struct->typeName = (*sit)->getName();
+                named_struct->typeName = (*sit)->getName().str();
                 LLVM_DEBUG(dbgs() << named_struct->typeName << "\n");
                 for (auto *element_type : (*sit)->elements())
                 {
