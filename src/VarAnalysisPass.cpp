@@ -54,7 +54,7 @@ namespace
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
 
-        const DIType *GetBasicType(const Metadata *MD);
+        const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         VarAnalysis() : ModulePass(ID)
@@ -89,7 +89,8 @@ namespace
                 errs() << named_struct->typeName << "\n{\n";
                 for (auto *named_field : named_struct->fields)
                 {
-                    errs() << "    " << named_field->fieldName << " : " << GetBasicType(named_field->typeMD)->getName() << "\n";
+                    if (named_field->typeMD)
+                        errs() << "    " << named_field->fieldName << " : " << GetBasicDIType(named_field->typeMD)->getName() << "\n";
                 }
                 errs() << "}\n";
             }
@@ -101,7 +102,7 @@ namespace
     };
 }
 
-const DIType *VarAnalysis::GetBasicType(const Metadata *MD)
+const DIType *VarAnalysis::GetBasicDIType(const Metadata *MD)
 {
     const DIType *ret = nullptr;
     switch (MD->getMetadataID())
@@ -156,8 +157,6 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 continue;
             }
 
-            errs() << "Type:";
-            errs() << ' ' << scope_name << " ";
             switch (T->getMetadataID())
             {
             // case Metadata::DIBasicTypeKind:
@@ -209,7 +208,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             // errs()
                             //     << "    ";
                             // errs() << "Name: " << DerivedT->getName() << "    "
-                            //        << "Type: " << GetBasicType(DerivedT)->getName()
+                            //        << "Type: " << GetBasicDIType(DerivedT)->getName()
                             //        << "\n";
                         }
                         idx++;
