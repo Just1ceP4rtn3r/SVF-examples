@@ -41,10 +41,19 @@ namespace test
         }
     };
 
+    class SonFriend : public Father // 继承
+    {
+
+    public:
+        SonFriend()
+        {
+        }
+    };
+
     // 派生类
     class Son : public Father // 继承
     {
-        friend class test::GrandSon;
+        friend class test::SonFriend;
         static Father *static_instance;
         static int static_var;
 
@@ -78,17 +87,6 @@ namespace test
         int g;
         GrandSon()
         {
-            a = 10;
-        }
-
-        void func()
-        {
-            cout << "Son\n"
-                 << a << "\n";
-        }
-        void myFunc()
-        {
-            cout << "Son\n";
         }
     };
 
