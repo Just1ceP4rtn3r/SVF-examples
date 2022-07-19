@@ -34,6 +34,7 @@ namespace test
         double d;
         Father()
         {
+            static_var = 10;
             cout << "Father construct\n";
         }
 
