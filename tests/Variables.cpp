@@ -49,7 +49,7 @@ public:
     {
         /* data */
         int x;
-    };
+    } y;
     int e;
     Son()
     {
