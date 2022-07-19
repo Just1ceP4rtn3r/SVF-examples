@@ -90,7 +90,7 @@ namespace
                 for (auto *named_field : named_struct->fields)
                 {
                     if (named_field->typeMD)
-                        errs() << "    " << named_field->fieldName << " : " << GetBasicDIType(named_field->typeMD)->getName() << "\n";
+                        errs() << "    " << named_field->fieldName << " : " << GetScope(GetBasicDIType(named_field->typeMD)) << GetBasicDIType(named_field->typeMD)->getName() << "\n";
                 }
                 errs() << "}\n";
             }
@@ -200,9 +200,9 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     int idx = 0;
                     for (auto *field : CT->getElements())
                     {
-                        NamedField *named_field = *(named_struct->fields.begin() + idx);
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
+                            NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
                             // errs()
@@ -217,6 +217,22 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 }
                 case dwarf::DW_TAG_class_type:
                 {
+                    int idx = 0;
+                    for (auto *field : CT->getElements())
+                    {
+                        if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
+                        {
+                            NamedField *named_field = *(named_struct->fields.begin() + idx);
+                            named_field->fieldName = DerivedT->getName().str();
+                            named_field->typeMD = DerivedT;
+                            // errs()
+                            //     << "    ";
+                            // errs() << "Name: " << DerivedT->getName() << "    "
+                            //        << "Type: " << GetBasicDIType(DerivedT)->getName()
+                            //        << "\n";
+                        }
+                        idx++;
+                    }
                     break;
                 }
                 case dwarf::DW_TAG_union_type:
