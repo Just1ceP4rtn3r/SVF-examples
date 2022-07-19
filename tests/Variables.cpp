@@ -20,74 +20,75 @@ namespace test
         struct S1 e;
 
     } field_test;
-} // namespace test
+    // namespace test
 
-class Father
-{
-public:
-    int a;
-    int b;
-    short c;
-    double d;
-    Father()
+    class Father
     {
-        cout << "Father construct\n";
-    }
+    public:
+        int a;
+        int b;
+        short c;
+        double d;
+        Father()
+        {
+            cout << "Father construct\n";
+        }
 
-    void func()
-    {
-        cout << "Father\n"
-             << a << "\n";
-    }
-};
+        void func()
+        {
+            cout << "Father\n"
+                 << a << "\n";
+        }
+    };
 
-// 派生类
-class Son : public Father // 继承
-{
-public:
-    struct SonStruct
+    // 派生类
+    class Son : public Father // 继承
     {
-        /* data */
-        int x;
-    } y;
-    int e;
-    Son()
-    {
-        a = 10;
-    }
+    public:
+        struct SonStruct
+        {
+            /* data */
+            int x;
+        } y;
+        int e;
+        Son()
+        {
+            a = 10;
+        }
 
-    void func()
-    {
-        cout << "Son\n"
-             << a << "\n";
-    }
-    void myFunc()
-    {
-        cout << "Son\n";
-    }
-    int f;
-};
+        void func()
+        {
+            cout << "Son\n"
+                 << a << "\n";
+        }
+        void myFunc()
+        {
+            cout << "Son\n";
+        }
+        int f;
+    };
 
-class Son2 : public Son // 继承
-{
-public:
-    int g;
-    Son2()
+    class Son2 : public Son // 继承
     {
-        a = 10;
-    }
+    public:
+        int g;
+        Son2()
+        {
+            a = 10;
+        }
 
-    void func()
-    {
-        cout << "Son\n"
-             << a << "\n";
-    }
-    void myFunc()
-    {
-        cout << "Son\n";
-    }
-};
+        void func()
+        {
+            cout << "Son\n"
+                 << a << "\n";
+        }
+        void myFunc()
+        {
+            cout << "Son\n";
+        }
+    };
 
+}
 int main()
 {
     test::field_test.a = 1;
@@ -98,9 +99,9 @@ int main()
 
     /////////////////////////////
 
-    Father *fa = new Father();
-    Son *son = new Son();
-    Son2 *son2 = new Son2();
+    test::Father *fa = new test::Father();
+    test::Son *son = new test::Son();
+    test::Son2 *son2 = new test::Son2();
     fa->a = 1;
     fa->b = 2;
 

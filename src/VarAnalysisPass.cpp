@@ -56,26 +56,27 @@ namespace
         std::vector<NamedStructType *> NamedStructTypes;
 
         DIType *GetBasicType(Metadata *MD);
+        std::string *GetScope(DIType *MD);
         VarAnalysis() : ModulePass(ID)
         {
         }
         bool runOnModule(Module &M) override
         {
 
-            std::vector<llvm::StructType *> StructSet;
-            StructSet = M.getIdentifiedStructTypes();
-            for (std::vector<llvm::StructType *>::iterator sit = StructSet.begin(); sit != StructSet.end(); sit++)
+            std::vector<llvm::StructType *> struct_set;
+            struct_set = M.getIdentifiedStructTypes();
+            for (std::vector<llvm::StructType *>::iterator sit = struct_set.begin(); sit != struct_set.end(); sit++)
             {
                 NamedStructType *named_struct = new NamedStructType();
                 named_struct->type = (*sit);
                 named_struct->typeName = (*sit)->getName().str();
-                errs() << named_struct->typeName << "\n";
+                // errs() << named_struct->typeName << "\n";
                 for (auto *element_type : (*sit)->elements())
                 {
                     NamedField *named_field = new NamedField();
                     named_field->type = element_type;
                     named_field->typeID = element_type->getTypeID();
-                    errs() << named_field->typeID << "\n";
+                    named_struct->fields.insert(named_struct->fields.end(), named_field);
                 }
             }
             errs() << "----------------------------------\n";
@@ -86,8 +87,10 @@ namespace
             {
                 if (!T->getName().empty())
                 {
+                    std::string scope_name = GetScope(T) + T->getName().str();
+
                     errs() << "Type:";
-                    errs() << ' ' << T->getName() << " ";
+                    errs() << ' ' << scope_name << " ";
                     switch (T->getMetadataID())
                     {
                     case Metadata::DIBasicTypeKind:
@@ -190,6 +193,18 @@ DIType *VarAnalysis::GetBasicType(Metadata *MD)
     }
 
     return ret;
+}
+
+std::string *VarAnalysis::GetScope(DIType *MD)
+{
+    std::string scope = "";
+    DIScope *scope_node = MD->getScope();
+    while (scope_node != NULL)
+    {
+        scope = scope_node->getName().str() + "::" + scope;
+        scope_node = scope_node->getScope();
+    }
+    return scope;
 }
 
 char VarAnalysis::ID = 0;
