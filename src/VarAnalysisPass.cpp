@@ -54,7 +54,7 @@ namespace
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
 
-        DIType *GetBasicType(Metadata *MD);
+        DIType *GetBasicType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         VarAnalysis() : ModulePass(ID)
@@ -101,7 +101,7 @@ namespace
     };
 }
 
-DIType *VarAnalysis::GetBasicType(Metadata *MD)
+DIType *VarAnalysis::GetBasicType(const Metadata *MD)
 {
     DIType *ret = nullptr;
     switch (MD->getMetadataID())
