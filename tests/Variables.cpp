@@ -113,7 +113,7 @@ int main()
     son->e = 7;
     son->f = 8;
 
-    son2->g = 9;
+    son2->g = 10;
 
     return 0;
 }
