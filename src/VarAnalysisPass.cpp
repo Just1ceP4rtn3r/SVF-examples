@@ -72,14 +72,14 @@ namespace
                 NamedStructTypes.push_back(named_struct);
                 named_struct->type = (*sit);
                 named_struct->typeName = (*sit)->getName().str();
-                errs() << named_struct->typeName << "\n";
+                // errs() << named_struct->typeName << "\n";
                 for (auto *element_type : (*sit)->elements())
                 {
                     NamedField *named_field = new NamedField();
                     named_field->type = element_type;
                     named_field->typeID = element_type->getTypeID();
                     named_struct->fields.insert(named_struct->fields.end(), named_field);
-                    errs() << named_field->typeID << "\n";
+                    // errs() << named_field->typeID << "\n";
                 }
 
                 GetStructDbgInfo(dbgFinder, named_struct);
@@ -224,11 +224,6 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
-                            errs()
-                                << "    ";
-                            errs() << "Name: " << DerivedT->getName() << "    "
-                                   << "Type: " << GetBasicDIType(DerivedT)->getName()
-                                   << "\n";
                         }
                         idx++;
                     }
