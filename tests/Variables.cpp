@@ -60,6 +60,7 @@ namespace test
             int x;
         } y;
         int e;
+        int f;
         Son()
         {
             static_var = 10;
@@ -75,8 +76,7 @@ namespace test
         {
             cout << "Son\n";
         }
-        int f;
-    };
+        };
 
     class SonFriend : public Father // 继承
     {

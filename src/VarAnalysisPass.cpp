@@ -103,6 +103,7 @@ namespace
 
 const DIType *VarAnalysis::GetBasicDIType(const Metadata *MD)
 {
+    std::string type_with_scope = "";
     const DIType *ret = nullptr;
     switch (MD->getMetadataID())
     {
@@ -115,7 +116,16 @@ const DIType *VarAnalysis::GetBasicDIType(const Metadata *MD)
     case Metadata::DIDerivedTypeKind:
     {
         auto *DerivedT = dyn_cast<DIDerivedType>(MD);
+        switch (DerivedT->getTag())
+        {
+        case dwarf::DW_TAG_pointer_type:
+        {
+        }
+        default:
+            break;
+        }
         ret = DerivedT->getBaseType();
+        dbgs() << "DEBUG: " << ret->getName() << "endl";
         break;
     }
     case Metadata::DICompositeTypeKind:
