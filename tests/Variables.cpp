@@ -42,6 +42,7 @@ namespace test
         }
     };
 
+    class SonFriend;
     // 派生类
     class Son : public Father // 继承
     {
@@ -87,7 +88,11 @@ namespace test
         {
         }
 
-        void TestFriend();
+        void TestFriend()
+        {
+            son = new test::Son();
+            h = son->secret;
+        }
     };
 
     class GrandSon : public Son // 继承
@@ -98,12 +103,6 @@ namespace test
         {
         }
     };
-
-    void test::SonFriend::TestFriend()
-    {
-        son = new test::Son();
-        h = son->secret;
-    }
 
 }
 int main()
