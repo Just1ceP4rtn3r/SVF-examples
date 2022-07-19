@@ -125,7 +125,7 @@ const DIType *VarAnalysis::GetBasicDIType(const Metadata *MD)
             break;
         }
         ret = DerivedT->getBaseType();
-        dbgs() << "DEBUG: " << ret->getName() << "endl";
+        dbgs() << "DEBUG: " << ret->getName() << "    " << DerivedT->getName() << "\n";
         break;
     }
     case Metadata::DICompositeTypeKind:
