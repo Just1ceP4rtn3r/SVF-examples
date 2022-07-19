@@ -126,9 +126,10 @@ int main()
     son->b = 4;
     son->c = 5;
     son->d = 6.0;
-
     son->e = 7;
     son->f = 8;
+
+    son_friend->TestFriend();
 
     grandson->g = 10;
 
