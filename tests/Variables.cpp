@@ -24,6 +24,9 @@ namespace test
 
     class Father
     {
+        static Father *static_instance;
+        static int static_var;
+
     public:
         int a;
         int b;
@@ -68,11 +71,11 @@ namespace test
         int f;
     };
 
-    class Son2 : public Son // 继承
+    class GrandSon : public Son // 继承
     {
     public:
         int g;
-        Son2()
+        GrandSon()
         {
             a = 10;
         }
@@ -101,7 +104,7 @@ int main()
 
     test::Father *fa = new test::Father();
     test::Son *son = new test::Son();
-    test::Son2 *son2 = new test::Son2();
+    test::GrandSon *grandson = new test::GrandSon();
     fa->a = 1;
     fa->b = 2;
 
@@ -113,7 +116,7 @@ int main()
     son->e = 7;
     son->f = 8;
 
-    son2->g = 10;
+    grandson->g = 10;
 
     return 0;
 }
