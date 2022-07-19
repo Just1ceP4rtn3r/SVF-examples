@@ -45,6 +45,11 @@ public:
 class Son : public Father // 继承
 {
 public:
+    struct SonStruct
+    {
+        /* data */
+        int x;
+    };
     int e;
     Son()
     {
