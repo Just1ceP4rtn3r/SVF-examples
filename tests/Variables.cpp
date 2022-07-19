@@ -50,9 +50,9 @@ namespace test
         Son *son;
         SonFriend()
         {
-            son = new test::Son();
-            h = son->secret;
         }
+
+        void TestFriend();
     };
 
     // 派生类
@@ -98,6 +98,12 @@ namespace test
         {
         }
     };
+
+    void test::SonFriend::TestFriend()
+    {
+        son = new test::Son();
+        h = son->secret;
+    }
 
 }
 int main()
