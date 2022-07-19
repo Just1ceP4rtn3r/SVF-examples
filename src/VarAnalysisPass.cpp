@@ -56,7 +56,7 @@ namespace
         std::vector<NamedStructType *> NamedStructTypes;
 
         DIType *GetBasicType(Metadata *MD);
-        std::string *GetScope(DIType *MD);
+        std::string GetScope(DIType *MD);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -195,7 +195,7 @@ DIType *VarAnalysis::GetBasicType(Metadata *MD)
     return ret;
 }
 
-std::string *VarAnalysis::GetScope(DIType *MD)
+std::string VarAnalysis::GetScope(DIType *MD)
 {
     std::string scope = "";
     DIScope *scope_node = MD->getScope();
