@@ -156,7 +156,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 continue;
             }
 
-            dbgs() << scope_name << "\n";
+            // dbgs() << scope_name << "\n";
             switch (T->getMetadataID())
             {
             // case Metadata::DIBasicTypeKind:
@@ -195,7 +195,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
-                            if (DerivedT->getTag() != dwarf::DW_TAG_member || DerivedT->getTag() != dwarf::DW_TAG_inheritance)
+                            if (DerivedT->getTag() != dwarf::DW_TAG_member && DerivedT->getTag() != dwarf::DW_TAG_inheritance)
                             {
                                 continue;
                             }
