@@ -50,7 +50,7 @@ namespace test
         Son *son;
         SonFriend()
         {
-            son = new Son();
+            son = new test::Son();
             h = son->secret;
         }
     };
