@@ -182,10 +182,6 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
             {
                 auto *CT = dyn_cast<DICompositeType>(T);
                 auto Tag = dwarf::TagString(T->getTag());
-                if (!Tag.empty())
-                    errs() << Tag << "\n";
-                else
-                    errs() << "unknown-tag(" << CT->getTag() << ")\n";
 
                 named_struct->typeMD = CT;
 
@@ -225,11 +221,11 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
-                            // errs()
-                            //     << "    ";
-                            // errs() << "Name: " << DerivedT->getName() << "    "
-                            //        << "Type: " << GetBasicDIType(DerivedT)->getName()
-                            //        << "\n";
+                            errs()
+                                << "    ";
+                            errs() << "Name: " << DerivedT->getName() << "    "
+                                   << "Type: " << GetBasicDIType(DerivedT)->getName()
+                                   << "\n";
                         }
                         idx++;
                     }
