@@ -91,7 +91,13 @@ namespace
                 for (auto *named_field : named_struct->fields)
                 {
                     if (named_field->typeMD)
-                        errs() << "    " << named_field->fieldName << " : " << *(named_field->type) << "\n";
+                    {
+                        std::string Str;
+                        raw_string_ostream OS(Str);
+
+                        named_field->type->print(OS, false, true);
+                        errs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
+                    }
                 }
                 errs() << "}\n";
             }
