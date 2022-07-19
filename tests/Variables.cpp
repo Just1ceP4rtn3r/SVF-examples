@@ -89,7 +89,7 @@ int main()
     test::field_test.b = 2;
     test::field_test.c = 2;
     test::field_test.d = 2.0;
-    test::field_test.e = S1();
+    test::field_test.e = test::S1();
 
     /////////////////////////////
 
