@@ -68,15 +68,14 @@ namespace
                 NamedStructType *named_struct = new NamedStructType();
                 named_struct->type = (*sit);
                 named_struct->typeName = (*sit)->getName();
+                LLVM_DEBUG(dbgs() << named_struct->typeName << "\n");
                 for (auto *element_type : (*sit)->elements())
                 {
                     NamedField *named_field = new NamedField();
                     named_field->type = element_type;
-                    named_field->typeID = element_type->getTypeID()
+                    named_field->typeID = element_type->getTypeID();
+                    LLVM_DEBUG(dbgs() << named_field->typeID << "\n");
                 }
-                errs()
-                    << "Name: " << (*sit)->getName() << "\n"
-                    << *(*sit) << "\n";
             }
             errs() << "----------------------------------\n";
 
