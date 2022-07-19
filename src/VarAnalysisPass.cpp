@@ -25,6 +25,7 @@
 #include "llvm/BinaryFormat/Dwarf.h"
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/TypeFinder.h"
+#include "llvm/Support/Debug.h"
 
 using namespace llvm;
 
