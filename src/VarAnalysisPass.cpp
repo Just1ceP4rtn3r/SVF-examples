@@ -218,6 +218,10 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
+                            if (idx >= named_struct->fields.size())
+                            {
+                                errs() << "ERROR: wrong idx '" << idx << "'\n";
+                            }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
