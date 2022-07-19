@@ -198,10 +198,10 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         errs() << "Error: error struct field count: " << named_struct->typeName << "\n";
                     }
-                    for (llvm::TypedMDOperandIterator<llvm::DINode> fieldit = CT->getElements().begin(); fieldit != CT->getElements().end(); fieldit++)
+                    for (int i = 0; i < CT->getElements().size(); i++)
                     {
-                        auto *field = *fieldit;
-                        NamedField *named_field = *(named_struct->fields.begin() + (fieldit - CT->getElements().begin()));
+                        auto *field = *(CT->getElements().begin() + i);
+                        NamedField *named_field = *(named_struct->fields.begin() + i);
                         if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
                         {
                             named_field->fieldName = DerivedT->getName().str();
