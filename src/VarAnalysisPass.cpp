@@ -214,8 +214,10 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             if (idx >= named_struct->fields.size())
                             {
                                 errs() << "ERROR: wrong member " << named_struct->typeName << "\n"
+                                       << scope_name << "\n"
                                        << "idx: " << idx << "\n"
                                        << "member size: " << named_struct->fields.size() << "\n";
+                                break;
                             }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
@@ -251,8 +253,10 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             if (idx >= named_struct->fields.size())
                             {
                                 errs() << "ERROR: wrong member " << named_struct->typeName << "\n"
+                                       << scope_name << "\n"
                                        << "idx: " << idx << "\n"
                                        << "member size: " << named_struct->fields.size() << "\n";
+                                break;
                             }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
