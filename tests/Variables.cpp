@@ -47,9 +47,11 @@ namespace test
 
     public:
         int h;
+        Son *son;
         SonFriend()
         {
-            h = 10;
+            son = new Son();
+            h = son->secret;
         }
     };
 
@@ -59,6 +61,9 @@ namespace test
         friend class test::SonFriend;
         static Father *static_instance;
         static int static_var;
+
+    private:
+        int secret;
 
     public:
         struct SonStruct
@@ -70,6 +75,7 @@ namespace test
         Son()
         {
             static_var = 10;
+            secret = 10;
         }
 
         void func()
