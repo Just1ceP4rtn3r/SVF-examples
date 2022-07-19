@@ -72,14 +72,14 @@ namespace
                 NamedStructTypes.push_back(named_struct);
                 named_struct->type = (*sit);
                 named_struct->typeName = (*sit)->getName().str();
-                dbgs() << named_struct->typeName << "\n";
+                // dbgs() << named_struct->typeName << "\n";
                 for (auto *element_type : (*sit)->elements())
                 {
                     NamedField *named_field = new NamedField();
                     named_field->type = element_type;
                     named_field->typeID = element_type->getTypeID();
                     named_struct->fields.insert(named_struct->fields.end(), named_field);
-                    dbgs() << named_field->typeID << "\n";
+                    // dbgs() << named_field->typeID << "\n";
                 }
 
                 GetStructDbgInfo(dbgFinder, named_struct);
@@ -188,42 +188,6 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 switch (CT->getTag())
                 {
                 case dwarf::DW_TAG_structure_type:
-                {
-                    if (CT->getElements().size() != named_struct->fields.size())
-                    {
-                        errs() << "Error: wrong struct member count: "
-                               << CT->getElements().size() << " != " << named_struct->fields.size() << "\n"
-                               << named_struct->typeName << "\n";
-                    }
-                    int idx = 0;
-                    for (auto *field : CT->getElements())
-                    {
-                        if (auto *DerivedT = dyn_cast<DIDerivedType>(field))
-                        {
-                            if (DerivedT->getTag() != dwarf::DW_TAG_member || DerivedT->getTag() != dwarf::DW_TAG_inheritance)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
-                                {
-                                    continue;
-                                }
-                            }
-                            NamedField *named_field = *(named_struct->fields.begin() + idx);
-                            named_field->fieldName = DerivedT->getName().str();
-                            named_field->typeMD = DerivedT;
-                            // errs()
-                            //     << "    ";
-                            // errs() << "Name: " << DerivedT->getName() << "    "
-                            //        << "Type: " << GetBasicDIType(DerivedT)->getName()
-                            //        << "\n";
-                        }
-                        idx++;
-                    }
-                    break;
-                }
                 case dwarf::DW_TAG_class_type:
                 {
                     int idx = 0;
@@ -244,12 +208,17 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             }
                             if (idx >= named_struct->fields.size())
                             {
-                                errs() << "ERROR: wrong class member idx: " << idx << "\n"
+                                errs() << "ERROR: wrong member idx: " << idx << "\n"
                                        << "member size: " << named_struct->fields.size() << "\n";
                             }
                             NamedField *named_field = *(named_struct->fields.begin() + idx);
                             named_field->fieldName = DerivedT->getName().str();
                             named_field->typeMD = DerivedT;
+                            // dbgs()
+                            //     << "    ";
+                            // dbgs() << "Name: " << DerivedT->getName() << "    "
+                            //        << "Type: " << GetBasicDIType(DerivedT)->getName()
+                            //        << "\n";
                         }
                         idx++;
                     }
