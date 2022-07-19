@@ -1,3 +1,5 @@
+#define DEBUG_TYPE "syncxxx"
+
 #include <set>
 #include <vector>
 #include <map>
