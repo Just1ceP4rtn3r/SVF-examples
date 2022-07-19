@@ -54,7 +54,7 @@ namespace
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
 
-        DIType *GetBasicType(const Metadata *MD);
+        const DIType *GetBasicType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         VarAnalysis() : ModulePass(ID)
@@ -101,9 +101,9 @@ namespace
     };
 }
 
-DIType *VarAnalysis::GetBasicType(const Metadata *MD)
+const DIType *VarAnalysis::GetBasicType(const Metadata *MD)
 {
-    DIType *ret = nullptr;
+    const DIType *ret = nullptr;
     switch (MD->getMetadataID())
     {
     case Metadata::DIBasicTypeKind:
@@ -198,7 +198,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                     {
                         errs() << "Error: error struct field count: " << named_struct->typeName << "\n";
                     }
-                    for (auto fieldit = CT->getElements().begin(); fieldit != CT->getElements().end(); fieldit++)
+                    for (llvm::TypedMDOperandIterator<llvm::DINode> fieldit = CT->getElements().begin(); fieldit != CT->getElements().end(); fieldit++)
                     {
                         auto *field = *fieldit;
                         NamedField *named_field = *(named_struct->fields.begin() + (fieldit - CT->getElements().begin()));
