@@ -57,6 +57,7 @@ namespace
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
+        void traverseFunction(Function &F);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -84,7 +85,6 @@ namespace
 
                 GetStructDbgInfo(dbgFinder, named_struct);
             }
-            errs() << "----------------------------------\n";
             for (auto *named_struct : NamedStructTypes)
             {
                 errs() << named_struct->typeName << "\n{\n";
@@ -101,6 +101,11 @@ namespace
                 }
                 errs() << "}\n";
             }
+
+            errs() << "----------------------------------\n";
+
+            Function *F = M.getFunction("main");
+            traverseFunction(*F);
 
             return false;
         }
@@ -284,6 +289,25 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                 }
                 break;
             }
+            }
+        }
+    }
+}
+
+void VarAnalysis::traverseFunction(Function &F)
+{
+    for (BasicBlock &BB : *F)
+    {
+        for (Instruction &I : BB)
+        {
+            Instruction *inst = &I;
+            unsigned int opcode = inst->getOpcode();
+            Use *operand_list = inst->getOperandList();
+            errs() << I << "\n";
+            for (int i = 0; i < inst->getNumOperands(); i++)
+            {
+                Value *operand = operand_list[i];
+                errs() << "    " << *operand << "--------Type:" << *(operand->getType()) << "\n";
             }
         }
     }
