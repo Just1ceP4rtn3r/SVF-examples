@@ -296,7 +296,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
 
 void VarAnalysis::traverseFunction(Function &F)
 {
-    for (BasicBlock &BB : *F)
+    for (BasicBlock &BB : F)
     {
         for (Instruction &I : BB)
         {
