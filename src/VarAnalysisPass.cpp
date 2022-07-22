@@ -322,7 +322,6 @@ void VarAnalysis::traverseFunction(Function &F)
                         int last_idx;
                         std::string Str;
                         raw_string_ostream OS(Str);
-                        OS.flush();
                         base->print(OS, false, true);
                         errs()
                             << "  " << *operand << "\n"
@@ -347,7 +346,8 @@ void VarAnalysis::traverseFunction(Function &F)
                                     {
                                         if (last_idx == i && named_field->typeMD)
                                         {
-                                            OS.flush();
+                                            std::string Str;
+                                            raw_string_ostream OS(Str);
                                             named_field->type->print(OS, false, true);
                                             errs() << "    fieldName: " << named_field->fieldName << " : " << OS.str() << "\n";
                                         }
