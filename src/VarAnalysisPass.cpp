@@ -332,6 +332,29 @@ void VarAnalysis::traverseFunction(Function &F)
                             errs() << idx << ", ";
                         }
                         errs() << "\n";
+
+                        if (StructType *base_struct = dyn_cast<StructType>(base))
+                        {
+                            for (auto *named_struct : NamedStructTypes)
+                            {
+                                if (named_struct->type == base_struct)
+                                {
+                                    int i = 0;
+                                    for (auto *named_field : named_struct->fields)
+                                    {
+                                        i++;
+                                        if (named_field->typeMD)
+                                        {
+                                            std::string Str;
+                                            raw_string_ostream OS(Str);
+                                            named_field->type->print(OS, false, true);
+                                            errs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
+                                        }
+                                    }
+                                    errs() << "}\n";
+                                }
+                            }
+                        }
                     }
                 }
             }
