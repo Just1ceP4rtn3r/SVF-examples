@@ -59,6 +59,7 @@ namespace
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         void traverseFunction(Function &F);
+        std::string GetVarInfo(const Value *V, Module &M, const Function *F);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -96,7 +97,7 @@ namespace
                         std::string Str;
                         raw_string_ostream OS(Str);
                         named_field->type->print(OS, false, true);
-                        errs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
+                        // dbgs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
                     }
                 }
                 errs() << "}\n";
@@ -106,6 +107,9 @@ namespace
 
             Function *F = M.getFunction("main");
             traverseFunction(*F);
+
+            GlobalVariable *global_var = M.getNamedGlobal("field_test");
+            erss() << *global_var << "\n";
 
             return false;
         }
@@ -314,50 +318,78 @@ void VarAnalysis::traverseFunction(Function &F)
 
             for (Value *operand : inst_value_list)
             {
-                if (GEPOperator *GEP = dyn_cast<GEPOperator>(operand))
-                {
-                    if (GEP->hasAllConstantIndices())
-                    {
-                        Type *base = GEP->getSourceElementType();
-                        int last_idx;
-                        std::string Str;
-                        raw_string_ostream OS(Str);
-                        base->print(OS, false, true);
-                        errs()
-                            << "  " << *operand << "\n"
-                            << "    Type: " << OS.str() << "\n"
-                            << "    indices: ";
-                        for (int i = 1; i != GEP->getNumIndices() + 1; ++i)
-                        {
-                            int idx = cast<ConstantInt>(GEP->getOperand(i))->getZExtValue();
-                            last_idx = idx;
-                            errs() << idx << ", ";
-                        }
-                        errs() << "\n";
+            }
+        }
+    }
+}
 
-                        if (StructType *base_struct = dyn_cast<StructType>(base))
+std::string VarAnalysis::GetVarInfo(const Value *V, Module &M, const Function *F)
+{
+    // For Struct type variables:
+    // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
+    // 2. store i32 2, i32* getelementptr inbounds (%"struct.test::S2", %"struct.test::S2"* @_ZN4test10field_testE, i32 0, i32 1), align 4, !dbg !922
+    if (GEPOperator *GEP = dyn_cast<GEPOperator>(V))
+    {
+        if (GEP->hasAllConstantIndices())
+        {
+            Type *base = GEP->getSourceElementType();
+            int last_idx;
+            std::string Str;
+            raw_string_ostream OS(Str);
+            base->print(OS, false, true);
+            errs()
+                << "    " << *V << "\n"
+                << "    Type: " << OS.str() << "\n"
+                << "    indices: ";
+            for (int i = 1; i != GEP->getNumIndices() + 1; ++i)
+            {
+                int idx = cast<ConstantInt>(GEP->getOperand(i))->getZExtValue();
+                last_idx = idx;
+                errs() << idx << ", ";
+            }
+            errs() << "\n";
+
+            if (StructType *base_struct = dyn_cast<StructType>(base))
+            {
+                for (auto *named_struct : NamedStructTypes)
+                {
+                    if (named_struct->type == base_struct)
+                    {
+                        int i = 0;
+                        for (auto *named_field : named_struct->fields)
                         {
-                            for (auto *named_struct : NamedStructTypes)
+                            if (last_idx == i && named_field->typeMD)
                             {
-                                if (named_struct->type == base_struct)
-                                {
-                                    int i = 0;
-                                    for (auto *named_field : named_struct->fields)
-                                    {
-                                        if (last_idx == i && named_field->typeMD)
-                                        {
-                                            std::string Str;
-                                            raw_string_ostream OS(Str);
-                                            named_field->type->print(OS, false, true);
-                                            errs() << "    fieldName: " << named_field->fieldName << " : " << OS.str() << "\n";
-                                        }
-                                        i++;
-                                    }
-                                }
+                                std::string Str;
+                                raw_string_ostream OS(Str);
+                                named_field->type->print(OS, false, true);
+                                errs() << "    Name: " << named_field->fieldName << " : " << OS.str() << "\n";
                             }
+                            i++;
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // For other variables
+    else
+    {
+        // static/Global variables
+
+        for (const_inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End; ++Iter)
+        {
+            const Instruction *I = &*Iter;
+            if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(I))
+            {
+                if (DbgDeclare->getAddress() == V)
+                    DbgDeclare->getVariable();
+            }
+            else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(I))
+            {
+                if (DbgValue->getValue() == V)
+                    DbgValue->getVariable();
             }
         }
     }
