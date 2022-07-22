@@ -319,16 +319,18 @@ void VarAnalysis::traverseFunction(Function &F)
                     if (GEP->hasAllConstantIndices())
                     {
                         Type *base = GEP->getSourceElementType();
+                        int last_idx;
                         std::string Str;
                         raw_string_ostream OS(Str);
                         base->print(OS, false, true);
                         errs()
-                            << "    " << *operand << "\n"
+                            << "  " << *operand << "\n"
                             << "    Type: " << OS.str() << "\n"
                             << "    indices: ";
                         for (int i = 1; i != GEP->getNumIndices() + 1; ++i)
                         {
                             int idx = cast<ConstantInt>(GEP->getOperand(i))->getZExtValue();
+                            last_idx = idx;
                             errs() << idx << ", ";
                         }
                         errs() << "\n";
@@ -342,16 +344,13 @@ void VarAnalysis::traverseFunction(Function &F)
                                     int i = 0;
                                     for (auto *named_field : named_struct->fields)
                                     {
-                                        i++;
-                                        if (named_field->typeMD)
+                                        if (last_idx == i && named_field->typeMD)
                                         {
-                                            std::string Str;
-                                            raw_string_ostream OS(Str);
                                             named_field->type->print(OS, false, true);
-                                            errs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
+                                            errs() << "    fieldName: " << named_field->fieldName << " : " << OS.str() << "\n";
                                         }
+                                        i++;
                                     }
-                                    errs() << "}\n";
                                 }
                             }
                         }
