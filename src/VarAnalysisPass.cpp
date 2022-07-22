@@ -321,7 +321,9 @@ void VarAnalysis::traverseFunction(Function &F)
                     {
                         Type *base = GEP->getSourceElementType();
                         errs()
-                            << "    " << *operand << ", indices:";
+                            << "    " << *operand
+                            << "    Type: " << *base << "\n"
+                            << "    indices: ";
                         for (int i = 1; i != GEP->getNumIndices() + 1; ++i)
                         {
                             int idx = cast<ConstantInt>(GEP->getOperand(i))->getZExtValue();
