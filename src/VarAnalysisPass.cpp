@@ -26,6 +26,7 @@
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/TypeFinder.h"
 #include "llvm/Support/Debug.h"
+#include "llvm/IR/Operator.h"
 
 using namespace llvm;
 
@@ -301,13 +302,34 @@ void VarAnalysis::traverseFunction(Function &F)
         for (Instruction &I : BB)
         {
             Instruction *inst = &I;
+            std::vector<Value *> inst_value_list;
             unsigned int opcode = inst->getOpcode();
             Use *operand_list = inst->getOperandList();
-            errs() << I << "\n";
+            errs()
+                << I << "\n";
+            inst_value_list.insert(inst_value_list.end(), inst);
             for (int i = 0; i < inst->getNumOperands(); i++)
             {
-                Value *operand = operand_list[i];
-                errs() << "    " << *operand << "--------Type:" << *(operand->getType()) << "\n";
+                inst_value_list.insert(inst_value_list.end(), operand_list[i]);
+            }
+
+            for (Value *operand : inst_value_list)
+            {
+                if (GEPOperator *GEP = dyn_cast<GEPOperator>(operand))
+                {
+                    if (GEP->hasAllConstantIndices())
+                    {
+                        Type *base = GEP->getSourceElementType();
+                        errs()
+                            << "    " << *operand << ", indices:";
+                        for (int i = 1; i != GEP->getNumIndices() + 1; ++i)
+                        {
+                            int idx = cast<ConstantInt>(GEP->getOperand(i);)->getZExtValue();
+                            errs() << idx << ", ";
+                        }
+                        errs() << "\n";
+                    }
+                }
             }
         }
     }
