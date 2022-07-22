@@ -54,12 +54,12 @@ namespace
     {
     public:
         static char ID;
-
         std::vector<NamedStructType *> NamedStructTypes;
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
-        void traverseFunction(Function &F);
+        void PrintNamedStructs();
+        void TraverseFunction(Function &F);
         std::string GetVarInfo(Value *V, Module &M, const Function *F);
         VarAnalysis() : ModulePass(ID)
         {
@@ -88,26 +88,11 @@ namespace
 
                 GetStructDbgInfo(dbgFinder, named_struct);
             }
-            for (auto *named_struct : NamedStructTypes)
-            {
-                errs() << named_struct->typeName << "\n{\n";
-                for (auto *named_field : named_struct->fields)
-                {
-                    if (named_field->typeMD)
-                    {
-                        std::string Str;
-                        raw_string_ostream OS(Str);
-                        named_field->type->print(OS, false, true);
-                        // dbgs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
-                    }
-                }
-                errs() << "}\n";
-            }
 
             errs() << "----------------------------------\n";
 
             Function *F = M.getFunction("main");
-            traverseFunction(*F);
+            TraverseFunction(*F);
 
             GlobalVariable *global_var = M.getNamedGlobal("field_test");
             errs() << *global_var << "\n";
@@ -299,7 +284,26 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
     }
 }
 
-void VarAnalysis::traverseFunction(Function &F)
+void PrintNamedStructs()
+{
+    for (auto *named_struct : NamedStructTypes)
+    {
+        dbgs() << named_struct->typeName << "\n{\n";
+        for (auto *named_field : named_struct->fields)
+        {
+            if (named_field->typeMD)
+            {
+                std::string Str;
+                raw_string_ostream OS(Str);
+                named_field->type->print(OS, false, true);
+                // dbgs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
+            }
+        }
+        dbgs() << "}\n";
+    }
+}
+
+void VarAnalysis::TraverseFunction(Function &F)
 {
     for (BasicBlock &BB : F)
     {
