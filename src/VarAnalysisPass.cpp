@@ -284,9 +284,9 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
     }
 }
 
-void PrintNamedStructs()
+void VarAnalysis::PrintNamedStructs()
 {
-    for (auto *named_struct : NamedStructTypes)
+    for (auto *named_struct : VarAnalysis::NamedStructTypes)
     {
         dbgs() << named_struct->typeName << "\n{\n";
         for (auto *named_field : named_struct->fields)
