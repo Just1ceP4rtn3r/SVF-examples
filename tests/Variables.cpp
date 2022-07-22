@@ -76,7 +76,7 @@ namespace test
         {
             cout << "Son\n";
         }
-        };
+    };
 
     class SonFriend : public Father // 继承
     {
@@ -112,6 +112,9 @@ int main()
     test::field_test.c = 2;
     test::field_test.d = 2.0;
     test::field_test.e = test::S1();
+
+    struct test::S1 struct_array[3];
+    struct_array[0].f = 5;
 
     /////////////////////////////
 
