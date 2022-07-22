@@ -27,6 +27,7 @@
 #include "llvm/IR/TypeFinder.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/IR/Operator.h"
+#include "llvm/IR/IntrinsicInst.h"
 
 using namespace llvm;
 
@@ -59,7 +60,7 @@ namespace
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         void traverseFunction(Function &F);
-        std::string GetVarInfo(const Value *V, Module &M, const Function *F);
+        std::string GetVarInfo(Value *V, Module &M, const Function *F);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -109,7 +110,7 @@ namespace
             traverseFunction(*F);
 
             GlobalVariable *global_var = M.getNamedGlobal("field_test");
-            erss() << *global_var << "\n";
+            errs() << *global_var << "\n";
 
             return false;
         }
@@ -323,7 +324,7 @@ void VarAnalysis::traverseFunction(Function &F)
     }
 }
 
-std::string VarAnalysis::GetVarInfo(const Value *V, Module &M, const Function *F)
+std::string VarAnalysis::GetVarInfo(Value *V, Module &M, const Function *F)
 {
     // For Struct type variables:
     // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
