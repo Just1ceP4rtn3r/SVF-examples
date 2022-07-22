@@ -53,8 +53,8 @@ namespace
     {
     public:
         static char ID;
-        std::string OutputStr;
-        raw_string_ostream OS(OutputStr);
+        std::string Str;
+        raw_string_ostream OS(Str);
 
         std::vector<NamedStructType *> NamedStructTypes;
         const DIType *GetBasicDIType(const Metadata *MD);
