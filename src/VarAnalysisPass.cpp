@@ -53,8 +53,6 @@ namespace
     {
     public:
         static char ID;
-        std::string Str;
-        raw_string_ostream OS(Str);
 
         std::vector<NamedStructType *> NamedStructTypes;
         const DIType *GetBasicDIType(const Metadata *MD);
@@ -95,6 +93,8 @@ namespace
                 {
                     if (named_field->typeMD)
                     {
+                        std::string Str;
+                        raw_string_ostream OS(Str);
                         named_field->type->print(OS, false, true);
                         errs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
                     }
@@ -319,6 +319,8 @@ void VarAnalysis::traverseFunction(Function &F)
                     if (GEP->hasAllConstantIndices())
                     {
                         Type *base = GEP->getSourceElementType();
+                        std::string Str;
+                        raw_string_ostream OS(Str);
                         base->print(OS, false, true);
                         errs()
                             << "    " << *operand << "\n"
