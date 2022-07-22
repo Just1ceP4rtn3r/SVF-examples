@@ -94,8 +94,14 @@ namespace
             Function *F = M.getFunction("main");
             TraverseFunction(*F);
 
-            GlobalVariable *global_var = M.getNamedGlobal("field_test");
-            errs() << *global_var << "\n";
+            for (auto global_var : dbgFinder->global_variables())
+            {
+                const auto *GV = global_var->getVariable();
+                errs() << "Global variable: " << GV->getName();
+                if (!GV->getLinkageName().empty())
+                    errs() << " ('" << GV->getLinkageName() << "')";
+                errs() << '\n';
+            }
 
             return false;
         }
