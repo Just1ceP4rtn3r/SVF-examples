@@ -89,7 +89,7 @@ namespace
                     // dbgs() << named_field->typeID << "\n";
                 }
 
-                GetStructDbgInfo(dbgFinder, named_struct);
+                GetStructDbgInfo(M, dbgFinder, named_struct);
             }
             for (auto global_var : dbgFinder->global_variables())
             {
