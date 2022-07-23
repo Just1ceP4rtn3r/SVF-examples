@@ -28,6 +28,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/IR/Operator.h"
 #include "llvm/IR/IntrinsicInst.h"
+#include "llvm/IR/GlobalVariable.h"
 
 using namespace llvm;
 
