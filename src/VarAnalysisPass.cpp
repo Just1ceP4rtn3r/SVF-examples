@@ -212,7 +212,8 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
-                                    VarAnalysis::GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
+                                    // VarAnalysis::GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
+                                    continue;
                                 }
                             }
                             if (idx >= named_struct->fields.size())
