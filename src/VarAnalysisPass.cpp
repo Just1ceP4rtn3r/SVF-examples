@@ -55,6 +55,7 @@ namespace
     public:
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
+        std::map<std::string, DIGlobalVariable *> GlobalVars;
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
@@ -88,20 +89,22 @@ namespace
 
                 GetStructDbgInfo(dbgFinder, named_struct);
             }
-
-            errs() << "----------------------------------\n";
-
-            Function *F = M.getFunction("main");
-            TraverseFunction(*F);
-
             for (auto global_var : dbgFinder->global_variables())
             {
                 const auto *GV = global_var->getVariable();
-                errs() << "Global variable: " << GV->getName();
                 if (!GV->getLinkageName().empty())
-                    errs() << " ('" << GV->getLinkageName() << "')";
-                errs() << '\n';
+                    GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
             }
+
+            errs() << "----------------------------------\n";
+
+            for (auto global_var : M.getGlobalList())
+            {
+                errs() << global_var.getName() << "\n";
+            }
+
+            Function *F = M.getFunction("main");
+            TraverseFunction(*F);
 
             return false;
         }
@@ -209,7 +212,7 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
-                                    continue;
+                                    VarAnalysis::GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
                                 }
                             }
                             if (idx >= named_struct->fields.size())
