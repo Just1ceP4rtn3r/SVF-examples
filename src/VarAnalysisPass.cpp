@@ -56,7 +56,7 @@ namespace
     public:
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
-        std::map<std::string, DIGlobalVariable *> GlobalVars;
+        std::map<std::string, llvm::DIGlobalVariable *> GlobalVars;
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
