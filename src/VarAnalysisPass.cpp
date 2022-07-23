@@ -96,7 +96,7 @@ namespace
                 if (!GV->getLinkageName().empty())
                 {
                     std::string linkage_name = GV->getLinkageName().str();
-                    GlobalVars.insert(std::pair<std::string, llvm::DIGlobalVariable *>(linkage_name, GV));
+                    GlobalVars.insert(std::pair<std::string, llvm::DIGlobalVariable *>("123", GV));
                 }
             }
 
