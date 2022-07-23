@@ -56,7 +56,7 @@ namespace
     public:
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
-        std::map<std::string, llvm::DIGlobalVariable *> GlobalVars;
+        std::map<std::string, const llvm::DIGlobalVariable *> GlobalVars;
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
@@ -95,8 +95,7 @@ namespace
                 const auto *GV = global_var->getVariable();
                 if (!GV->getLinkageName().empty())
                 {
-                    std::string linkage_name = GV->getLinkageName().str();
-                    GlobalVars.insert(std::pair<std::string, llvm::DIGlobalVariable *>("123", GV));
+                    GlobalVars.insert(std::pair<std::string, const llvm::DIGlobalVariable *>(GV->getLinkageName().str(), GV));
                 }
             }
 
