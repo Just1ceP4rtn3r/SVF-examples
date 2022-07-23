@@ -94,12 +94,15 @@ namespace
             {
                 const auto *GV = global_var->getVariable();
                 if (!GV->getLinkageName().empty())
-                    GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
+                {
+                    std::string linkage_name = GV->getLinkageName().str();
+                    GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(linkage_name, GV));
+                }
             }
 
             errs() << "----------------------------------\n";
 
-            for (auto global_var : M.getGlobalList())
+            for (auto &global_var : M.getGlobalList())
             {
                 errs() << global_var.getName() << "\n";
             }
