@@ -29,6 +29,7 @@
 #include "llvm/IR/Operator.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/GlobalVariable.h"
+#include "llvm/Demangle/Demangle.h"
 
 using namespace llvm;
 
@@ -59,7 +60,7 @@ namespace
         std::map<std::string, const llvm::DIGlobalVariable *> GlobalVars;
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
-        void GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
+        void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         void PrintNamedStructs();
         void TraverseFunction(Function &F);
         std::string GetVarInfo(Value *V, Module &M, const Function *F);
@@ -100,11 +101,6 @@ namespace
             }
 
             errs() << "----------------------------------\n";
-
-            for (auto &global_var : M.getGlobalList())
-            {
-                errs() << global_var.getName() << "\n";
-            }
 
             Function *F = M.getFunction("main");
             TraverseFunction(*F);
@@ -156,7 +152,7 @@ std::string VarAnalysis::GetScope(const DIType *MD)
     return scope;
 }
 
-void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *named_struct)
+void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct)
 {
     for (const DIType *T : dbgFinder->types())
     {
@@ -215,6 +211,13 @@ void VarAnalysis::GetStructDbgInfo(DebugInfoFinder *dbgFinder, NamedStructType *
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
+                                    // for (auto &global_var : M.getGlobalList())
+                                    // {
+                                    //     if (!global_var.getName().empty())
+                                    //     {
+                                    //         global_var.getName().str()
+                                    //     }
+                                    // }
                                     // VarAnalysis::GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
                                     continue;
                                 }

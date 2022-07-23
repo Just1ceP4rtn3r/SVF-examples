@@ -115,7 +115,7 @@ int main()
 
     struct test::S1 struct_array[3];
     struct_array[0].f = 5;
-
+    struct_array[0].static_var = 8;
     /////////////////////////////
 
     test::Father *fa = new test::Father();
