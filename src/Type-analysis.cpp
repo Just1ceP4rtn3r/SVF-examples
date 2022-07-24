@@ -144,5 +144,10 @@ int main(int argc, char **argv)
     // PrintAliasPairs(ander);
     traverseOnVFG(svfg, ander);
 
+    for (auto s : moduleNameVec)
+    {
+        std::cout << s << "\n";
+    }
+
     return 0;
 }
