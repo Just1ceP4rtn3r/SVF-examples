@@ -68,7 +68,7 @@ namespace
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
         void TraverseFunction(Module &M, Function &F);
-        std::string ParseVariables(Value *V, Module &M, const Function &F);
+        void ParseVariables(Value *V, Module &M, const Function &F);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -398,7 +398,7 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
     }
 }
 
-std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
+void VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
 {
     // For Struct type variables:
     // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
