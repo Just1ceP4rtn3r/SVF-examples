@@ -454,7 +454,6 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
         std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
         if (V->hasName() && git != GlobalVars.end())
         {
-            dbgs() << "dbg1\n";
             std::string n;
             if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
             {
@@ -470,25 +469,28 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
 
         dbgs() << "dbg2\n";
         // Local variables
-        for (const_inst_iterator Iter = inst_begin(&F), End = inst_end(&F); Iter != End; ++Iter)
+        for (auto &BB : F)
         {
-            const Instruction *I = &*Iter;
-            if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(I))
+            for (Instruction &I : BB)
             {
-                if (DbgDeclare->getAddress() == V)
+                Instruction *inst = &I;
+                if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(inst))
                 {
-                    DILocalVariable *var = DbgDeclare->getVariable();
-                    errs()
-                        << "    Local variable Name: " << var->getName().str() << "\n";
+                    if (DbgDeclare->getAddress() == V)
+                    {
+                        DILocalVariable *var = DbgDeclare->getVariable();
+                        errs()
+                            << "    Local variable Name: " << var->getName().str() << "\n";
+                    }
                 }
-            }
-            else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(I))
-            {
-                if (DbgValue->getValue() == V)
+                else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(inst))
                 {
-                    DILocalVariable *var = DbgValue->getVariable();
-                    errs()
-                        << "    Local variable Name: " << var->getName().str() << "\n";
+                    if (DbgValue->getValue() == V)
+                    {
+                        DILocalVariable *var = DbgValue->getVariable();
+                        errs()
+                            << "    Local variable Name: " << var->getName().str() << "\n";
+                    }
                 }
             }
         }
