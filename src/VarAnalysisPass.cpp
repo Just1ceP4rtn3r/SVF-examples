@@ -111,7 +111,10 @@ namespace
 
             // PrintDbgInfo();
 
-            mqttactic::PTA *PointerAnalyzer;
+            std::vector<std::string> module_vec;
+            module_vec.push_back("/home/szx/Documents/tools/SVF/Driver/SVF-examples/tests/Variables.bc");
+            mqttactic::PTA *PointerAnalyzer = new mqttactic::PTA(module_vec);
+            PointerAnalyzer->traverseOnVFG();
 
             // Function *F = M.getFunction("main");
             // TraverseFunction(M, *F);
