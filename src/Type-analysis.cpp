@@ -142,11 +142,11 @@ int main(int argc, char **argv)
     SVFG *svfg = svfBuilder.buildFullSVFG(ander);
 
     // PrintAliasPairs(ander);
-    traverseOnVFG(svfg, ander);
+    // traverseOnVFG(svfg, ander);
 
     for (auto s : moduleNameVec)
     {
-        std::cout << s << "\n";
+        SVFUtil::outs() << s << "\n";
     }
 
     return 0;
