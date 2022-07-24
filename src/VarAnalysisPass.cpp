@@ -107,7 +107,7 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            PrintDbgInfo();
+            // PrintDbgInfo();
 
             Function *F = M.getFunction("main");
             TraverseFunction(M, *F);
