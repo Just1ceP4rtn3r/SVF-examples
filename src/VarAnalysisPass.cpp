@@ -449,11 +449,10 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     // For other variables
     else
     {
-
-        // static/Global variables
         if (V->hasName())
         {
             std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
+            // static/Global variables
             if (git != GlobalVars.end())
             {
                 std::string n;
@@ -468,44 +467,49 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
                 }
                 errs() << "    Global variable Name: " << n << "\n";
             }
-        }
 
-        // Local variables
-        for (auto &BB : F)
-        {
-            for (auto &I : BB)
+            // Local variables
+            else
             {
-                const Instruction *inst = &I;
-                dbgs() << "4\n";
-                if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(inst))
-                {
-                    dbgs() << "1\n";
-                    if (DbgDeclare->getAddress() == V)
-                    {
-                        dbgs() << "2\n";
-                        DILocalVariable *var = DbgDeclare->getVariable();
-                        if (var)
-                        {
-                            dbgs() << "3\n";
-                            errs()
-                                << "    Local variable Name: " << var->getName().str() << "\n";
-                        }
-                    }
-                }
-                else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(inst))
-                {
-                    if (DbgValue->getValue() == V)
-                    {
-                        DILocalVariable *var = DbgValue->getVariable();
-                        if (var)
-                        {
-                            errs()
-                                << "    Local variable Name: " << var->getName().str() << "\n";
-                        }
-                    }
-                }
+                errs() << "    Local variable Name: " << V->getName() << "\n";
             }
         }
+
+        // for (auto &BB : F)
+        // {
+        //     for (auto &I : BB)
+        //     {
+        //         const Instruction *inst = &I;
+        //         dbgs() << "4\n";
+        //         if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(inst))
+        //         {
+        //             dbgs() << "1\n";
+        //             if (DbgDeclare->getAddress() == V)
+        //             {
+        //                 dbgs() << "2\n";
+        //                 DILocalVariable *var = DbgDeclare->getVariable();
+        //                 if (var)
+        //                 {
+        //                     dbgs() << "3\n";
+        //                     errs()
+        //                         << "    Local variable Name: " << var->getName().str() << "\n";
+        //                 }
+        //             }
+        //         }
+        //         else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(inst))
+        //         {
+        //             if (DbgValue->getValue() == V)
+        //             {
+        //                 DILocalVariable *var = DbgValue->getVariable();
+        //                 if (var)
+        //                 {
+        //                     errs()
+        //                         << "    Local variable Name: " << var->getName().str() << "\n";
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
 
