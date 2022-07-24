@@ -453,7 +453,7 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
         std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
         if (V->hasName() && git != GlobalVars.end())
         {
-            std string n;
+            std::string n;
             if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
             {
                 n = var->getName().str();
