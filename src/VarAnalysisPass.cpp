@@ -31,6 +31,8 @@
 #include "llvm/IR/GlobalVariable.h"
 #include "llvm/Demangle/Demangle.h"
 
+#include "../include/PTA.h"
+
 using namespace llvm;
 
 namespace
@@ -109,8 +111,10 @@ namespace
 
             // PrintDbgInfo();
 
-            Function *F = M.getFunction("main");
-            TraverseFunction(M, *F);
+            mqttactic::PTA *PointerAnalyzer;
+
+            // Function *F = M.getFunction("main");
+            // TraverseFunction(M, *F);
 
             return false;
         }
