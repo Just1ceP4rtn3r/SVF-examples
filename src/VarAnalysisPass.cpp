@@ -403,6 +403,7 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     // 2. store i32 2, i32* getelementptr inbounds (%"struct.test::S2", %"struct.test::S2"* @_ZN4test10field_testE, i32 0, i32 1), align 4, !dbg !922
     if (GEPOperator *GEP = dyn_cast<GEPOperator>(V))
     {
+        errs() << "1\n";
         if (GEP->hasAllConstantIndices())
         {
             Type *base = GEP->getSourceElementType();
@@ -451,7 +452,6 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     {
         if (V->hasName())
         {
-            errs() << "1\n";
             std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
             // static/Global variables
             if (git != GlobalVars.end())
