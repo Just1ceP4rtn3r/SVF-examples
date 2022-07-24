@@ -365,7 +365,7 @@ void VarAnalysis::PrintDbgInfo()
     {
         std::string Str;
         raw_string_ostream OS(Str);
-        git->second->print(OS, false, true);
+        git->second->print(OS);
         errs() << git->first << ": " << OS.str() << "\n";
     }
 }
