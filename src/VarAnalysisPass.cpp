@@ -390,6 +390,7 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
 
             for (Value *operand : inst_value_list)
             {
+                errs() << operand->getName() << "\n";
                 // ParseVariables(operand, M, F);
             }
         }
