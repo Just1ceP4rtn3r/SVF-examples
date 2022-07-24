@@ -451,23 +451,25 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     {
 
         // static/Global variables
-        std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
-        if (V->hasName() && git != GlobalVars.end())
+        if (V->hasName())
         {
-            std::string n;
-            if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
+            std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
+            if (git != GlobalVars.end())
             {
-                n = var->getName().str();
-            }
-            else if (const DIDerivedType *var = dyn_cast<DIDerivedType>(git->second))
-            {
+                std::string n;
+                if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
+                {
+                    n = var->getName().str();
+                }
+                else if (const DIDerivedType *var = dyn_cast<DIDerivedType>(git->second))
+                {
 
-                n = GetScope(var) + var->getName().str();
+                    n = GetScope(var) + var->getName().str();
+                }
+                errs() << "    Global variable Name: " << n << "\n";
             }
-            errs() << "    Global variable Name: " << n << "\n";
         }
 
-        dbgs() << "dbg2\n";
         // Local variables
         for (auto &BB : F)
         {
@@ -479,8 +481,11 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
                     if (DbgDeclare->getAddress() == V)
                     {
                         DILocalVariable *var = DbgDeclare->getVariable();
-                        errs()
-                            << "    Local variable Name: " << var->getName().str() << "\n";
+                        if (var)
+                        {
+                            errs()
+                                << "    Local variable Name: " << var->getName().str() << "\n";
+                        }
                     }
                 }
                 else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(inst))
@@ -488,8 +493,11 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
                     if (DbgValue->getValue() == V)
                     {
                         DILocalVariable *var = DbgValue->getVariable();
-                        errs()
-                            << "    Local variable Name: " << var->getName().str() << "\n";
+                        if (var)
+                        {
+                            errs()
+                                << "    Local variable Name: " << var->getName().str() << "\n";
+                        }
                     }
                 }
             }
