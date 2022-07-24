@@ -390,8 +390,7 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
 
             for (Value *operand : inst_value_list)
             {
-                errs() << operand->getName() << "\n";
-                // ParseVariables(operand, M, F);
+                ParseVariables(operand, M, F);
             }
         }
     }
@@ -399,6 +398,7 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
 
 std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
 {
+    errs() << V->getName() << "\n";
     // For Struct type variables:
     // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
     // 2. store i32 2, i32* getelementptr inbounds (%"struct.test::S2", %"struct.test::S2"* @_ZN4test10field_testE, i32 0, i32 1), align 4, !dbg !922
