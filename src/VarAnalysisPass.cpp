@@ -473,7 +473,7 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
             // Local variables
             else
             {
-                errs() << "    Local variable Name: " << V->getName().st() << "\n";
+                errs() << "    Local variable Name: " << V->getName().str() << "\n";
             }
         }
 
