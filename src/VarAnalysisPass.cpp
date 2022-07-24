@@ -56,8 +56,10 @@ namespace
     {
     public:
         static char ID;
+        // struct/class
         std::vector<NamedStructType *> NamedStructTypes;
-        std::map<std::string, const llvm::DIGlobalVariable *> GlobalVars;
+        // static/global
+        std::map<std::string, const Metadata *> GlobalVars;
 
         void PrintDbgInfo();
 
@@ -99,7 +101,7 @@ namespace
                 const auto *GV = global_var->getVariable();
                 if (!GV->getLinkageName().empty())
                 {
-                    GlobalVars.insert(std::pair<std::string, const llvm::DIGlobalVariable *>(GV->getLinkageName().str(), GV));
+                    GlobalVars.insert(std::pair<std::string, const llvm::Metadata *>(GV->getLinkageName().str(), GV));
                 }
             }
 
@@ -216,9 +218,10 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
-                                    if (llvm::GlobalVariable *static_var = GetStaticDbgInfo(M, DerivedT) && !static_var->getName().empty())
+                                    if (llvm::GlobalVariable *static_var = GetStaticDbgInfo(M, DerivedT))
                                     {
-                                        VarAnalysis::GlobalVars.insert(std::map<std::string, const llvm::DIGlobalVariable *>::value_type(static_var->getName().str(), DerivedT));
+                                        if (!static_var->getName().empty())
+                                            VarAnalysis::GlobalVars.insert(std::map<std::string, const llvm::Metadata *>::value_type(static_var->getName().str(), DerivedT));
                                     }
                                     continue;
                                 }
@@ -259,9 +262,10 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
-                                    if (llvm::GlobalVariable *static_var = GetStaticDbgInfo(M, DerivedT) && !static_var->getName().empty())
+                                    if (llvm::GlobalVariable *static_var = GetStaticDbgInfo(M, DerivedT))
                                     {
-                                        VarAnalysis::GlobalVars.insert(std::map<std::string, const llvm::DIGlobalVariable *>::value_type(static_var->getName().str(), DerivedT));
+                                        if (!static_var->getName().empty())
+                                            VarAnalysis::GlobalVars.insert(std::map<std::string, const llvm::Metadata *>::value_type(static_var->getName().str(), DerivedT));
                                     }
                                     continue;
                                 }
@@ -332,7 +336,7 @@ llvm::GlobalVariable *VarAnalysis::GetStaticDbgInfo(Module &M, DIDerivedType *st
                 scope_node = scope_node->getScope();
             }
 
-            if (falg)
+            if (flag)
                 return &global_var;
         }
     }
@@ -359,7 +363,10 @@ void VarAnalysis::PrintDbgInfo()
 
     for (auto git = GlobalVars.begin(); git != GlobalVars.end(); git++)
     {
-        errs() << git->first << ": " << git->second->getName().str() << "\n";
+        std::string Str;
+        raw_string_ostream OS(Str);
+        git->second->print(OS, false, true);
+        errs() << git->first << ": " << OS.str() << "\n";
     }
 }
 
