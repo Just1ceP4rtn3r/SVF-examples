@@ -449,11 +449,12 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     // For other variables
     else
     {
-        dbgs() << "dbg\n";
+        
         // static/Global variables
         std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
         if (V->hasName() && git != GlobalVars.end())
         {
+            dbgs() << "dbg1\n";
             std::string n;
             if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
             {
@@ -467,6 +468,7 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
             errs() << "    Global variable Name: " << n << "\n";
         }
 
+        dbgs() << "dbg\n";
         // Local variables
         for (const_inst_iterator Iter = inst_begin(&F), End = inst_end(&F); Iter != End; ++Iter)
         {
