@@ -471,9 +471,9 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
         // Local variables
         for (auto &BB : F)
         {
-            for (Instruction &I : BB)
+            for (auto &I : BB)
             {
-                Instruction *inst = &I;
+                const Instruction *inst = &I;
                 if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(inst))
                 {
                     if (DbgDeclare->getAddress() == V)
