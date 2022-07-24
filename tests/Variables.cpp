@@ -136,5 +136,7 @@ int main()
 
     grandson->g = 10;
 
+    int key_var = 20;
+
     return 0;
 }
