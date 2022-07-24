@@ -481,9 +481,11 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
                     dbgs() << "1\n";
                     if (DbgDeclare->getAddress() == V)
                     {
+                        dbgs() << "2\n";
                         DILocalVariable *var = DbgDeclare->getVariable();
                         if (var)
                         {
+                            dbgs() << "3\n";
                             errs()
                                 << "    Local variable Name: " << var->getName().str() << "\n";
                         }
@@ -491,7 +493,6 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
                 }
                 else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(inst))
                 {
-                    dbgs() << "2\n";
                     if (DbgValue->getValue() == V)
                     {
                         DILocalVariable *var = DbgValue->getVariable();
