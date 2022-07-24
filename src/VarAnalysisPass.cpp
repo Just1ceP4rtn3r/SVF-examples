@@ -58,11 +58,13 @@ namespace
         static char ID;
         std::vector<NamedStructType *> NamedStructTypes;
         std::map<std::string, const llvm::DIGlobalVariable *> GlobalVars;
+
+        void PrintDbgInfo();
+
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
-        void PrintNamedStructs();
         void TraverseFunction(Function &F);
         std::string ParseVariables(Value *V, Module &M, const Function *F);
         VarAnalysis() : ModulePass(ID)
@@ -103,8 +105,10 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            Function *F = M.getFunction("main");
-            TraverseFunction(*F);
+            PrintDbgInfo();
+
+            // Function *F = M.getFunction("main");
+            // TraverseFunction(*F);
 
             return false;
         }
@@ -335,7 +339,7 @@ llvm::GlobalVariable *VarAnalysis::GetStaticDbgInfo(Module &M, DIDerivedType *st
     return nullptr;
 }
 
-void VarAnalysis::PrintNamedStructs()
+void VarAnalysis::PrintDbgInfo()
 {
     for (auto *named_struct : VarAnalysis::NamedStructTypes)
     {
@@ -351,6 +355,11 @@ void VarAnalysis::PrintNamedStructs()
             }
         }
         dbgs() << "}\n";
+    }
+
+    for (auto git = GlobalVars.begin(); git != GlobalVars.end(); git++)
+    {
+        errs() << git->first << ": " << git->second->getName().str() << "\n";
     }
 }
 
