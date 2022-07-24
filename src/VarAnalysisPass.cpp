@@ -67,8 +67,8 @@ namespace
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
-        void TraverseFunction(Function &F);
-        std::string ParseVariables(Value *V, Module &M, const Function *F);
+        void TraverseFunction(Module &M, Function &F);
+        std::string ParseVariables(Value *V, Module &M, const Function &F);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -109,8 +109,8 @@ namespace
 
             PrintDbgInfo();
 
-            // Function *F = M.getFunction("main");
-            // TraverseFunction(*F);
+            Function *F = M.getFunction("main");
+            TraverseFunction(M, *F);
 
             return false;
         }
@@ -370,7 +370,7 @@ void VarAnalysis::PrintDbgInfo()
     }
 }
 
-void VarAnalysis::TraverseFunction(Function &F)
+void VarAnalysis::TraverseFunction(Module &M, Function &F)
 {
     for (BasicBlock &BB : F)
     {
@@ -390,12 +390,13 @@ void VarAnalysis::TraverseFunction(Function &F)
 
             for (Value *operand : inst_value_list)
             {
+                ParseVariables(operand, M, F);
             }
         }
     }
 }
 
-std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function *F)
+std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
 {
     // For Struct type variables:
     // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
@@ -449,19 +450,43 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function *F)
     else
     {
         // static/Global variables
+        std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
+        if (V->hasName() && git != GlobalVars.end())
+        {
+            std string n;
+            if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
+            {
+                n = var->getName().str();
+            }
+            else if (const DIDerivedType *var = dyn_cast<DIDerivedType>(git->second))
+            {
 
-        for (const_inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End; ++Iter)
+                n = GetScope(var) + var->getName().str();
+            }
+            errs() << "    Global variable Name: " << n << "\n";
+        }
+
+        // Local variables
+        for (const_inst_iterator Iter = inst_begin(&F), End = inst_end(&F); Iter != End; ++Iter)
         {
             const Instruction *I = &*Iter;
             if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(I))
             {
                 if (DbgDeclare->getAddress() == V)
-                    DbgDeclare->getVariable();
+                {
+                    DILocalVariable *var = DbgDeclare->getVariable();
+                    errs()
+                        << "    Local variable Name: " << var->getName().str() << "\n";
+                }
             }
             else if (const DbgValueInst *DbgValue = dyn_cast<DbgValueInst>(I))
             {
                 if (DbgValue->getValue() == V)
-                    DbgValue->getVariable();
+                {
+                    DILocalVariable *var = DbgValue->getVariable();
+                    errs()
+                        << "    Local variable Name: " << var->getName().str() << "\n";
+                }
             }
         }
     }
