@@ -476,6 +476,7 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
             for (auto &I : BB)
             {
                 const Instruction *inst = &I;
+                dbgs() << "4\n";
                 if (const DbgDeclareInst *DbgDeclare = dyn_cast<DbgDeclareInst>(inst))
                 {
                     dbgs() << "1\n";
