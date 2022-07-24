@@ -390,7 +390,7 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
 
             for (Value *operand : inst_value_list)
             {
-                ParseVariables(operand, M, F);
+                // ParseVariables(operand, M, F);
             }
         }
     }
@@ -449,31 +449,31 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     // For other variables
     else
     {
-        // if (V->hasName())
-        // {
-        //     std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
-        //     // static/Global variables
-        //     if (git != GlobalVars.end())
-        //     {
-        //         std::string n;
-        //         if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
-        //         {
-        //             n = var->getName().str();
-        //         }
-        //         else if (const DIDerivedType *var = dyn_cast<DIDerivedType>(git->second))
-        //         {
+        if (V->hasName())
+        {
+            std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
+            // static/Global variables
+            if (git != GlobalVars.end())
+            {
+                std::string n;
+                if (const DIVariable *var = dyn_cast<DIVariable>(git->second))
+                {
+                    n = var->getName().str();
+                }
+                else if (const DIDerivedType *var = dyn_cast<DIDerivedType>(git->second))
+                {
 
-        //             n = GetScope(var) + var->getName().str();
-        //         }
-        //         errs() << "    Global variable Name: " << n << "\n";
-        //     }
+                    n = GetScope(var) + var->getName().str();
+                }
+                errs() << "    Global variable Name: " << n << "\n";
+            }
 
-        //     // Local variables
-        //     else
-        //     {
-        //         errs() << "    Local variable Name: " << V->getName() << "\n";
-        //     }
-        // }
+            // Local variables
+            else
+            {
+                errs() << "    Local variable Name: " << V->getName() << "\n";
+            }
+        }
 
         // for (auto &BB : F)
         // {
