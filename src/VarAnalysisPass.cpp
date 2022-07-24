@@ -449,6 +449,7 @@ std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
     // For other variables
     else
     {
+        dbgs() << "dbg\n";
         // static/Global variables
         std::map<std::string, const llvm::Metadata *>::iterator git = GlobalVars.find(V->getName().str());
         if (V->hasName() && git != GlobalVars.end())
