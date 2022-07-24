@@ -61,9 +61,10 @@ namespace
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
+        llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
         void PrintNamedStructs();
         void TraverseFunction(Function &F);
-        std::string GetVarInfo(Value *V, Module &M, const Function *F);
+        std::string ParseVariables(Value *V, Module &M, const Function *F);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -211,14 +212,10 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
-                                    // for (auto &global_var : M.getGlobalList())
-                                    // {
-                                    //     if (!global_var.getName().empty())
-                                    //     {
-                                    //         global_var.getName().str()
-                                    //     }
-                                    // }
-                                    // VarAnalysis::GlobalVars.insert(std::map<std::string, llvm::DIGlobalVariable *>::value_type(GV->getLinkageName().str(), GV));
+                                    if (llvm::GlobalVariable *static_var = GetStaticDbgInfo(M, DerivedT) && !static_var->getName().empty())
+                                    {
+                                        VarAnalysis::GlobalVars.insert(std::map<std::string, const llvm::DIGlobalVariable *>::value_type(static_var->getName().str(), DerivedT));
+                                    }
                                     continue;
                                 }
                             }
@@ -258,6 +255,10 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
                             {
                                 if (DerivedT->getTag() == dwarf::DW_TAG_member && DerivedT->isStaticMember())
                                 {
+                                    if (llvm::GlobalVariable *static_var = GetStaticDbgInfo(M, DerivedT) && !static_var->getName().empty())
+                                    {
+                                        VarAnalysis::GlobalVars.insert(std::map<std::string, const llvm::DIGlobalVariable *>::value_type(static_var->getName().str(), DerivedT));
+                                    }
                                     continue;
                                 }
                             }
@@ -300,6 +301,40 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
     }
 }
 
+llvm::GlobalVariable *VarAnalysis::GetStaticDbgInfo(Module &M, DIDerivedType *static_var)
+{
+
+    for (auto &global_var : M.getGlobalList())
+    {
+        if (!global_var.getName().empty())
+        {
+            std::string G_name = global_var.getName().str();
+            bool flag = false;
+            std::string scope = "";
+            DIScope *scope_node = static_var->getScope();
+
+            if (!static_var->getName().empty() && G_name.find(static_var->getName().str()) != std::string::npos)
+            {
+                flag = true;
+            }
+
+            while (scope_node != NULL && flag)
+            {
+                scope = scope_node->getName().str();
+                if (G_name.find(scope) == std::string::npos)
+                {
+                    flag = false;
+                }
+                scope_node = scope_node->getScope();
+            }
+
+            if (falg)
+                return &global_var;
+        }
+    }
+    return nullptr;
+}
+
 void VarAnalysis::PrintNamedStructs()
 {
     for (auto *named_struct : VarAnalysis::NamedStructTypes)
@@ -312,7 +347,7 @@ void VarAnalysis::PrintNamedStructs()
                 std::string Str;
                 raw_string_ostream OS(Str);
                 named_field->type->print(OS, false, true);
-                // dbgs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
+                dbgs() << "    " << named_field->fieldName << " : " << OS.str() << "\n";
             }
         }
         dbgs() << "}\n";
@@ -344,7 +379,7 @@ void VarAnalysis::TraverseFunction(Function &F)
     }
 }
 
-std::string VarAnalysis::GetVarInfo(Value *V, Module &M, const Function *F)
+std::string VarAnalysis::ParseVariables(Value *V, Module &M, const Function *F)
 {
     // For Struct type variables:
     // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
