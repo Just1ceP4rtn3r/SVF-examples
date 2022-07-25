@@ -398,6 +398,7 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
                 {
                     errs() << "Instruction: " << I << "\n";
                     PointerAnalyzer->traverseOnVFG(operand);
+                    errs() << "----------------------------------\n";
                 }
             }
         }
