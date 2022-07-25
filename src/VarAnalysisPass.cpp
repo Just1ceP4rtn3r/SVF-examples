@@ -78,8 +78,6 @@ namespace
         }
         bool runOnModule(Module &M) override
         {
-            errs() << M.getName() << "\n";
-
             DebugInfoFinder *dbgFinder = new DebugInfoFinder();
             dbgFinder->processModule(M);
             std::vector<llvm::StructType *> struct_set;
