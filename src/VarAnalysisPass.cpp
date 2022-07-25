@@ -478,14 +478,14 @@ bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::st
 
                     n = GetScope(var) + var->getName().str();
                 }
-                var_name == n;
+                var_name = n;
                 // dbgs() << "    Global variable Name: " << n << "\n";
             }
 
             // Local variables
             else
             {
-                var_name == V->getName().str();
+                var_name = V->getName().str();
                 // dbgs() << "    Local variable Name: " << V->getName().str() << "\n";
             }
         }
