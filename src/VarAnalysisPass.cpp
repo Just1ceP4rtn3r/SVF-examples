@@ -110,9 +110,6 @@ namespace
             }
 
             // PrintDbgInfo();
-
-            std::vector<std::string> module_vec;
-            module_vec.push_back(M.getName().str());
             PointerAnalyzer = new mqttactic::PTA(M);
 
             errs() << "----------------------------------\n";
@@ -399,8 +396,7 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
             {
                 if (ParseVariables(operand, M, F, key_var))
                 {
-                    errs() << "Instruction: " << I << "\n"
-                           << "Address: " << operand << "\n";
+                    errs() << "Instruction: " << I << "\n";
                     PointerAnalyzer->traverseOnVFG(operand);
                 }
             }
