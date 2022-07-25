@@ -39,7 +39,7 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
         if (this->Svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
-            if (pNode->getValue() == key_var)
+            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str().find("key_var") != std::string::npos)
             {
                 worklist.push(vNode);
 
@@ -52,7 +52,8 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                 vNode->getValue()->printAsOperand(OS, false);
                 SVFUtil::outs()
                     << "Value: " << OS.str() << "\n"
-                    << "VFG: " << *(vNode) << "\n";
+                    << "VFG: " << *(vNode) << "\n"
+                    << "Address: " << vNode->getValue() << "\n";
                 while (!worklist.empty())
                 {
                     const VFGNode *vNode = worklist.pop();
