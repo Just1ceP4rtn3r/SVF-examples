@@ -35,10 +35,11 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
     for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
     {
         PAGNode *pNode = lit->second;
+
         if (this->Svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
-            if (vNode->getValue() == key_var)
+            if (pNode->getValue() == key_var)
             {
                 worklist.push(vNode);
 
