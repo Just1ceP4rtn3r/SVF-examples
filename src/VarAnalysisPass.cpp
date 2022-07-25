@@ -396,9 +396,9 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
             {
                 if (ParseVariables(operand, M, F, key_var))
                 {
-                    errs() << "Instruction: " << I << "\n";
+                    errs() << "Instruction: " << I << "\n\n\n\n";
                     PointerAnalyzer->traverseOnVFG(operand);
-                    errs() << "----------------------------------\n";
+                    errs() << "----------------------------------\n\n\n\n";
                 }
             }
         }
