@@ -113,7 +113,7 @@ namespace
 
             std::vector<std::string> module_vec;
             module_vec.push_back(M.getName().str());
-            PointerAnalyzer = new mqttactic::PTA(module_vec);
+            PointerAnalyzer = new mqttactic::PTA(M);
 
             errs() << "----------------------------------\n";
 

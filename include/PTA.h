@@ -26,9 +26,9 @@ namespace mqttactic
         Andersen *Ander;
         SVFG *Svfg;
 
-        PTA(std::vector<std::string> moduleNameVec)
+        PTA(llvm::Module &M)
         {
-            this->SvfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(moduleNameVec);
+            this->SvfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(M);
             this->SvfModule->buildSymbolTableInfo();
 
             // WPAPass *wpa = new WPAPass();
