@@ -50,7 +50,10 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                 raw_string_ostream OS(Str);
                 vNode->getValue()->printAsOperand(OS, false);
                 llvm::errs()
-                    << "Value: " << OS.str() << "\n";
+                    << "    Value: \n"
+                    << OS.str() << "\n"
+                    << "    KBB: \n"
+                    << *(vNode->getICFGNode()->getBB()) << "\n";
                 // << "VFG: " << *(vNode) << "\n";
                 while (!worklist.empty())
                 {
@@ -84,7 +87,10 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                     //        << "Type: "
                     //        << *((*vit)->getValue()->getType()) << "\n";
                     llvm::errs()
-                        << "Value: " << OS.str() << "\n";
+                        << "    Value: \n"
+                        << OS.str() << "\n"
+                        << "    KBB: \n"
+                        << *(vNode->getICFGNode()->getBB()) << "\n";
                     // << "VFG: " << *(*vit) << "\n";
                     //    << "Edge: "
                     //    << edge->getEdgeKind() << "\n";
