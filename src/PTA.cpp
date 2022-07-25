@@ -36,7 +36,8 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
     {
         PAGNode *pNode = lit->second;
 
-        outs() << "Address: " << pNode->getValue() << "\n";
+        if (pNode->hasValue())
+            outs() << "Address: " << pNode->getValue() << "\n";
 
         if (this->Svfg->hasDefSVFGNode(pNode))
         {
