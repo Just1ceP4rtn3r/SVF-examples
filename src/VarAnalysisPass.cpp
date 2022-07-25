@@ -109,13 +109,13 @@ namespace
                 }
             }
 
-            errs() << "----------------------------------\n";
-
             // PrintDbgInfo();
 
             std::vector<std::string> module_vec;
             module_vec.push_back("/home/szx/Documents/tools/SVF/Driver/SVF-examples/tests/Variables.bc");
             PointerAnalyzer = new mqttactic::PTA(module_vec);
+
+            errs() << "----------------------------------\n";
 
             Function *F = M.getFunction("main");
             std::string key_var = "key_var";
@@ -400,6 +400,7 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
                 if (ParseVariables(operand, M, F, key_var))
                 {
                     errs() << "Instruction: " << I << "\n";
+                    PointerAnalyzer->traverseOnVFG(operand);
                 }
             }
         }
