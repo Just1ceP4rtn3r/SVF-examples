@@ -62,15 +62,17 @@ namespace
         std::vector<NamedStructType *> NamedStructTypes;
         // static/global
         std::map<std::string, const Metadata *> GlobalVars;
+        mqttactic::PTA *PointerAnalyzer;
 
-        void PrintDbgInfo();
+        void
+        PrintDbgInfo();
 
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
-        void TraverseFunction(Module &M, Function &F);
-        void ParseVariables(Value *V, Module &M, const Function &F);
+        void SearchKeyVar(Module &M, Function &F, std::string key_var);
+        bool ParseVariables(Value *V, Module &M, const Function &F, std::string key_var);
         VarAnalysis() : ModulePass(ID)
         {
         }
@@ -113,11 +115,11 @@ namespace
 
             std::vector<std::string> module_vec;
             module_vec.push_back("/home/szx/Documents/tools/SVF/Driver/SVF-examples/tests/Variables.bc");
-            mqttactic::PTA *PointerAnalyzer = new mqttactic::PTA(module_vec);
-            PointerAnalyzer->traverseOnVFG();
+            PointerAnalyzer = new mqttactic::PTA(module_vec);
 
-            // Function *F = M.getFunction("main");
-            // TraverseFunction(M, *F);
+            Function *F = M.getFunction("main");
+            std::string key_var = "key_var";
+            SearchKeyVar(M, *F, key_var);
 
             return false;
         }
@@ -377,7 +379,7 @@ void VarAnalysis::PrintDbgInfo()
     }
 }
 
-void VarAnalysis::TraverseFunction(Module &M, Function &F)
+void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
 {
     for (BasicBlock &BB : F)
     {
@@ -387,8 +389,6 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
             std::vector<Value *> inst_value_list;
             unsigned int opcode = inst->getOpcode();
             Use *operand_list = inst->getOperandList();
-            errs()
-                << I << "\n";
             inst_value_list.insert(inst_value_list.end(), inst);
             for (int i = 0; i < inst->getNumOperands(); i++)
             {
@@ -397,14 +397,19 @@ void VarAnalysis::TraverseFunction(Module &M, Function &F)
 
             for (Value *operand : inst_value_list)
             {
-                ParseVariables(operand, M, F);
+                if (ParseVariables(operand, M, F, key_var))
+                {
+                    errs() << "Instruction: " << I << "\n";
+                }
             }
         }
     }
 }
 
-void VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
+bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::string key_var)
 {
+    std::string var_name = "";
+
     // For Struct type variables:
     // 1. %b11 = getelementptr inbounds %"class.test::Father", %"class.test::Father"* %11, i32 0, i32 1, !dbg !963
     // 2. store i32 2, i32* getelementptr inbounds (%"struct.test::S2", %"struct.test::S2"* @_ZN4test10field_testE, i32 0, i32 1), align 4, !dbg !922
@@ -417,17 +422,17 @@ void VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
             std::string Str;
             raw_string_ostream OS(Str);
             base->print(OS, false, true);
-            errs()
-                << "    " << *V << "\n"
-                << "    Type: " << OS.str() << "\n"
-                << "    indices: ";
+            var_name += OS.str();
+            // dbgs()
+            //     << "    " << *V << "\n"
+            //     << "    Type: " << OS.str() << "\n"
+            //     << "    indices: ";
             for (int i = 1; i != GEP->getNumIndices() + 1; ++i)
             {
                 int idx = cast<ConstantInt>(GEP->getOperand(i))->getZExtValue();
                 last_idx = idx;
-                errs() << idx << ", ";
+                // dbgs() << idx << ", ";
             }
-            errs() << "\n";
 
             if (StructType *base_struct = dyn_cast<StructType>(base))
             {
@@ -443,7 +448,8 @@ void VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
                                 std::string Str;
                                 raw_string_ostream OS(Str);
                                 named_field->type->print(OS, false, true);
-                                errs() << "    Name: " << named_field->fieldName << " : " << OS.str() << "\n";
+                                var_name += "::" + OS.str();
+                                // dbgs() << "    Name: " << named_field->fieldName << " : " << OS.str() << "\n";
                             }
                             i++;
                         }
@@ -472,13 +478,15 @@ void VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
 
                     n = GetScope(var) + var->getName().str();
                 }
-                errs() << "    Global variable Name: " << n << "\n";
+                var_name == n;
+                // dbgs() << "    Global variable Name: " << n << "\n";
             }
 
             // Local variables
             else
             {
-                errs() << "    Local variable Name: " << V->getName().str() << "\n";
+                var_name == V->getName().str();
+                // dbgs() << "    Local variable Name: " << V->getName().str() << "\n";
             }
         }
 
@@ -514,6 +522,15 @@ void VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F)
         //     }
         // }
     }
+    if (var_name != "")
+    {
+        if (var_name.find(key_var) != std::string::npos && var_name.find(key_var) + key_var.size() == var_name.size())
+        {
+            errs() << "Found variable Name: " << var_name << "\n";
+            return true;
+        }
+    }
+    return false;
 }
 
 char VarAnalysis::ID = 0;

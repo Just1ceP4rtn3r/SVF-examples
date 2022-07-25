@@ -25,7 +25,7 @@
 //     }
 // }
 
-void mqttactic::PTA::traverseOnVFG()
+void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
 {
     SVFIR *pag = this->Ander->getPAG();
 
@@ -38,7 +38,7 @@ void mqttactic::PTA::traverseOnVFG()
         if (this->Svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
-            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str().find("key_var") != std::string::npos)
+            if (vNode->getValue() == key_var)
             {
                 worklist.push(vNode);
 
