@@ -49,9 +49,9 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                 std::string Str;
                 raw_string_ostream OS(Str);
                 vNode->getValue()->printAsOperand(OS, false);
-                SVFUtil::outs()
-                    << "Value: " << OS.str() << "\n"
-                    << "VFG: " << *(vNode) << "\n";
+                llvm::errs()
+                    << "Value: " << OS.str() << "\n";
+                // << "VFG: " << *(vNode) << "\n";
                 while (!worklist.empty())
                 {
                     const VFGNode *vNode = worklist.pop();
@@ -83,14 +83,13 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                     //        << *((*vit)->getValue()) << "\n"
                     //        << "Type: "
                     //        << *((*vit)->getValue()->getType()) << "\n";
-                    SVFUtil::outs()
-                        << "Value: " << OS.str() << "\n"
-                        << "VFG: " << *(*vit) << "\n";
+                    llvm::errs()
+                        << "Value: " << OS.str() << "\n";
+                    // << "VFG: " << *(*vit) << "\n";
                     //    << "Edge: "
                     //    << edge->getEdgeKind() << "\n";
                     //
                 }
-                SVFUtil::outs() << "---------------------\n";
                 worklist.clear();
                 useSet.clear();
             }
