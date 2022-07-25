@@ -35,7 +35,7 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
     for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
     {
         PAGNode *pNode = lit->second;
-        if (pNode->getValue() == key_var && this->Svfg->hasDefSVFGNode(pNode))
+        if (pNode->hasValue() && pNode->getValue() == key_var && this->Svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
