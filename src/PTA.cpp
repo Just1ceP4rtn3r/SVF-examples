@@ -49,7 +49,7 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                 std::string Str;
                 raw_string_ostream OS(Str);
                 vNode->getValue()->printAsOperand(OS, false);
-                llvm::outs()
+                llvm::errs()
                     << "****Pointer Value****\n"
                     << OS.str() << "\n"
                     << "****KBB****\n"
@@ -86,7 +86,7 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                     //        << *((*vit)->getValue()) << "\n"
                     //        << "Type: "
                     //        << *((*vit)->getValue()->getType()) << "\n";
-                    llvm::outs()
+                    llvm::errs()
                         << "****Pointer Value****\n"
                         << OS.str() << "\n"
                         << "****KBB****\n"
