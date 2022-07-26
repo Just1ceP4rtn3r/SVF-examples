@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -99,6 +100,7 @@ namespace test
     {
     public:
         int g;
+        vector<int> j;
         GrandSon()
         {
         }
@@ -135,8 +137,9 @@ int main()
     son_friend->TestFriend();
 
     grandson->g = 10;
+    grandson->j.push_back(1);
 
-    int key_var = 20;
+    /////////////////////////////
 
     return 0;
 }

@@ -54,6 +54,13 @@ namespace
         std::vector<NamedField *> fields;
     };
 
+    struct SemanticKBB
+    {
+
+        llvm::BasicBlock *bb;
+        int semantics;
+    };
+
     class VarAnalysis : public ModulePass
     {
     public:
@@ -62,10 +69,12 @@ namespace
         std::vector<NamedStructType *> NamedStructTypes;
         // static/global
         std::map<std::string, const Metadata *> GlobalVars;
+        // {"class:key_var":[Basicblock*, semantics]}
+        std::map<std::string, std::set<llvm::BasicBlock *>> KeyBasicBlocks;
+        std::map<std::string, std::set<SemanticKBB *>> SemanticKeyBasicBlocks;
         mqttactic::PTA *PointerAnalyzer;
 
-        void
-        PrintDbgInfo();
+        void PrintDbgInfo();
 
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
@@ -116,7 +125,14 @@ namespace
 
             Function *F = M.getFunction("main");
             std::string key_var = "S2::key_var";
+            std::set<llvm::BasicBlock *> bb_array;
+            KeyBasicBlocks.insert(std::pair<std::string, std::set<llvm::BasicBlock *>>(key_var, bb_array));
             SearchKeyVar(M, *F, key_var);
+
+            for (auto bb : KeyBasicBlocks[key_var])
+            {
+                errs() << *bb << "\n\n";
+            }
 
             return false;
         }
@@ -397,7 +413,14 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
                 if (ParseVariables(operand, M, F, key_var))
                 {
                     errs() << "Instruction: " << I << "\n\n\n\n";
-                    PointerAnalyzer->traverseOnVFG(operand);
+                    for (auto bb : PointerAnalyzer->traverseOnVFG(operand))
+                    {
+                        if (KeyBasicBlocks[key_var].find(bb) == KeyBasicBlocks[key_var].end())
+                        {
+                            KeyBasicBlocks[key_var].insert(KeyBasicBlocks[key_var].end(), bb);
+                        }
+                    }
+
                     errs() << "----------------------------------\n\n\n\n";
                 }
             }

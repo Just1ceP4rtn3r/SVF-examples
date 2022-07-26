@@ -25,8 +25,10 @@
 //     }
 // }
 
-void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
+std::set<llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
 {
+    std::set<llvm::BasicBlock *> KBBS;
+
     SVFIR *pag = this->Ander->getPAG();
 
     FIFOWorkList<const VFGNode *> worklist;
@@ -49,11 +51,12 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                 std::string Str;
                 raw_string_ostream OS(Str);
                 vNode->getValue()->printAsOperand(OS, false);
-                llvm::errs()
-                    << "****Pointer Value****\n"
-                    << OS.str() << "\n"
-                    << "****KBB****\n"
-                    << *(vNode->getICFGNode()->getBB()) << "\n";
+                // llvm::errs()
+                //     << "****Pointer Value****\n"
+                //     << OS.str() << "\n"
+                //     << "****KBB****\n"
+                //     << *(vNode->getICFGNode()->getBB()) << "\n";
+                KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
                 // << "VFG: " << *(vNode) << "\n";
                 while (!worklist.empty())
                 {
@@ -86,11 +89,15 @@ void mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                     //        << *((*vit)->getValue()) << "\n"
                     //        << "Type: "
                     //        << *((*vit)->getValue()->getType()) << "\n";
-                    llvm::errs()
-                        << "****Pointer Value****\n"
-                        << OS.str() << "\n"
-                        << "****KBB****\n"
-                        << *(vNode->getICFGNode()->getBB()) << "\n";
+                    // llvm::errs()
+                    //     << "****Pointer Value****\n"
+                    //     << OS.str() << "\n"
+                    //     << "****KBB****\n"
+                    //     << *(vNode->getICFGNode()->getBB()) << "\n";
+                    if (KBBS.find(vNode->getICFGNode()->getBB()) == KBBS.end())
+                    {
+                        KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
+                    }
                     // << "VFG: " << *(*vit) << "\n";
                     //    << "Edge: "
                     //    << edge->getEdgeKind() << "\n";

@@ -45,7 +45,7 @@ namespace mqttactic
             this->Svfg = svfBuilder.buildFullSVFG(this->Ander);
         }
 
-        void traverseOnVFG(llvm::Value *);
+        std::set<llvm::BasicBlock *> traverseOnVFG(llvm::Value *);
     };
 }
 #endif
