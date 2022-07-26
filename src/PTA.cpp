@@ -56,7 +56,7 @@ std::set<llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                 //     << OS.str() << "\n"
                 //     << "****KBB****\n"
                 //     << *(vNode->getICFGNode()->getBB()) << "\n";
-                KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
+                KBBS.insert(KBBS.end(), dyn_cast<llvm::BasicBlock>(vNode->getICFGNode()->getBB()));
                 // << "VFG: " << *(vNode) << "\n";
                 while (!worklist.empty())
                 {
@@ -94,7 +94,7 @@ std::set<llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
                     //     << OS.str() << "\n"
                     //     << "****KBB****\n"
                     //     << *(vNode->getICFGNode()->getBB()) << "\n";
-                    if (KBBS.find(vNode->getICFGNode()->getBB()) == KBBS.end())
+                    if (KBBS.find(dyn_cast<llvm::BasicBlock>(vNode->getICFGNode()->getBB())) == KBBS.end())
                     {
                         KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
                     }
