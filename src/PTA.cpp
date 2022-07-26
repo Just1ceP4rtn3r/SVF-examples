@@ -108,4 +108,6 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *ke
             }
         }
     }
+
+    return KBBS;
 }
