@@ -448,7 +448,7 @@ bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::st
                                 raw_string_ostream OS(Str);
                                 named_field->type->print(OS, false, true);
                                 var_name += "::" + OS.str();
-                                dbgs() << "    Name: " << named_field->fieldName << " : " << OS.str() << "\n";
+                                dbgs() << "    Name: " << var_name << " : " << OS.str() << "\n";
                             }
                             i++;
                         }
