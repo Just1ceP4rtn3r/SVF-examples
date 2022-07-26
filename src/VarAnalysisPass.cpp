@@ -115,7 +115,7 @@ namespace
             errs() << "----------------------------------\n";
 
             Function *F = M.getFunction("main");
-            std::string key_var = "key_var";
+            std::string key_var = "S2::key_var";
             SearchKeyVar(M, *F, key_var);
 
             return false;
