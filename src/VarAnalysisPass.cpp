@@ -112,7 +112,7 @@ namespace
             // PrintDbgInfo();
             PointerAnalyzer = new mqttactic::PTA(M);
 
-            errs() << "----------------------------------\n";
+            outs() << "----------------------------------\n";
 
             Function *F = M.getFunction("main");
             std::string key_var = "S2::key_var";
@@ -186,18 +186,18 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
             //     auto *BT = dyn_cast<DIBasicType>(T);
             //     auto Encoding = dwarf::AttributeEncodingString(BT->getEncoding());
             //     if (!Encoding.empty())
-            //         errs() << Encoding;
+            //         outs() << Encoding;
             //     else
-            //         errs() << "unknown-encoding(" << BT->getEncoding() << ')';
+            //         outs() << "unknown-encoding(" << BT->getEncoding() << ')';
             //     break;
             // }
             // case Metadata::DIDerivedTypeKind:
             // {
             //     auto Tag = dwarf::TagString(T->getTag());
             //     if (!Tag.empty())
-            //         errs() << Tag << "\n";
+            //         outs() << Tag << "\n";
             //     else
-            //         errs() << "unknown-tag(" << T->getTag() << ")\n";
+            //         outs() << "unknown-tag(" << T->getTag() << ")\n";
             //     break;
             // }
             case Metadata::DICompositeTypeKind:
@@ -234,7 +234,7 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
                             }
                             if (idx >= named_struct->fields.size())
                             {
-                                errs() << "ERROR: wrong member " << named_struct->typeName << "\n"
+                                outs() << "ERROR: wrong member " << named_struct->typeName << "\n"
                                        << scope_name << "\n"
                                        << "idx: " << idx << "\n"
                                        << "member size: " << named_struct->fields.size() << "\n";
@@ -278,7 +278,7 @@ void VarAnalysis::GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedS
                             }
                             if (idx >= named_struct->fields.size())
                             {
-                                errs() << "ERROR: wrong member " << named_struct->typeName << "\n"
+                                outs() << "ERROR: wrong member " << named_struct->typeName << "\n"
                                        << scope_name << "\n"
                                        << "idx: " << idx << "\n"
                                        << "member size: " << named_struct->fields.size() << "\n";
@@ -372,7 +372,7 @@ void VarAnalysis::PrintDbgInfo()
         std::string Str;
         raw_string_ostream OS(Str);
         git->second->print(OS);
-        errs() << git->first << ": " << OS.str() << "\n";
+        outs() << git->first << ": " << OS.str() << "\n";
     }
 }
 
@@ -396,9 +396,9 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
             {
                 if (ParseVariables(operand, M, F, key_var))
                 {
-                    errs() << "Instruction: " << I << "\n\n\n\n";
+                    outs() << "Instruction: " << I << "\n\n\n\n";
                     PointerAnalyzer->traverseOnVFG(operand);
-                    errs() << "----------------------------------\n\n\n\n";
+                    outs() << "----------------------------------\n\n\n\n";
                 }
             }
         }
@@ -501,7 +501,7 @@ bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::st
         //                 DILocalVariable *var = DbgDeclare->getVariable();
         //                 if (var)
         //                 {
-        //                     errs()
+        //                     outs()
         //                         << "    Local variable Name: " << var->getName().str() << "\n";
         //                 }
         //             }
@@ -513,7 +513,7 @@ bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::st
         //                 DILocalVariable *var = DbgValue->getVariable();
         //                 if (var)
         //                 {
-        //                     errs()
+        //                     outs()
         //                         << "    Local variable Name: " << var->getName().str() << "\n";
         //                 }
         //             }
@@ -525,7 +525,7 @@ bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::st
     {
         if (var_name.find(key_var) != std::string::npos && var_name.find(key_var) + key_var.size() == var_name.size())
         {
-            errs() << "Found variable Name: " << var_name << "\n";
+            outs() << "Found variable Name: " << var_name << "\n";
             return true;
         }
     }
