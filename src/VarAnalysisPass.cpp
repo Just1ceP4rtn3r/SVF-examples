@@ -70,7 +70,7 @@ namespace
         // static/global
         std::map<std::string, const Metadata *> GlobalVars;
         // {"class:key_var":[Basicblock*, semantics]}
-        std::map<std::string, std::set<llvm::BasicBlock *>> KeyBasicBlocks;
+        std::map<std::string, std::set<const llvm::BasicBlock *>> KeyBasicBlocks;
         std::map<std::string, std::set<SemanticKBB *>> SemanticKeyBasicBlocks;
         mqttactic::PTA *PointerAnalyzer;
 
