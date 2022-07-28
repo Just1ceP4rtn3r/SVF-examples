@@ -42,6 +42,7 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *ke
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
+
                 worklist.push(vNode);
 
                 // outs() << "Value: " << *(vNode->getValue()) << "\n"
