@@ -123,7 +123,7 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::string key_var = "S2::key_var";
+            std::string key_var = "Father::key_var";
             std::set<const llvm::BasicBlock *> bb_array;
             KeyBasicBlocks.insert(std::pair<std::string, std::set<const llvm::BasicBlock *>>(key_var, bb_array));
 
@@ -131,7 +131,6 @@ namespace
             {
                 Function &f = *mi;
 
-                std::string fname = f.getName();
                 SearchKeyVar(M, f, key_var);
             }
 
