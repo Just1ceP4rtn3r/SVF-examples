@@ -30,8 +30,11 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *ke
     std::set<const llvm::BasicBlock *> KBBS;
 
     SVFIR *pag = this->Ander->getPAG();
+    ICFGPrinter *icfgp = pag->getICFG();
+    icfgp->printICFGToJson("/tmp/test.json");
 
-    FIFOWorkList<const VFGNode *> worklist;
+    FIFOWorkList<const VFGNode *>
+        worklist;
     Set<const VFGNode *> useSet;
 
     for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
@@ -97,8 +100,6 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *ke
                     //     << *(vNode->getICFGNode()->getBB()) << "\n";
                     if (KBBS.find(vNode->getICFGNode()->getBB()) == KBBS.end())
                     {
-                        errs() << "ID: " << vNode->getICFGNode()->getId() << "\n"
-                               << "Type: " << vNode->getICFGNode()->getNodeKind() << "\n";
                         KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
                     }
                 }

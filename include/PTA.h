@@ -2,6 +2,7 @@
 #define ANDERSEN_PTA
 
 #include "SVF-FE/LLVMUtil.h"
+#include "SVF-FE/Graph2Json.h"
 #include "Graphs/SVFG.h"
 #include "WPA/Andersen.h"
 #include "Util/Options.h"
