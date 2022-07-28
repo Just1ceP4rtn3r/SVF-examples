@@ -125,8 +125,8 @@ namespace
 
             Function *F = M.getFunction("main");
             std::string key_var = "S2::key_var";
-            std::set<llvm::BasicBlock *> bb_array;
-            KeyBasicBlocks.insert(std::pair<std::string, std::set<llvm::BasicBlock *>>(key_var, bb_array));
+            std::set<const llvm::BasicBlock *> bb_array;
+            KeyBasicBlocks.insert(std::pair<std::string, std::set<const llvm::BasicBlock *>>(key_var, bb_array));
             SearchKeyVar(M, *F, key_var);
 
             for (auto bb : KeyBasicBlocks[key_var])
