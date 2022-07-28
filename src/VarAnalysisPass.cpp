@@ -136,6 +136,7 @@ namespace
 
             for (auto bb : KeyBasicBlocks[key_var])
             {
+                errs() << bb->getParent()->getName() << "\n";
                 errs() << *bb << "\n\n";
             }
 
@@ -553,7 +554,7 @@ bool VarAnalysis::ParseVariables(Value *V, Module &M, const Function &F, std::st
     {
         if (var_name.find(key_var) != std::string::npos && var_name.find(key_var) + key_var.size() == var_name.size())
         {
-            errs() << "Found variable Name: " << var_name << "\n";
+            // dbgs() << "Found variable Name: " << var_name << "\n";
             return true;
         }
     }
