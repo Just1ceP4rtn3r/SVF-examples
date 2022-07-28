@@ -419,7 +419,7 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
                 if (ParseVariables(operand, M, F, key_var))
                 {
                     errs() << "Instruction: " << I << "\n\n\n\n";
-                    for (auto bb : PointerAnalyzer->traverseOnVFG(operand))
+                    for (auto bb : PointerAnalyzer->TraverseOnVFG(operand))
                     {
                         if (KeyBasicBlocks[key_var].find(bb) == KeyBasicBlocks[key_var].end())
                         {

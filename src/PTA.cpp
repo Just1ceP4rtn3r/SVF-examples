@@ -25,7 +25,7 @@
 //     }
 // }
 
-std::set<const llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *key_var)
+std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *key_var)
 {
     std::set<const llvm::BasicBlock *> KBBS;
 
@@ -97,12 +97,10 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::traverseOnVFG(llvm::Value *ke
                     //     << *(vNode->getICFGNode()->getBB()) << "\n";
                     if (KBBS.find(vNode->getICFGNode()->getBB()) == KBBS.end())
                     {
+                        errs() << "ID: " << vNode->getICFGNode()->getId()
+                               << "Type: " << vNode->getICFGNode()->getNodeKind();
                         KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
                     }
-                    // << "VFG: " << *(*vit) << "\n";
-                    //    << "Edge: "
-                    //    << edge->getEdgeKind() << "\n";
-                    //
                 }
                 worklist.clear();
                 useSet.clear();
