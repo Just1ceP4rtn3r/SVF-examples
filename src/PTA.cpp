@@ -90,7 +90,7 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *ke
                         const Instruction *I = inst->getInst();
                         errs() << *I << "\n";
                     }
-                    else if (const CallICFGNode * call_inst dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
+                    else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                     {
                         const Instruction *I = call_inst->getCallSite();
                         errs() << *I << "\n";
