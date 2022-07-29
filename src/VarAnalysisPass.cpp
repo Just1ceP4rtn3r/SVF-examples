@@ -116,7 +116,7 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::string key_var = "Father::key_var";
+            std::string key_var = "Father::header";
             std::set<const llvm::BasicBlock *> bb_array;
             KeyBasicBlocks.insert(std::pair<std::string, std::set<const llvm::BasicBlock *>>(key_var, bb_array));
 
