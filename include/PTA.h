@@ -18,6 +18,19 @@ using namespace SVF;
 
 namespace mqttactic
 {
+    struct SemanticKBB
+    {
+
+        llvm::BasicBlock *bb;
+        int semantics;
+    };
+
+    enum KeyOperation
+    {
+        READ,
+        WRITE0,
+        WRITE1
+    };
     // Andersen flow-insensitive pointer analysis
     class PTA
     {
@@ -47,7 +60,7 @@ namespace mqttactic
         }
 
         std::set<const llvm::BasicBlock *> TraverseOnVFG(llvm::Value *);
-        void IdentifyOperationType();
+        int IdentifyOperationType(const Instruction *I, const Value *V);
     };
 }
 #endif

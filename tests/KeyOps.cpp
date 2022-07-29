@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -12,8 +13,8 @@ struct S1
 class Father
 {
 public:
-    int a;
-    int b;
+    int a[10];
+    vector<int> b;
     short c;
     double d;
     struct S1 *key_var;
@@ -26,8 +27,6 @@ public:
     {
         this->key_var = new S1();
         this->key_var->f = 0;
-        cout << "Father\n"
-             << a << "\n";
     }
 
     void func2()
@@ -38,9 +37,12 @@ public:
 
 int main()
 {
-
     Father *fa = new Father();
     fa->func();
     fa->func2();
+
+    fa->a[0] = 10;
+    fa->b.push_back(10);
+    fa->a[1] = fa->b[0];
     return 0;
 }

@@ -54,12 +54,7 @@ namespace
         std::vector<NamedField *> fields;
     };
 
-    struct SemanticKBB
-    {
 
-        llvm::BasicBlock *bb;
-        int semantics;
-    };
 
     class VarAnalysis : public ModulePass
     {
