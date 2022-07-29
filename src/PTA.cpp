@@ -97,9 +97,9 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *ke
                     //     << "****KBB****\n"
                     //     << *(vNode->getICFGNode()->getBB()) << "\n";
 
-                    SVFUtil::errs() << "VFG: " << OS.str() << "\n"
-                                    << "Type: " << (*vit)->getICFGNode()->getNodeKind() << "\n"
-                                    << "Node: " << (*vit)->getICFGNode()->getId();
+                    errs() << "VFG: " << *((*vit)->getValue()) << "\n"
+                           << "Type: " << (*vit)->getICFGNode()->getNodeKind() << "\n"
+                           << "Node: " << (*vit)->getICFGNode()->getId();
 
                     if (KBBS.find((*vit)->getICFGNode()->getBB()) == KBBS.end())
                     {
