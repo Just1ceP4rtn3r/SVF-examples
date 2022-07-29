@@ -54,8 +54,6 @@ namespace
         std::vector<NamedField *> fields;
     };
 
-
-
     class VarAnalysis : public ModulePass
     {
     public:
@@ -64,9 +62,9 @@ namespace
         std::vector<NamedStructType *> NamedStructTypes;
         // static/global
         std::map<std::string, const Metadata *> GlobalVars;
-        // {"class:key_var":[Basicblock*, semantics]}
         std::map<std::string, std::set<const llvm::BasicBlock *>> KeyBasicBlocks;
-        std::map<std::string, std::set<SemanticKBB *>> SemanticKeyBasicBlocks;
+        // {"class:key_var":[Basicblock*, semantics]}
+        std::map<std::string, std::set<mqttactic::SemanticKBB *>> SemanticKeyBasicBlocks;
         mqttactic::PTA *PointerAnalyzer;
 
         void PrintDbgInfo();

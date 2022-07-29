@@ -38,7 +38,9 @@ clang -S -c -g -fno-discard-value-names -emit-llvm example.c -o example.ll
 
 ## 相关库、include配置，主要包含LLVM、SVF两部分
 
-
+export LLVM_DIR=/home/szx/Documents/tools/clang+llvm-14.0.0-x86_64-linux-gnu-ubuntu-18.04
+export Z3_DIR=/home/szx/Documents/tools/SVF/z3.obj
+export SVF_DIR=/home/szx/Documents/tools/SVF/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/szx/Documents/tools/clang+llvm-14.0.0-x86_64-linux-gnu-ubuntu-18.04/lib:/home/szx/Documents/tools/SVF/Release-build/lib
 export PATH=$PATH:/home/szx/Documents/tools/clang+llvm-14.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
 export CPLUS_INCLUDE_PATH=/home/szx/Documents/tools/clang+llvm-14.0.0-x86_64-linux-gnu-ubuntu-18.04/include:/home/szx/Documents/tools/SVF/include:/home/szx/Documents/tools/SVF/z3.obj/include
