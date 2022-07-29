@@ -87,12 +87,12 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *ke
                     (*vit)->getValue()->printAsOperand(OS, false);
                     if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
                     {
-                        Instruction *I = inst->getInst();
+                        const Instruction *I = inst->getInst();
                         errs() << *I << "\n";
                     }
                     else if (const CallICFGNode * call_inst dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                     {
-                        Instruction *I = call_inst->getCallSite();
+                        const Instruction *I = call_inst->getCallSite();
                         errs() << *I << "\n";
                     }
                     // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
