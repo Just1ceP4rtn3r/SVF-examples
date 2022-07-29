@@ -122,85 +122,85 @@ namespace mqttactic
         return KBBS;
     }
 
-    int PTA::IdentifyOperationType(const Instruction *I, const Value *V)
-    {
-        // Normal store/load
-        unsigned int opcode = I->getOpcode();
-        switch (opcode)
-        {
-        case Instruction::Call:
-        {
-            CallInst *call = static_cast<CallInst *>(I);
-            std::string calledFuncName = "";
-            if (call->isIndirectCall() || !(call->getCalledFunction()))
-            {
-                const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
-                if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
-                    calledFuncName = GV->getAliasee()->getName().str();
-                else
-                    break;
-            }
-            else
-            {
-                calledFuncName = call->getCalledFunction()->getName().str();
-            }
-            if (!found_end && keyFuncs.find(calledFuncName) != keyFuncs.end() && keyBBs.find(&BB) != keyBBs.end())
-            {
-                found_end = traverseFuncToEnd(M, *(call->getCalledFunction()), end, found_end, path, endPath, results);
-                if (found_end)
-                {
-                    path.clear();
-                    for (std::vector<keyBBPath>::iterator it = results[results.end() - results.begin() - 1].begin(); it != results[results.end() - results.begin() - 1].end(); it++)
-                    {
-                        path.push_back((*it));
-                    }
-                    results.pop_back();
-                }
-            }
-            break;
-        }
-        case Instruction::Invoke:
-        {
-            InvokeInst *call = static_cast<InvokeInst *>(I);
-            std::string calledFuncName = "";
-            if (call->isIndirectCall() || !(call->getCalledFunction()))
-            {
-                const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
-                if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
-                    calledFuncName = GV->getAliasee()->getName().str();
-                else
-                    break;
-            }
-            else
-            {
-                calledFuncName = call->getCalledFunction()->getName().str();
-            }
-            if (!found_end && keyFuncs.find(calledFuncName) != keyFuncs.end() && keyBBs.find(&BB) != keyBBs.end())
-            {
-                found_end = traverseFuncToEnd(M, *(call->getCalledFunction()), end, found_end, path, endPath, results);
-                if (found_end)
-                {
-                    path.clear();
-                    for (std::vector<keyBBPath>::iterator it = results[results.end() - results.begin() - 1].begin(); it != results[results.end() - results.begin() - 1].end(); it++)
-                    {
-                        path.push_back((*it));
-                    }
-                    results.pop_back();
-                }
-            }
-            break;
-        }
-        case Instruction::Store:
-        {
-            StoreInst *store = static_cast<StoreInst *>(I);
-            // If the value is the rvalue of the `store` instruction
-            if (V == store->getOperand(1))
-            {
-                return KeyOperation::WRITE1;
-            }
-        }
-        default:
-            break;
-        }
-    }
+    // int PTA::IdentifyOperationType(const Instruction *I, const Value *V)
+    // {
+    //     // Normal store/load
+    //     unsigned int opcode = I->getOpcode();
+    //     switch (opcode)
+    //     {
+    //     case Instruction::Call:
+    //     {
+    //         CallInst *call = static_cast<CallInst *>(I);
+    //         std::string calledFuncName = "";
+    //         if (call->isIndirectCall() || !(call->getCalledFunction()))
+    //         {
+    //             const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
+    //             if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
+    //                 calledFuncName = GV->getAliasee()->getName().str();
+    //             else
+    //                 break;
+    //         }
+    //         else
+    //         {
+    //             calledFuncName = call->getCalledFunction()->getName().str();
+    //         }
+    //         if (!found_end && keyFuncs.find(calledFuncName) != keyFuncs.end() && keyBBs.find(&BB) != keyBBs.end())
+    //         {
+    //             found_end = traverseFuncToEnd(M, *(call->getCalledFunction()), end, found_end, path, endPath, results);
+    //             if (found_end)
+    //             {
+    //                 path.clear();
+    //                 for (std::vector<keyBBPath>::iterator it = results[results.end() - results.begin() - 1].begin(); it != results[results.end() - results.begin() - 1].end(); it++)
+    //                 {
+    //                     path.push_back((*it));
+    //                 }
+    //                 results.pop_back();
+    //             }
+    //         }
+    //         break;
+    //     }
+    //     case Instruction::Invoke:
+    //     {
+    //         InvokeInst *call = static_cast<InvokeInst *>(I);
+    //         std::string calledFuncName = "";
+    //         if (call->isIndirectCall() || !(call->getCalledFunction()))
+    //         {
+    //             const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
+    //             if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
+    //                 calledFuncName = GV->getAliasee()->getName().str();
+    //             else
+    //                 break;
+    //         }
+    //         else
+    //         {
+    //             calledFuncName = call->getCalledFunction()->getName().str();
+    //         }
+    //         if (!found_end && keyFuncs.find(calledFuncName) != keyFuncs.end() && keyBBs.find(&BB) != keyBBs.end())
+    //         {
+    //             found_end = traverseFuncToEnd(M, *(call->getCalledFunction()), end, found_end, path, endPath, results);
+    //             if (found_end)
+    //             {
+    //                 path.clear();
+    //                 for (std::vector<keyBBPath>::iterator it = results[results.end() - results.begin() - 1].begin(); it != results[results.end() - results.begin() - 1].end(); it++)
+    //                 {
+    //                     path.push_back((*it));
+    //                 }
+    //                 results.pop_back();
+    //             }
+    //         }
+    //         break;
+    //     }
+    //     case Instruction::Store:
+    //     {
+    //         StoreInst *store = static_cast<StoreInst *>(I);
+    //         // If the value is the rvalue of the `store` instruction
+    //         if (V == store->getOperand(1))
+    //         {
+    //             return KeyOperation::WRITE1;
+    //         }
+    //     }
+    //     default:
+    //         break;
+    //     }
+    // }
 }

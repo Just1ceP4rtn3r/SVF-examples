@@ -141,13 +141,8 @@ int main(int argc, char **argv)
     SVFGBuilder svfBuilder;
     SVFG *svfg = svfBuilder.buildFullSVFG(ander);
 
-    // PrintAliasPairs(ander);
-    // traverseOnVFG(svfg, ander);
-
-    for (auto s : moduleNameVec)
-    {
-        SVFUtil::outs() << s << "\n";
-    }
+    PrintAliasPairs(ander);
+    traverseOnVFG(svfg, ander);
 
     return 0;
 }

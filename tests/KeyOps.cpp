@@ -10,14 +10,21 @@ struct S1
     static int static_var;
 };
 
+struct Link
+{
+    /* data */
+    int f;
+    struct Link *next;
+};
+
 class Father
 {
 public:
     int a[10];
     vector<int> b;
-    short c;
+    struct Link *header;
     double d;
-    struct S1 *key_var;
+    struct S1 *e;
     Father()
     {
         cout << "Father construct\n";
@@ -25,13 +32,13 @@ public:
 
     void func()
     {
-        this->key_var = new S1();
-        this->key_var->f = 0;
+        this->e = new S1();
+        this->e->f = 0;
     }
 
     void func2()
     {
-        this->key_var->f = 2;
+        this->e->f = 2;
     }
 };
 
@@ -44,5 +51,14 @@ int main()
     fa->a[0] = 10;
     fa->b.push_back(10);
     fa->a[1] = fa->b[0];
+
+    fa->header = new Link();
+    Link *node1 = new Link();
+    Link *node2 = new Link();
+    fa->header->next = node1;
+    node1->next = node2;
+
+    fa->header->next = fa->header->next->next;
+
     return 0;
 }
