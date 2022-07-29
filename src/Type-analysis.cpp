@@ -50,7 +50,7 @@ void traverseOnVFG(const SVFG *svfg, PointerAnalysis *pta)
         if (svfg->hasDefSVFGNode(pNode))
         {
             const VFGNode *vNode = svfg->getDefSVFGNode(pNode);
-            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str().find("key_var") != std::string::npos)
+            if (vNode->getValue() != nullptr && vNode->getValue()->getName().str().find("header") != std::string::npos)
             {
                 worklist.push(vNode);
 
