@@ -90,12 +90,12 @@ namespace mqttactic
                         if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
                         {
                             const Instruction *I = inst->getInst();
-                            errs() << *I << "\n";
+                            errs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                         {
                             const Instruction *I = call_inst->getCallSite();
-                            errs() << *I << "\n";
+                            errs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
                         // const SVF::Value *val = pN->getValue();
