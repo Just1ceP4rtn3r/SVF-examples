@@ -97,13 +97,13 @@ std::set<const llvm::BasicBlock *> mqttactic::PTA::TraverseOnVFG(llvm::Value *ke
                     //     << "****KBB****\n"
                     //     << *(vNode->getICFGNode()->getBB()) << "\n";
 
-                    SVFUtil::errs() << "VFG: " << *vNode << "\n"
-                                    << "Type: " << vNode->getICFGNode()->getNodeKind() << "\n"
-                                    << "Node: " << vNode->getICFGNode()->getId();
+                    SVFUtil::errs() << "VFG: " << OS.str() << "\n"
+                                    << "Type: " << (*vit)->getICFGNode()->getNodeKind() << "\n"
+                                    << "Node: " << (*vit)->getICFGNode()->getId();
 
-                    if (KBBS.find(vNode->getICFGNode()->getBB()) == KBBS.end())
+                    if (KBBS.find((*vit)->getICFGNode()->getBB()) == KBBS.end())
                     {
-                        KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
+                        KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
                     }
                 }
                 worklist.clear();
