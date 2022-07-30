@@ -10,7 +10,7 @@ namespace mqttactic
         SVFIR *pag = this->Ander->getPAG();
         FIFOWorkList<const VFGNode *> worklist;
         Set<const VFGNode *> use_set;
-        Set<Value *> pts_set;
+        Set<const Value *> pts_set;
 
         for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
         {
@@ -68,7 +68,7 @@ namespace mqttactic
                         if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
                         {
                             const Instruction *I = inst->getInst();
-                            op_type = IdentifyOperationType(I, (*vit), pts_set);
+                            op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
 
                             errs()
                                 << "Value: " << OS.str() << "      " << *I << "\n";
@@ -76,7 +76,7 @@ namespace mqttactic
                         else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                         {
                             const Instruction *I = call_inst->getCallSite();
-                            op_type = IdentifyOperationType(I, (*vit), pts_set);
+                            op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
                             errs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
@@ -94,7 +94,7 @@ namespace mqttactic
                         {
                             SemanticKBB *sbb = new SemanticKBB();
                             sbb->bb = (*vit)->getICFGNode()->getBB();
-                            sbb->values.push_back(*vit);
+                            sbb->values.push_back((*vit)->getValue());
                             sbb->semantics = op_type;
 
                             KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
@@ -123,7 +123,7 @@ namespace mqttactic
         {
         case Instruction::Call:
         {
-            CallInst *call = static_cast<CallInst *>(I);
+            const CallInst *call = static_cast<const CallInst *>(I);
             std::string calledFuncName = "";
             if (call->isIndirectCall() || !(call->getCalledFunction()))
             {
@@ -147,7 +147,7 @@ namespace mqttactic
         }
         case Instruction::Invoke:
         {
-            InvokeInst *call = static_cast<InvokeInst *>(I);
+            const InvokeInst *call = static_cast<const InvokeInst *>(I);
             std::string calledFuncName = "";
             if (call->isIndirectCall() || !(call->getCalledFunction()))
             {
@@ -169,7 +169,7 @@ namespace mqttactic
         }
         case Instruction::Store:
         {
-            StoreInst *store = static_cast<StoreInst *>(I);
+            const StoreInst *store = static_cast<const StoreInst *>(I);
             // If the value is the rvalue of the `store` instruction
             if (V == store->getOperand(1))
             {
