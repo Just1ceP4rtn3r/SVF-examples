@@ -18,12 +18,8 @@ using namespace SVF;
 
 namespace mqttactic
 {
-    std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
-    std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove"};
-    std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
     struct SemanticKBB
     {
-
         const llvm::BasicBlock *bb;
         std::vector<const llvm::Value *> values;
         int semantics;

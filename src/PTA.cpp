@@ -198,23 +198,27 @@ namespace mqttactic
         return KeyOperation::READ;
     }
 
+    // Identify operation type of STL function. e.g., vector::push_back
     int PTA::IdentifyCallFuncOperation(std::string func_name)
     {
-        // for (auto op : mqttactic::OperationFuncRead)
+        std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
+        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove"};
+        std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
+        // for (auto op : OperationFuncRead)
         // {
         //     if (func_name.find(op) != std::string::npos)
         //     {
         //         return mqttactic::READ;
         //     }
         // }
-        for (auto op : mqttactic::OperationFuncWrite0)
+        for (auto op : OperationFuncWrite0)
         {
             if (func_name.find(op) != std::string::npos)
             {
                 return mqttactic::WRITE0;
             }
         }
-        for (auto op : mqttactic::OperationFuncWrite1)
+        for (auto op : OperationFuncWrite1)
         {
             if (func_name.find(op) != std::string::npos)
             {
