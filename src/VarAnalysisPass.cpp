@@ -121,6 +121,7 @@ namespace
             errs() << "----------------------------------\n";
 
             std::vector<KeyVariable *> key_variables(1);
+            key_variables[0] = new KeyVariable();
             key_variables[0]->name = "Father::header";
 
             for (auto key_var : key_variables)
