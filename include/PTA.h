@@ -25,7 +25,7 @@ namespace mqttactic
     {
 
         const llvm::BasicBlock *bb;
-        std::vector<llvm::Value *> values;
+        std::vector<const llvm::Value *> values;
         int semantics;
     };
 
@@ -67,7 +67,7 @@ namespace mqttactic
         }
 
         std::set<SemanticKBB *> TraverseOnVFG(llvm::Value *);
-        int IdentifyOperationType(const Instruction *I, const Value *V, Set<Value *> &pts_set);
+        int IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set);
         int IdentifyCallFuncOperation(std::string func_name);
     };
 }

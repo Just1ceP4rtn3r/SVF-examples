@@ -102,8 +102,14 @@ namespace mqttactic
                         }
                         else
                         {
-                            std::set<mqttactic::SemanticKBB *>::iterator sbb = SKBBS.begin() + (KBBS.find((*vit)->getICFGNode()->getBB()) - KBBS.begin());
-                            (*sbb)->semantics &= op_type;
+                            for (auto sbb : SKBBS)
+                            {
+                                if (sbb->bb == (*vit)->getICFGNode()->getBB())
+                                {
+                                    sbb->semantics &= op_type;
+                                    break;
+                                }
+                            }
                         }
                     }
                     worklist.clear();
@@ -115,7 +121,7 @@ namespace mqttactic
         return SKBBS;
     }
 
-    int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<Value *> &pts_set)
+    int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set)
     {
         // Normal store/load
         unsigned int opcode = I->getOpcode();

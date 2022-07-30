@@ -69,7 +69,7 @@ namespace
         // static/global
         std::map<std::string, const Metadata *> GlobalVars;
         // {"class:key_var":[Basicblock*, semantics]}
-        std::map<std::string, std::set<mqttactic::SemanticKBB *>> SemanticKeyBasicBlocks;
+        std::map<KeyVariable *, std::set<mqttactic::SemanticKBB *>> SemanticKeyBasicBlocks;
         mqttactic::PTA *PointerAnalyzer;
 
         void PrintDbgInfo();
@@ -123,10 +123,12 @@ namespace
             std::vector<KeyVariable *> key_variables(1);
             key_variables[0]->name = "Father::header";
 
-            std::set<mqttactic::SemanticKBB *>
-                bb_array;
-            SemanticKeyBasicBlocks.insert(std::pair<std::string, std::set<mqttactic::SemanticKBB *>>(key_var, bb_array));
-
+            for (auto key_var : key_variables)
+            {
+                std::set<mqttactic::SemanticKBB *>
+                    bb_array;
+                SemanticKeyBasicBlocks.insert(std::pair<KeyVariable *, std::set<mqttactic::SemanticKBB *>>(key_var, bb_array));
+            }
             for (Module::iterator mi = M.begin(); mi != M.end(); ++mi)
             {
                 Function &f = *mi;
@@ -134,11 +136,11 @@ namespace
                 SearchKeyVar(M, f, key_variables);
             }
 
-            for (auto sbb : SemanticKeyBasicBlocks[key_variables[0]->name])
+            for (auto sbb : SemanticKeyBasicBlocks[key_variables[0]])
             {
                 errs() << sbb->bb->getParent()->getName() << "\n"
                        << sbb->semantics << "\n";
-                errs() << *bb << "\n\n";
+                errs() << *(sbb->bb) << "\n\n";
             }
 
             return false;
@@ -421,9 +423,9 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *
                     if (key_var->completed == false && ParseVariables(operand, M, F, key_var->name))
                     {
                         errs() << "Instruction: " << I << "\n\n\n\n";
-                        for (auto bb : PointerAnalyzer->TraverseOnVFG(operand))
+                        for (auto sbb : PointerAnalyzer->TraverseOnVFG(operand))
                         {
-                            SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), bb);
+                            SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), sbb);
                         }
                         key_var->completed = true;
 
