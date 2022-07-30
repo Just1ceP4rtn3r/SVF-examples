@@ -18,17 +18,24 @@ using namespace SVF;
 
 namespace mqttactic
 {
+    std::vector<std::string> OperationFuncRead = {"back", "front", "find", "top", "contain"};
+    std::vector<std::string> OperationFuncWrite0 = {"pop_back", "erase", "pop", "delete", "Remove"};
+    std::vector<std::string> OperationFuncWrite1 = {"push_back", "insert", "push", "PushBack", "PushFront"};
     struct SemanticKBB
     {
 
-        llvm::BasicBlock *bb;
+        const llvm::BasicBlock *bb;
+        std::vector<llvm::Value *> values;
         int semantics;
     };
 
     enum KeyOperation
     {
+        // read
         READ,
+        // write-
         WRITE0,
+        // write+
         WRITE1
     };
     // Andersen flow-insensitive pointer analysis
@@ -59,8 +66,9 @@ namespace mqttactic
             this->Svfg = svfBuilder.buildFullSVFG(this->Ander);
         }
 
-        std::set<const llvm::BasicBlock *> TraverseOnVFG(llvm::Value *);
-        int IdentifyOperationType(const Instruction *I, const Value *V);
+        std::set<SemanticKBB *> TraverseOnVFG(llvm::Value *);
+        int IdentifyOperationType(const Instruction *I, const Value *V, Set<Value *> &pts_set);
+        int IdentifyCallFuncOperation(std::string func_name);
     };
 }
 #endif

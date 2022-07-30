@@ -54,6 +54,12 @@ namespace
         std::vector<NamedField *> fields;
     };
 
+    struct KeyVariable
+    {
+        std::string name;
+        bool completed = 0;
+    };
+
     class VarAnalysis : public ModulePass
     {
     public:
@@ -62,18 +68,16 @@ namespace
         std::vector<NamedStructType *> NamedStructTypes;
         // static/global
         std::map<std::string, const Metadata *> GlobalVars;
-        std::map<std::string, std::set<const llvm::BasicBlock *>> KeyBasicBlocks;
         // {"class:key_var":[Basicblock*, semantics]}
         std::map<std::string, std::set<mqttactic::SemanticKBB *>> SemanticKeyBasicBlocks;
         mqttactic::PTA *PointerAnalyzer;
 
         void PrintDbgInfo();
-
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
-        void SearchKeyVar(Module &M, Function &F, std::string key_var);
+        void SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *> &key_variables);
         bool ParseVariables(Value *V, Module &M, const Function &F, std::string key_var);
         VarAnalysis() : ModulePass(ID)
         {
@@ -116,20 +120,24 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::string key_var = "Father::header";
-            std::set<const llvm::BasicBlock *> bb_array;
-            KeyBasicBlocks.insert(std::pair<std::string, std::set<const llvm::BasicBlock *>>(key_var, bb_array));
+            std::vector<KeyVariable *> key_variables(1);
+            key_variables[0]->name = "Father::header";
+
+            std::set<mqttactic::SemanticKBB *>
+                bb_array;
+            SemanticKeyBasicBlocks.insert(std::pair<std::string, std::set<mqttactic::SemanticKBB *>>(key_var, bb_array));
 
             for (Module::iterator mi = M.begin(); mi != M.end(); ++mi)
             {
                 Function &f = *mi;
 
-                SearchKeyVar(M, f, key_var);
+                SearchKeyVar(M, f, key_variables);
             }
 
-            for (auto bb : KeyBasicBlocks[key_var])
+            for (auto sbb : SemanticKeyBasicBlocks[key_variables[0]->name])
             {
-                errs() << bb->getParent()->getName() << "\n";
+                errs() << sbb->bb->getParent()->getName() << "\n"
+                       << sbb->semantics << "\n";
                 errs() << *bb << "\n\n";
             }
 
@@ -391,7 +399,7 @@ void VarAnalysis::PrintDbgInfo()
     }
 }
 
-void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
+void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *> &key_variables)
 {
     for (BasicBlock &BB : F)
     {
@@ -409,19 +417,18 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::string key_var)
 
             for (Value *operand : inst_value_list)
             {
-                if (ParseVariables(operand, M, F, key_var))
-                {
-                    errs() << "Instruction: " << I << "\n\n\n\n";
-                    for (auto bb : PointerAnalyzer->TraverseOnVFG(operand))
+                for (KeyVariable *key_var : key_variables)
+                    if (key_var->completed == false && ParseVariables(operand, M, F, key_var->name))
                     {
-                        if (KeyBasicBlocks[key_var].find(bb) == KeyBasicBlocks[key_var].end())
+                        errs() << "Instruction: " << I << "\n\n\n\n";
+                        for (auto bb : PointerAnalyzer->TraverseOnVFG(operand))
                         {
-                            KeyBasicBlocks[key_var].insert(KeyBasicBlocks[key_var].end(), bb);
+                            SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), bb);
                         }
-                    }
+                        key_var->completed = true;
 
-                    errs() << "----------------------------------\n\n\n\n";
-                }
+                        errs() << "----------------------------------\n\n\n\n";
+                    }
             }
         }
     }

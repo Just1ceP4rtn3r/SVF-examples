@@ -2,40 +2,15 @@
 
 namespace mqttactic
 {
-    // void PrintAliasPairs(PointerAnalysis *this->Ander)
-    // {
-
-    //     SVFIR *pag = this->Ander->getPAG();
-    //     for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
-    //     {
-    //         PAGNode *node1 = lit->second;
-    //         PAGNode *node2 = node1;
-    //         for (SVFIR::iterator rit = lit, erit = pag->end(); rit != erit; ++rit)
-    //         {
-    //             node2 = rit->second;
-    //             if (node1 == node2)
-    //                 continue;
-    //             const Function *fun1 = node1->getFunction();
-    //             const Function *fun2 = node2->getFunction();
-    //             SVF::AliasResult result = this->Ander->alias(node1->getId(), node2->getId());
-    //             SVFUtil::outs() << (result == SVF::AliasResult::NoAlias ? "NoAlias" : "MayAlias")
-    //                             << " var" << node1->getId() << "[" << node1->getValueName()
-    //                             << "@" << (fun1 == nullptr ? "" : fun1->getName().str()) << "] --"
-    //                             << " var" << node2->getId() << "[" << node2->getValueName()
-    //                             << "@" << (fun2 == nullptr ? "" : fun2->getName().str()) << "]\n";
-    //         }
-    //     }
-    // }
-
-    std::set<const llvm::BasicBlock *> PTA::TraverseOnVFG(llvm::Value *key_var)
+    std::set<SemanticKBB *> PTA::TraverseOnVFG(llvm::Value *key_var)
     {
         std::set<const llvm::BasicBlock *> KBBS;
+        std::set<SemanticKBB *> SKBBS;
 
         SVFIR *pag = this->Ander->getPAG();
-
-        FIFOWorkList<const VFGNode *>
-            worklist;
-        Set<const VFGNode *> useSet;
+        FIFOWorkList<const VFGNode *> worklist;
+        Set<const VFGNode *> use_set;
+        Set<Value *> pts_set;
 
         for (SVFIR::iterator lit = pag->begin(), elit = pag->end(); lit != elit; ++lit)
         {
@@ -67,34 +42,41 @@ namespace mqttactic
                         const VFGNode *vNode = worklist.pop();
                         if (vNode->getValue() != nullptr)
                         {
-                            // useSet.insert(vNode);
+                            // use_set.insert(vNode);
                             for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
                                                                                          vNode->OutEdgeEnd();
                                  it != eit; ++it)
                             {
                                 VFGEdge *edge = *it;
                                 VFGNode *succNode = edge->getDstNode();
-                                if (succNode->getValue() && useSet.find(succNode) == useSet.end())
+                                if (succNode->getValue() && use_set.find(succNode) == use_set.end())
                                 {
-                                    useSet.insert(succNode);
+                                    use_set.insert(succNode);
                                     worklist.push(succNode);
+                                    pts_set.insert(succNode->getValue());
                                 }
                             }
                         }
                     }
-                    for (Set<const VFGNode *>::iterator vit = useSet.begin(); vit != useSet.end(); vit++)
+                    for (Set<const VFGNode *>::iterator vit = use_set.begin(); vit != use_set.end(); vit++)
                     {
+                        int op_type = 0;
                         std::string Str;
                         raw_string_ostream OS(Str);
                         (*vit)->getValue()->printAsOperand(OS, false);
+
                         if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
                         {
                             const Instruction *I = inst->getInst();
-                            errs() << "Value: " << OS.str() << "      " << *I << "\n";
+                            op_type = IdentifyOperationType(I, (*vit), pts_set);
+
+                            errs()
+                                << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                         {
                             const Instruction *I = call_inst->getCallSite();
+                            op_type = IdentifyOperationType(I, (*vit), pts_set);
                             errs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
@@ -110,97 +92,129 @@ namespace mqttactic
                         //     << *(vNode->getICFGNode()->getBB()) << "\n";
                         if (KBBS.find((*vit)->getICFGNode()->getBB()) == KBBS.end())
                         {
+                            SemanticKBB *sbb = new SemanticKBB();
+                            sbb->bb = (*vit)->getICFGNode()->getBB();
+                            sbb->values.push_back(*vit);
+                            sbb->semantics = op_type;
+
                             KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
+                            SKBBS.insert(SKBBS.end(), sbb);
+                        }
+                        else
+                        {
+                            std::set<mqttactic::SemanticKBB *>::iterator sbb = SKBBS.begin() + (KBBS.find((*vit)->getICFGNode()->getBB()) - KBBS.begin());
+                            (*sbb)->semantics &= op_type;
                         }
                     }
                     worklist.clear();
-                    useSet.clear();
+                    use_set.clear();
                 }
             }
         }
 
-        return KBBS;
+        return SKBBS;
     }
 
-    // int PTA::IdentifyOperationType(const Instruction *I, const Value *V)
-    // {
-    //     // Normal store/load
-    //     unsigned int opcode = I->getOpcode();
-    //     switch (opcode)
-    //     {
-    //     case Instruction::Call:
-    //     {
-    //         CallInst *call = static_cast<CallInst *>(I);
-    //         std::string calledFuncName = "";
-    //         if (call->isIndirectCall() || !(call->getCalledFunction()))
-    //         {
-    //             const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
-    //             if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
-    //                 calledFuncName = GV->getAliasee()->getName().str();
-    //             else
-    //                 break;
-    //         }
-    //         else
-    //         {
-    //             calledFuncName = call->getCalledFunction()->getName().str();
-    //         }
-    //         if (!found_end && keyFuncs.find(calledFuncName) != keyFuncs.end() && keyBBs.find(&BB) != keyBBs.end())
-    //         {
-    //             found_end = traverseFuncToEnd(M, *(call->getCalledFunction()), end, found_end, path, endPath, results);
-    //             if (found_end)
-    //             {
-    //                 path.clear();
-    //                 for (std::vector<keyBBPath>::iterator it = results[results.end() - results.begin() - 1].begin(); it != results[results.end() - results.begin() - 1].end(); it++)
-    //                 {
-    //                     path.push_back((*it));
-    //                 }
-    //                 results.pop_back();
-    //             }
-    //         }
-    //         break;
-    //     }
-    //     case Instruction::Invoke:
-    //     {
-    //         InvokeInst *call = static_cast<InvokeInst *>(I);
-    //         std::string calledFuncName = "";
-    //         if (call->isIndirectCall() || !(call->getCalledFunction()))
-    //         {
-    //             const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
-    //             if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
-    //                 calledFuncName = GV->getAliasee()->getName().str();
-    //             else
-    //                 break;
-    //         }
-    //         else
-    //         {
-    //             calledFuncName = call->getCalledFunction()->getName().str();
-    //         }
-    //         if (!found_end && keyFuncs.find(calledFuncName) != keyFuncs.end() && keyBBs.find(&BB) != keyBBs.end())
-    //         {
-    //             found_end = traverseFuncToEnd(M, *(call->getCalledFunction()), end, found_end, path, endPath, results);
-    //             if (found_end)
-    //             {
-    //                 path.clear();
-    //                 for (std::vector<keyBBPath>::iterator it = results[results.end() - results.begin() - 1].begin(); it != results[results.end() - results.begin() - 1].end(); it++)
-    //                 {
-    //                     path.push_back((*it));
-    //                 }
-    //                 results.pop_back();
-    //             }
-    //         }
-    //         break;
-    //     }
-    //     case Instruction::Store:
-    //     {
-    //         StoreInst *store = static_cast<StoreInst *>(I);
-    //         // If the value is the rvalue of the `store` instruction
-    //         if (V == store->getOperand(1))
-    //         {
-    //             return KeyOperation::WRITE1;
-    //         }
-    //     }
-    //     default:
-    //         break;
-    //     }
-    // }
+    int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<Value *> &pts_set)
+    {
+        // Normal store/load
+        unsigned int opcode = I->getOpcode();
+        switch (opcode)
+        {
+        case Instruction::Call:
+        {
+            CallInst *call = static_cast<CallInst *>(I);
+            std::string calledFuncName = "";
+            if (call->isIndirectCall() || !(call->getCalledFunction()))
+            {
+                const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
+                if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
+                    calledFuncName = GV->getAliasee()->getName().str();
+                else
+                    break;
+            }
+            else
+            {
+                calledFuncName = call->getCalledFunction()->getName().str();
+            }
+
+            if (call->getArgOperand(0) == V && calledFuncName != "")
+            {
+                return IdentifyCallFuncOperation(calledFuncName);
+            }
+
+            break;
+        }
+        case Instruction::Invoke:
+        {
+            InvokeInst *call = static_cast<InvokeInst *>(I);
+            std::string calledFuncName = "";
+            if (call->isIndirectCall() || !(call->getCalledFunction()))
+            {
+                const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
+                if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
+                    calledFuncName = GV->getAliasee()->getName().str();
+                else
+                    break;
+            }
+            else
+            {
+                calledFuncName = call->getCalledFunction()->getName().str();
+            }
+            if (call->getArgOperand(0) == V && calledFuncName != "")
+            {
+                return IdentifyCallFuncOperation(calledFuncName);
+            }
+            break;
+        }
+        case Instruction::Store:
+        {
+            StoreInst *store = static_cast<StoreInst *>(I);
+            // If the value is the rvalue of the `store` instruction
+            if (V == store->getOperand(1))
+            {
+
+                Value *leftV = store->getOperand(0);
+                // Link w- operation
+                if (pts_set.find(leftV) != pts_set.end())
+                {
+                    return KeyOperation::WRITE0;
+                }
+                else
+                    return KeyOperation::WRITE1;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        return KeyOperation::READ;
+    }
+
+    int PTA::IdentifyCallFuncOperation(std::string func_name)
+    {
+        // for (auto op : mqttactic::OperationFuncRead)
+        // {
+        //     if (func_name.find(op) != std::string::npos)
+        //     {
+        //         return mqttactic::READ;
+        //     }
+        // }
+        for (auto op : mqttactic::OperationFuncWrite0)
+        {
+            if (func_name.find(op) != std::string::npos)
+            {
+                return mqttactic::WRITE0;
+            }
+        }
+        for (auto op : mqttactic::OperationFuncWrite1)
+        {
+            if (func_name.find(op) != std::string::npos)
+            {
+                return mqttactic::WRITE1;
+            }
+        }
+        return mqttactic::READ;
+    }
 }
