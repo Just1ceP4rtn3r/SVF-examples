@@ -423,7 +423,8 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *
                 {
                     for (auto sbb : SemanticKeyBasicBlocks[key_var])
                     {
-                        if (sbb->values.find(operand) != sbb->values.end())
+                        const llvm::Value *ov = operand;
+                        if (sbb->values.find(ov) != sbb->values.end())
                         {
                             goto RepeatOperandAccess;
                         }
