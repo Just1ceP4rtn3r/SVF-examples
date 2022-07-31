@@ -64,6 +64,8 @@ namespace mqttactic
                         op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
                         errs() << "Value: " << OS.str() << "      " << *I << "\n";
                     }
+
+                    errs() << "Op Type: " << op_type << "\n";
                     // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
                     // errs() << "Value: "
@@ -84,7 +86,6 @@ namespace mqttactic
 
                         KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
                         SKBBS.insert(SKBBS.end(), sbb);
-                        errs() << "new bb: \n";
                     }
                     else
                     {
