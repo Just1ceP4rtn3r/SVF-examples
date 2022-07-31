@@ -133,7 +133,6 @@ namespace
             for (Module::iterator mi = M.begin(); mi != M.end(); ++mi)
             {
                 Function &f = *mi;
-
                 SearchKeyVar(M, f, key_variables);
             }
 
@@ -424,8 +423,10 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *
                     if (key_var->completed == false && ParseVariables(operand, M, F, key_var->name))
                     {
                         errs() << "Instruction: " << I << "\n\n\n\n";
-                        for (auto sbb : PointerAnalyzer->TraverseOnVFG(operand))
+                        std::set<mqttactic::SemanticKBB *> SKBBS = PointerAnalyzer->TraverseOnVFG(operand);
+                        for (auto sbb : SKBBS)
                         {
+                            errs() << sbb->values << "\n";
                             SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), sbb);
                         }
                         key_var->completed = true;
