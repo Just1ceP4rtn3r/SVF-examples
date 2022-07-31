@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#define test 0;
+
 using namespace std;
 
 struct S1
@@ -44,6 +46,8 @@ public:
 
 int main()
 {
+    int x = test;
+
     Father *fa = new Father();
     fa->func();
     fa->func2();
@@ -55,8 +59,8 @@ int main()
     fa->header = new Link();
     Link *node1 = new Link();
     Link *node2 = new Link();
-    fa->header->next = node1;
     node1->next = node2;
+    fa->header->next = node1;
 
     fa->header->next = fa->header->next->next;
 
