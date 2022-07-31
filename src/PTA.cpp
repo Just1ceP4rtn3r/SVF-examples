@@ -20,21 +20,8 @@ namespace mqttactic
             {
 
                 worklist.push(vNode);
-
-                // outs() << "Value: " << *(vNode->getValue()) << "\n"
-                //        << "Type: "
-                //        << *(vNode->getValue()->getType()) << "\n";
-
-                std::string Str;
-                raw_string_ostream OS(Str);
-                vNode->getValue()->printAsOperand(OS, false);
-                // llvm::errs()
-                //     << "****Pointer Value****\n"
-                //     << OS.str() << "\n"
-                //     << "****KBB****\n"
-                //     << *(vNode->getICFGNode()->getBB()) << "\n";
-                KBBS.insert(KBBS.end(), vNode->getICFGNode()->getBB());
-                // << "VFG: " << *(vNode) << "\n";
+                use_set.insert(vNode);
+                pts_set.insert(vNode->getValue());
                 while (!worklist.empty())
                 {
                     const VFGNode *vNode = worklist.pop();
@@ -97,6 +84,7 @@ namespace mqttactic
 
                         KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
                         SKBBS.insert(SKBBS.end(), sbb);
+                        errs() << "new bb: \n";
                     }
                     else
                     {

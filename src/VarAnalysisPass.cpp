@@ -426,7 +426,6 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *
                         std::set<mqttactic::SemanticKBB *> SKBBS = PointerAnalyzer->TraverseOnVFG(operand);
                         for (auto sbb : SKBBS)
                         {
-                            errs() << sbb->semantics << "\n";
                             SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), sbb);
                         }
                         key_var->completed = true;
