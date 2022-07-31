@@ -163,10 +163,10 @@ namespace mqttactic
         {
             const StoreInst *store = static_cast<const StoreInst *>(I);
             // If the value is the rvalue of the `store` instruction
-            if (V == store->getOperand(1))
+            Value *RightV = store->getOperand(1);
+            Value *leftV = store->getOperand(0);
+            if (pts_set.find(RightV) != pts_set.end())
             {
-
-                Value *leftV = store->getOperand(0);
                 // Link w- operation
                 if (pts_set.find(leftV) != pts_set.end())
                 {
