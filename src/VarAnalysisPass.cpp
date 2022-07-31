@@ -420,7 +420,15 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *
             for (Value *operand : inst_value_list)
             {
                 for (KeyVariable *key_var : key_variables)
-                    if (key_var->completed == false && ParseVariables(operand, M, F, key_var->name))
+                {
+                    for (auto sbb : SemanticKeyBasicBlocks[key_var])
+                    {
+                        if (sbb->values.find(operand) != sbb->values.end())
+                        {
+                            goto RepeatOperandAccess;
+                        }
+                    }
+                    if (ParseVariables(operand, M, F, key_var->name))
                     {
                         errs() << "Instruction: " << I << "\n\n\n\n";
                         std::set<mqttactic::SemanticKBB *> SKBBS = PointerAnalyzer->TraverseOnVFG(operand);
@@ -428,10 +436,13 @@ void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *
                         {
                             SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), sbb);
                         }
-                        key_var->completed = true;
 
                         errs() << "----------------------------------\n\n\n\n";
                     }
+                }
+
+            RepeatOperandAccess:
+                continue;
             }
         }
     }
