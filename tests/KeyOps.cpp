@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
 
-#define test 0;
-
 using namespace std;
 
 struct S1
@@ -46,7 +44,6 @@ public:
 
 int main()
 {
-    int x = test;
 
     Father *fa = new Father();
     fa->func();

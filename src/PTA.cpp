@@ -93,7 +93,7 @@ namespace mqttactic
                         {
                             if (sbb->bb == (*vit)->getICFGNode()->getBB())
                             {
-                                sbb->semantics &= op_type;
+                                sbb->semantics |= op_type;
                                 break;
                             }
                         }
