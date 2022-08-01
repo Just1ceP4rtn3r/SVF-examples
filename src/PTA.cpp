@@ -32,7 +32,8 @@ namespace mqttactic
                         // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto left_node : vNode->getDefSVFVars())
                         {
-                            dbgs() << *(this->Svfg->getGNode(left_node)->getValue()) << "\n";
+                            if (this->Svfg->getGNode(left_node)->getValue())
+                                dbgs() << *(this->Svfg->getGNode(left_node)->getValue()) << "\n";
                             if (this->Svfg->hasDefSVFGNode(pag->getGNode(left_node)))
                             {
 
