@@ -61,5 +61,7 @@ int main()
 
     fa->header->next = fa->header->next->next;
 
+    Link *headNode = fa->header;
+
     return 0;
 }

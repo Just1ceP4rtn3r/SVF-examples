@@ -21,7 +21,6 @@ namespace mqttactic
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
-
                 worklist.push(vNode);
                 use_set.insert(vNode);
                 pts_set.insert(vNode->getValue());
@@ -58,14 +57,14 @@ namespace mqttactic
                         const Instruction *I = inst->getInst();
                         op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
 
-                        dbgs()
-                            << "Value: " << OS.str() << "      " << *I << "\n";
+                        // dbgs()
+                        //     << "Value: " << OS.str() << "      " << *I << "\n";
                     }
                     else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                     {
                         const Instruction *I = call_inst->getCallSite();
                         op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
-                        dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
+                        // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                     }
                     // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
