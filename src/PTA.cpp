@@ -32,12 +32,15 @@ namespace mqttactic
                         // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto left_node : vNode->getDefSVFVars())
                         {
-                            const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(left_node));
-                            if (succNode->getValue() && use_set.find(succNode) == use_set.end())
+                            if (this->Svfg->hasDefSVFGNode(pag->getGNode(left_node)))
                             {
-                                use_set.insert(succNode);
-                                worklist.push(succNode);
-                                pts_set.insert(succNode->getValue());
+                                const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(left_node));
+                                if (succNode->getValue() && use_set.find(succNode) == use_set.end())
+                                {
+                                    use_set.insert(succNode);
+                                    worklist.push(succNode);
+                                    pts_set.insert(succNode->getValue());
+                                }
                             }
                         }
                         // use_set.insert(vNode);
