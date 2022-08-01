@@ -32,7 +32,7 @@ namespace mqttactic
                         dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto left_node : vNode->getDefSVFVars())
                         {
-                            dbgs() << left_node << "\n";
+                            dbgs() << pag->getGNode(left_node)->getValue() << "\n";
                         }
                         // use_set.insert(vNode);
                         for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
