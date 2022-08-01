@@ -30,11 +30,17 @@ namespace mqttactic
                     if (vNode->getValue() != nullptr)
                     {
                         dbgs() << "Value: " << *(vNode->getValue()) << "\n";
-                        for (auto left_node : vNode->getDefSVFVars())
+                        for (auto node_id : vNode->getDefSVFVars())
                         {
-                            if (this->Svfg->hasDefSVFGNode(pag->getGNode(left_node)))
+                            PAGNode *pag_node = pag->getGNode(node_id);
+                            for (auto edge : pag_node->OutEdges)
                             {
-                                const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(left_node));
+                                if (dyn_cast<SVFStmt::Addr> edge)
+                                    pag_node = edge->getDstNode()
+                            }
+                            if (this->Svfg->hasDefSVFGNode(pag_node))
+                            {
+                                const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(node_id));
                                 dbgs() << *(succNode->getValue()) << "\n";
                                 if (succNode->getValue() && use_set.find(succNode) == use_set.end())
                                 {
