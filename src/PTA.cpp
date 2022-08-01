@@ -32,8 +32,10 @@ namespace mqttactic
                         // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto left_node : vNode->getDefSVFVars())
                         {
+                            dbgs() << this->Svfg->getGNode(left_node) << "\n";
                             if (this->Svfg->hasDefSVFGNode(pag->getGNode(left_node)))
                             {
+
                                 const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(left_node));
                                 if (succNode->getValue() && use_set.find(succNode) == use_set.end())
                                 {
