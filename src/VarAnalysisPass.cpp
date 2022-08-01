@@ -22,7 +22,7 @@ namespace
 
             std::vector<mqttactic::KeyVariable *> key_variables(3);
             key_variables[0] = new mqttactic::KeyVariable();
-            key_variables[0]->name = "mosquitto_db::subscription_count";
+            key_variables[0]->name = "mosquitto__subhier::subs";
 
             key_variables[1] = new mqttactic::KeyVariable();
             key_variables[1]->name = "mosquitto_msg_data::inflight";
@@ -42,7 +42,7 @@ namespace
                 var_analyzer->SearchKeyVar(M, f, key_variables);
             }
 
-            for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_variables[1]])
+            for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_variables[0]])
             {
                 errs() << sbb->bb->getParent()->getName() << "\n"
                        << sbb->semantics << "\n";
