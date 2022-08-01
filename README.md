@@ -70,7 +70,7 @@ $ cd src/
 $ clang -fPIC -fno-rtti -Wno-deprecated -o PTA.cpp.o -c ./PTA.cpp
 $ clang  -Wl,-znodelete -fno-rtti -fPIC -shared VarAnalysisPass.cpp -o  ../bin/VarAnalysisPass.so /home/szx/Documents/tools/SVF/Release-build/lib/libSvf.a  PTA.cpp.o
 $ cd ../bin/
-$ opt -load ./VarAnalysisPass.so -VarAnalysis ../tests/Field.bc -enable-new-pm=0 -o /dev/null
+$ opt -load ./VarAnalysisPass.so -VarAnalysisPass ../tests/Field.bc -enable-new-pm=0 -o /dev/null
 
 
 # Type-analysis.cpp

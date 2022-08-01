@@ -62,7 +62,7 @@ namespace mqttactic
             this->Svfg = svfBuilder.buildFullSVFG(this->Ander);
         }
 
-        std::set<SemanticKBB *> TraverseOnVFG(llvm::Value *);
+        void TraverseOnVFG(llvm::Value *key_var, std::set<SemanticKBB *> &SKBBS);
         int IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set);
         int IdentifyCallFuncOperation(std::string func_name);
     };
