@@ -46,6 +46,10 @@ namespace
             {
                 errs() << sbb->bb->getParent()->getName() << "\n"
                        << sbb->semantics << "\n";
+                for (auto var : sbb->values)
+                {
+                    errs() << *var << "\n";
+                }
                 errs() << *(sbb->bb) << "\n\n";
             }
 

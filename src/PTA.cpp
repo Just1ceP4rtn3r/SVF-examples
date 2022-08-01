@@ -2,10 +2,13 @@
 
 namespace mqttactic
 {
-    std::set<SemanticKBB *> PTA::TraverseOnVFG(llvm::Value *key_var)
+    std::set<SemanticKBB *> PTA::TraverseOnVFG(llvm::Value *key_var, std::set<SemanticKBB *> &SKBBS)
     {
         std::set<const llvm::BasicBlock *> KBBS;
-        std::set<SemanticKBB *> SKBBS;
+        for (auto sbb : SKBBS)
+        {
+            KBBS.insert(KBBS.end(), sbb->bb);
+        }
 
         SVFIR *pag = this->Ander->getPAG();
         FIFOWorkList<const VFGNode *> worklist;

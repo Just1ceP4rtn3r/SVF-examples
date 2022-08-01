@@ -285,11 +285,7 @@ namespace mqttactic
                         if (ParseVariables(operand, M, F, key_var->name))
                         {
                             // dbgs() << "Instruction: " << I << "\n\n\n\n";
-                            std::set<mqttactic::SemanticKBB *> SKBBS = PointerAnalyzer->TraverseOnVFG(operand);
-                            for (auto sbb : SKBBS)
-                            {
-                                SemanticKeyBasicBlocks[key_var].insert(SemanticKeyBasicBlocks[key_var].end(), sbb);
-                            }
+                            PointerAnalyzer->TraverseOnVFG(operand, SemanticKeyBasicBlocks[key_var]);
                             // dbgs() << "----------------------------------\n\n\n\n";
                         }
                     }
