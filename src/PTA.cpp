@@ -32,7 +32,7 @@ namespace mqttactic
                         // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto left_node : vNode->getDefSVFVars())
                         {
-                            VFGNode *succNode = pag->getGNode(left_node)->getValue();
+                            VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(left_node));
                             if (succNode->getValue() && use_set.find(succNode) == use_set.end())
                             {
                                 use_set.insert(succNode);
