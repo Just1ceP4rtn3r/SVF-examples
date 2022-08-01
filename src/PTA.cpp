@@ -55,17 +55,15 @@ namespace mqttactic
                         const Instruction *I = inst->getInst();
                         op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
 
-                        errs()
-                            << "Value: " << OS.str() << "      " << *I << "\n";
+                        // dbgs()
+                        //     << "Value: " << OS.str() << "      " << *I << "\n";
                     }
                     else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                     {
                         const Instruction *I = call_inst->getCallSite();
                         op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
-                        errs() << "Value: " << OS.str() << "      " << *I << "\n";
+                        // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                     }
-
-                    errs() << "Op Type: " << op_type << "\n";
                     // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
                     // const SVF::Value *val = pN->getValue();
                     // errs() << "Value: "
