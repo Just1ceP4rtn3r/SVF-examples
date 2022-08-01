@@ -120,9 +120,15 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::vector<KeyVariable *> key_variables(1);
+            std::vector<KeyVariable *> key_variables(3);
             key_variables[0] = new KeyVariable();
             key_variables[0]->name = "mosquitto_db::subscription_count";
+
+            key_variables[1] = new KeyVariable();
+            key_variables[1]->name = "mosquitto_client_msg::inflight";
+
+            key_variables[2] = new KeyVariable();
+            key_variables[2]->name = "mosquitto_client_msg::queued";
 
             for (auto key_var : key_variables)
             {
