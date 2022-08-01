@@ -105,8 +105,6 @@ namespace mqttactic
                 use_set.clear();
             }
         }
-
-        return SKBBS;
     }
 
     int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set)
