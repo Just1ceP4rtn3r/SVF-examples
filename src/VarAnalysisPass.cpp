@@ -142,7 +142,7 @@ namespace
                 SearchKeyVar(M, f, key_variables);
             }
 
-            for (auto sbb : SemanticKeyBasicBlocks[key_variables[0]])
+            for (auto sbb : SemanticKeyBasicBlocks[key_variables[1]])
             {
                 errs() << sbb->bb->getParent()->getName() << "\n"
                        << sbb->semantics << "\n";
