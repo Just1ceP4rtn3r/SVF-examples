@@ -29,15 +29,13 @@ namespace mqttactic
                     const VFGNode *vNode = worklist.pop();
                     if (vNode->getValue() != nullptr)
                     {
-                        // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
+                        dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto left_node : vNode->getDefSVFVars())
                         {
-                            if (this->Svfg->getGNode(left_node)->getValue())
-                                dbgs() << *(this->Svfg->getGNode(left_node)->getValue()) << "\n";
                             if (this->Svfg->hasDefSVFGNode(pag->getGNode(left_node)))
                             {
-
                                 const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(left_node));
+                                dbgs() << *(succNode->getValue()) << "\n";
                                 if (succNode->getValue() && use_set.find(succNode) == use_set.end())
                                 {
                                     use_set.insert(succNode);
