@@ -2,7 +2,7 @@
 
 namespace mqttactic
 {
-    std::set<SemanticKBB *> PTA::TraverseOnVFG(llvm::Value *key_var, std::set<SemanticKBB *> &SKBBS)
+    void PTA::TraverseOnVFG(llvm::Value *key_var, std::set<SemanticKBB *> &SKBBS)
     {
         std::set<const llvm::BasicBlock *> KBBS;
         for (auto sbb : SKBBS)
