@@ -38,9 +38,10 @@ namespace mqttactic
                                 if (edge->getEdgeKind() == SVFStmt::Addr)
                                     pag_node = edge->getDstNode();
                             }
+                            dbgs() << pag_node->getId() << "\n";
                             if (this->Svfg->hasDefSVFGNode(pag_node))
                             {
-                                const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag->getGNode(node_id));
+                                const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag_node);
                                 dbgs() << *(succNode->getValue()) << "\n";
                                 if (succNode->getValue() && use_set.find(succNode) == use_set.end())
                                 {
