@@ -20,21 +20,21 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::vector<KeyVariable *> key_variables(3);
-            key_variables[0] = new KeyVariable();
+            std::vector<mqttactic::KeyVariable *> key_variables(3);
+            key_variables[0] = new mqttactic::KeyVariable();
             key_variables[0]->name = "mosquitto_db::subscription_count";
 
-            key_variables[1] = new KeyVariable();
+            key_variables[1] = new mqttactic::KeyVariable();
             key_variables[1]->name = "mosquitto_msg_data::inflight";
 
-            key_variables[2] = new KeyVariable();
+            key_variables[2] = new mqttactic::KeyVariable();
             key_variables[2]->name = "mosquitto_msg_data::queued";
 
             for (auto key_var : key_variables)
             {
                 std::set<mqttactic::SemanticKBB *>
                     bb_array;
-                var_analyzer->SemanticKeyBasicBlocks.insert(std::pair<KeyVariable *, std::set<mqttactic::SemanticKBB *>>(key_var, bb_array));
+                var_analyzer->SemanticKeyBasicBlocks.insert(std::pair<mqttactic::KeyVariable *, std::set<mqttactic::SemanticKBB *>>(key_var, bb_array));
             }
             for (Module::iterator mi = M.begin(); mi != M.end(); ++mi)
             {
