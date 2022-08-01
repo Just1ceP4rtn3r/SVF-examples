@@ -120,15 +120,15 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::vector<KeyVariable *> key_variables(1);
-            // key_variables[0] = new KeyVariable();
-            // key_variables[0]->name = "mosquitto_db::subscription_count";
-
-            // key_variables[1] = new KeyVariable();
-            // key_variables[1]->name = "mosquitto_client_msg::inflight";
-
+            std::vector<KeyVariable *> key_variables(3);
             key_variables[0] = new KeyVariable();
-            key_variables[0]->name = "mosquitto_client_msg::queued";
+            key_variables[0]->name = "mosquitto_db::subscription_count";
+
+            key_variables[1] = new KeyVariable();
+            key_variables[1]->name = "mosquitto_msg_data::inflight";
+
+            key_variables[2] = new KeyVariable();
+            key_variables[2]->name = "mosquitto_msg_data::queued";
 
             for (auto key_var : key_variables)
             {
@@ -142,7 +142,7 @@ namespace
                 SearchKeyVar(M, f, key_variables);
             }
 
-            for (auto sbb : SemanticKeyBasicBlocks[key_variables[0]])
+            for (auto sbb : SemanticKeyBasicBlocks[key_variables[1]])
             {
                 errs() << sbb->bb->getParent()->getName() << "\n"
                        << sbb->semantics << "\n";
