@@ -35,8 +35,8 @@ namespace mqttactic
                             PAGNode *pag_node = pag->getGNode(node_id);
                             for (auto edge : pag_node->OutEdges)
                             {
-                                if (dyn_cast<SVFStmt::Addr>(edge))
-                                    pag_node = edge->getDstNode()
+                                if (edge->getEdgeKind() == SVFStmt::Addr)
+                                    pag_node = edge->getDstNode();
                             }
                             if (this->Svfg->hasDefSVFGNode(pag_node))
                             {
