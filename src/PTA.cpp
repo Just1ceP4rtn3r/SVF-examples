@@ -79,8 +79,9 @@ namespace mqttactic
                             const Instruction *I = inst->getInst();
                             op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
 
-                            // dbgs()
-                            //     << "Value: " << OS.str() << "      " << *I << "\n";
+                            dbgs()
+                                << "Value: " << OS.str()
+                                << "Type: " << op_type << "      " << *I << "\n";
                         }
                         else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
                         {
