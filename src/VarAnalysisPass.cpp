@@ -20,7 +20,7 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::vector<mqttactic::KeyVariable *> key_variables(0);
+            std::vector<mqttactic::KeyVariable *> key_variables(1);
 
             // key_variables[0] = new mqttactic::KeyVariable();
             // key_variables[0]->name = "Father::header";
