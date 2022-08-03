@@ -67,55 +67,58 @@ namespace mqttactic
                 }
                 for (Set<const VFGNode *>::iterator vit = use_set.begin(); vit != use_set.end(); vit++)
                 {
-                    int op_type = 0;
-                    std::string Str;
-                    raw_string_ostream OS(Str);
-                    (*vit)->getValue()->printAsOperand(OS, false);
+                    if ((*vit)->getValue())
+                    {
+                        int op_type = 0;
+                        std::string Str;
+                        raw_string_ostream OS(Str);
+                        (*vit)->getValue()->printAsOperand(OS, false);
 
-                    if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
-                    {
-                        const Instruction *I = inst->getInst();
-                        op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
-
-                        // dbgs()
-                        //     << "Value: " << OS.str() << "      " << *I << "\n";
-                    }
-                    else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
-                    {
-                        const Instruction *I = call_inst->getCallSite();
-                        op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
-                        // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
-                    }
-                    // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
-                    // const SVF::Value *val = pN->getValue();
-                    // errs() << "Value: "
-                    //        << *((*vit)->getValue()) << "\n"
-                    //        << "Type: "
-                    //        << *((*vit)->getValue()->getType()) << "\n";
-                    // llvm::errs()
-                    //     << "****Pointer Value****\n"
-                    //     << OS.str() << "\n"
-                    //     << "****KBB****\n"
-                    //     << *(vNode->getICFGNode()->getBB()) << "\n";
-                    if (KBBS.find((*vit)->getICFGNode()->getBB()) == KBBS.end())
-                    {
-                        SemanticKBB *sbb = new SemanticKBB();
-                        sbb->bb = (*vit)->getICFGNode()->getBB();
-                        sbb->values.push_back((*vit)->getValue());
-                        sbb->semantics = op_type;
-
-                        KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
-                        SKBBS.insert(SKBBS.end(), sbb);
-                    }
-                    else
-                    {
-                        for (auto sbb : SKBBS)
+                        if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
                         {
-                            if (sbb->bb == (*vit)->getICFGNode()->getBB())
+                            const Instruction *I = inst->getInst();
+                            op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
+
+                            // dbgs()
+                            //     << "Value: " << OS.str() << "      " << *I << "\n";
+                        }
+                        else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
+                        {
+                            const Instruction *I = call_inst->getCallSite();
+                            op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
+                            // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
+                        }
+                        // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
+                        // const SVF::Value *val = pN->getValue();
+                        // errs() << "Value: "
+                        //        << *((*vit)->getValue()) << "\n"
+                        //        << "Type: "
+                        //        << *((*vit)->getValue()->getType()) << "\n";
+                        // llvm::errs()
+                        //     << "****Pointer Value****\n"
+                        //     << OS.str() << "\n"
+                        //     << "****KBB****\n"
+                        //     << *(vNode->getICFGNode()->getBB()) << "\n";
+                        if (KBBS.find((*vit)->getICFGNode()->getBB()) == KBBS.end())
+                        {
+                            SemanticKBB *sbb = new SemanticKBB();
+                            sbb->bb = (*vit)->getICFGNode()->getBB();
+                            sbb->values.push_back((*vit)->getValue());
+                            sbb->semantics = op_type;
+
+                            KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
+                            SKBBS.insert(SKBBS.end(), sbb);
+                        }
+                        else
+                        {
+                            for (auto sbb : SKBBS)
                             {
-                                sbb->values.push_back((*vit)->getValue());
-                                sbb->semantics |= op_type;
-                                break;
+                                if (sbb->bb == (*vit)->getICFGNode()->getBB())
+                                {
+                                    sbb->values.push_back((*vit)->getValue());
+                                    sbb->semantics |= op_type;
+                                    break;
+                                }
                             }
                         }
                     }
