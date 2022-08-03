@@ -20,7 +20,7 @@ namespace
 
             errs() << "----------------------------------\n";
 
-            std::vector<mqttactic::KeyVariable *> key_variables(3);
+            std::vector<mqttactic::KeyVariable *> key_variables(0);
 
             // key_variables[0] = new mqttactic::KeyVariable();
             // key_variables[0]->name = "Father::header";
@@ -28,11 +28,11 @@ namespace
             key_variables[0] = new mqttactic::KeyVariable();
             key_variables[0]->name = "mosquitto__subhier::subs";
 
-            key_variables[1] = new mqttactic::KeyVariable();
-            key_variables[1]->name = "mosquitto_msg_data::inflight";
+            // key_variables[1] = new mqttactic::KeyVariable();
+            // key_variables[1]->name = "mosquitto_msg_data::inflight";
 
-            key_variables[2] = new mqttactic::KeyVariable();
-            key_variables[2]->name = "mosquitto_msg_data::queued";
+            // key_variables[2] = new mqttactic::KeyVariable();
+            // key_variables[2]->name = "mosquitto_msg_data::queued";
 
             for (auto key_var : key_variables)
             {
