@@ -27,42 +27,41 @@ namespace mqttactic
                 while (!worklist.empty())
                 {
                     const VFGNode *vNode = worklist.pop();
-                    if (vNode->getValue() != nullptr)
+
+                    // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
+                    // for (auto node_id : vNode->getDefSVFVars())
+                    // {
+                    //     PAGNode *pag_node = pag->getGNode(node_id);
+                    //     for (auto edge : pag_node->getOutEdges())
+                    //     {
+                    //         if (edge->getEdgeKind() == SVFStmt::Addr)
+                    //             pag_node = edge->getDstNode();
+                    //     }
+                    //     // dbgs() << pag_node->getId() << "\n";
+                    //     if (this->Svfg->hasDefSVFGNode(pag_node))
+                    //     {
+                    //         const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag_node);
+                    //         // dbgs() << *(succNode->getValue()) << "\n";
+                    //         if (succNode->getValue() && use_set.find(succNode) == use_set.end())
+                    //         {
+                    //             use_set.insert(succNode);
+                    //             worklist.push(succNode);
+                    //             pts_set.insert(succNode->getValue());
+                    //         }
+                    //     }
+                    // }
+                    for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
+                                                                                 vNode->OutEdgeEnd();
+                         it != eit; ++it)
                     {
-                        // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
-                        // for (auto node_id : vNode->getDefSVFVars())
-                        // {
-                        //     PAGNode *pag_node = pag->getGNode(node_id);
-                        //     for (auto edge : pag_node->getOutEdges())
-                        //     {
-                        //         if (edge->getEdgeKind() == SVFStmt::Addr)
-                        //             pag_node = edge->getDstNode();
-                        //     }
-                        //     // dbgs() << pag_node->getId() << "\n";
-                        //     if (this->Svfg->hasDefSVFGNode(pag_node))
-                        //     {
-                        //         const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag_node);
-                        //         // dbgs() << *(succNode->getValue()) << "\n";
-                        //         if (succNode->getValue() && use_set.find(succNode) == use_set.end())
-                        //         {
-                        //             use_set.insert(succNode);
-                        //             worklist.push(succNode);
-                        //             pts_set.insert(succNode->getValue());
-                        //         }
-                        //     }
-                        // }
-                        for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
-                                                                                     vNode->OutEdgeEnd();
-                             it != eit; ++it)
+                        VFGEdge *edge = *it;
+                        VFGNode *succNode = edge->getDstNode();
+                        if (use_set.find(succNode) == use_set.end())
                         {
-                            VFGEdge *edge = *it;
-                            VFGNode *succNode = edge->getDstNode();
-                            if (succNode->getValue() && use_set.find(succNode) == use_set.end())
-                            {
-                                use_set.insert(succNode);
-                                worklist.push(succNode);
+                            use_set.insert(succNode);
+                            worklist.push(succNode);
+                            if (succNode->getValue())
                                 pts_set.insert(succNode->getValue());
-                            }
                         }
                     }
                 }
