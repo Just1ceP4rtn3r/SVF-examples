@@ -51,7 +51,6 @@ namespace mqttactic
                         //         }
                         //     }
                         // }
-                        // use_set.insert(vNode);
                         for (VFGNode::const_iterator it = vNode->OutEdgeBegin(), eit =
                                                                                      vNode->OutEdgeEnd();
                              it != eit; ++it)

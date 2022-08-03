@@ -63,7 +63,10 @@ int main()
 
     Link *headNode = fa->header;
 
-    headNode->f = 20;
+    while (headNode)
+    {
+        headNode = headNode->next;
+    }
 
     return 0;
 }
