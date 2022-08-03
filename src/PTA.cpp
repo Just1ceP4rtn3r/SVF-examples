@@ -56,7 +56,7 @@ namespace mqttactic
                     {
                         VFGEdge *edge = *it;
                         VFGNode *succNode = edge->getDstNode();
-                        if (use_set.find(succNode) == use_set.end())
+                        if ((succNode->getNodeKind() == VFGNode::MPhi || succNode->getNodeKind() == VFGNode::MIntraPhi || succNode->getNodeKind() == VFGNode::MInterPhi) && use_set.find(succNode) == use_set.end())
                         {
                             use_set.insert(succNode);
                             worklist.push(succNode);
