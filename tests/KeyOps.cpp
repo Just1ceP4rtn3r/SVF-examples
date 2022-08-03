@@ -63,5 +63,7 @@ int main()
 
     Link *headNode = fa->header;
 
+    headNode->f = 20;
+
     return 0;
 }

@@ -29,7 +29,7 @@ namespace mqttactic
                     const VFGNode *vNode = worklist.pop();
                     if (vNode->getValue() != nullptr)
                     {
-                        dbgs() << "Value: " << *(vNode->getValue()) << "\n";
+                        // dbgs() << "Value: " << *(vNode->getValue()) << "\n";
                         for (auto node_id : vNode->getDefSVFVars())
                         {
                             PAGNode *pag_node = pag->getGNode(node_id);
