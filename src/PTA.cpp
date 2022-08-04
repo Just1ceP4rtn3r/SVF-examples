@@ -57,13 +57,11 @@ namespace mqttactic
                         VFGEdge *edge = *it;
                         VFGNode *succNode = edge->getDstNode();
                         //(succNode->getNodeKind() == VFGNode::MIntraPhi)
+
+                        SVFUtil::errs() << *succNode << "\n";
                         if (succNode->getValue() == nullptr && !(edge->isIntraVFGEdge()))
                         {
                             continue;
-                        }
-                        else
-                        {
-                            SVFUtil::errs() << *succNode << "\n";
                         }
 
                         if (use_set.find(succNode) == use_set.end())
