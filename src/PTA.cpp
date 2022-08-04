@@ -22,7 +22,7 @@ namespace mqttactic
             if (vNode->getValue() != nullptr)
             {
 
-                for (NodeBS::iterator nIter = this->Ander->getAllValidPtrs().begin();
+                for (auto nIter = this->Ander->getAllValidPtrs().begin();
                      nIter != this->Ander->getAllValidPtrs().end();
                      ++nIter)
                 {
