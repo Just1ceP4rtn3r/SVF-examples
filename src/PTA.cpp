@@ -85,7 +85,7 @@ namespace mqttactic
                 }
                 for (Set<const VFGNode *>::iterator vit = use_set.begin(); vit != use_set.end(); vit++)
                 {
-                    if ((*vit)->getValue())
+                    if ((*vit)->getValue() && StmtVFGNode::classof(*vit))
                     {
                         int op_type = 0;
                         std::string Str;
