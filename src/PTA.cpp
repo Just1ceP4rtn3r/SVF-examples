@@ -22,7 +22,7 @@ namespace mqttactic
             if (vNode->getValue() != nullptr)
             {
 
-                for (auto ptr : this->Ander->getPts(pNode->getId()))
+                for (auto ptr : this->Ander->getPts(vNode->getId()))
                 {
                     if (pag->getGNode(ptr)->hasValue())
                         dbgs() << "Value: " << *(pag->getGNode(ptr)->getValue()) << "\n";
