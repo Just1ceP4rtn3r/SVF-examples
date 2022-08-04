@@ -41,7 +41,7 @@ namespace mqttactic
     public:
         SVFModule *SvfModule;
         SVFIR *Pag;
-        Andersen *Ander;
+        FlowSensitive *Ander;
         SVFG *Svfg;
 
         PTA(llvm::Module &M)
