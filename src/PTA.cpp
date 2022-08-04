@@ -21,14 +21,19 @@ namespace mqttactic
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
-                dbgs() << "pid: " << pNode->getId() << "\nvid: " << vNode->getId() << "\n";
 
-                for (auto ptr : this->Ander->getPts(pNode->getId()))
+                for (NodeBS::iterator nIter = this->Ander->getAllValidPtrs().begin();
+                     nIter != this->Ander->getAllValidPtrs().end();
+                     ++nIter)
                 {
-                    if (pag->getGNode(ptr)->hasValue())
-                        dbgs() << "Value: " << ptr << "\n";
+                    if (this->Ander->alias(*nIter, pNode->getId()) != NoAlias)
+                    {
+                        if (targetAliases.find(*nIter) == targetAliases.end())
+                        {
+                            dbgs() << "[+] Alias found:" << *nIter << "\n";
+                        }
+                    }
                 }
-
                 worklist.push(vNode);
                 use_set.insert(vNode);
                 pts_set.insert(vNode->getValue());
