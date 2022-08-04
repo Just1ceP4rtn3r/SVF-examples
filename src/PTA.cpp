@@ -24,7 +24,8 @@ namespace mqttactic
 
                 for (auto ptr : this->Ander->getPts(pNode->getId()))
                 {
-                    dbgs() << "Value: " << *(pag->getGNode(ptr)->getValue()) << "\n";
+                    if (pag->getGNode(ptr)->hasValue())
+                        dbgs() << "Value: " << *(pag->getGNode(ptr)->getValue()) << "\n";
                 }
 
                 worklist.push(vNode);
