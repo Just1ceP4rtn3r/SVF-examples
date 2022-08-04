@@ -63,7 +63,7 @@ namespace mqttactic
                         }
                         else
                         {
-                            dbgs() << "Type: " << succNode->getNodeKind() << "    id: " succNode->getId() << "\n";
+                            SVFUtil::errs() << *succNode << "\n";
                         }
 
                         if (use_set.find(succNode) == use_set.end())
