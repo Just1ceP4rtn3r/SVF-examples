@@ -21,11 +21,12 @@ namespace mqttactic
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
+                dbgs() << "pid: " << pNode->getId() << "\nvid: " << vNode->getId() << "\n";
 
-                for (auto ptr : this->Ander->getPts(vNode->getId()))
+                for (auto ptr : this->Ander->getPts(pNode->getId()))
                 {
                     if (pag->getGNode(ptr)->hasValue())
-                        dbgs() << "Value: " << *(pag->getGNode(ptr)->getValue()) << "\n";
+                        dbgs() << "Value: " << ptr << "\n";
                 }
 
                 worklist.push(vNode);
