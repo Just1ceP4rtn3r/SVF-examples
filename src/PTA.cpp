@@ -57,7 +57,17 @@ namespace mqttactic
                     {
                         VFGEdge *edge = *it;
                         VFGNode *succNode = edge->getDstNode();
-                        //(succNode->getNodeKind() == VFGNode::MIntraPhi)
+
+                        // if (edge->isCallVFGEdge())
+                        // {
+                        //     vfCond = ComputeInterCallVFGGuard(nodeBB, succBB, getCallSite(edge)->getParent());
+                        // }
+                        // else if (edge->isRetVFGEdge())
+                        // {
+                        //     vfCond = ComputeInterRetVFGGuard(nodeBB, succBB, getRetSite(edge)->getParent());
+                        // }
+                        // else
+                        //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
                         if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MIntraPhi))
                         {
@@ -68,7 +78,7 @@ namespace mqttactic
                         {
                             use_set.insert(succNode);
                             worklist.push(succNode);
-                            if (succNode->getValue())
+                            if (succNode->getValue() && StmtVFGNode::classof(succNode))
                                 pts_set.insert(succNode->getValue());
                         }
                     }
