@@ -21,6 +21,12 @@ namespace mqttactic
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
+
+                for (auto ptr : this->Ander->getPts(pNode->getId()))
+                {
+                    dbgs() << "Value: " << *(pag->getGNode(ptr)->getValue()) << "\n";
+                }
+
                 worklist.push(vNode);
                 use_set.insert(vNode);
                 pts_set.insert(vNode->getValue());
