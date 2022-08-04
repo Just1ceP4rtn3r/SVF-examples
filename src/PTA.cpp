@@ -21,6 +21,7 @@ namespace mqttactic
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
+
                 worklist.push(vNode);
                 use_set.insert(vNode);
                 pts_set.insert(vNode->getValue());
@@ -58,7 +59,7 @@ namespace mqttactic
                         VFGNode *succNode = edge->getDstNode();
                         //(succNode->getNodeKind() == VFGNode::MIntraPhi)
 
-                        if (succNode->getValue() == nullptr)
+                        if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MIntraPhi))
                         {
                             continue;
                         }

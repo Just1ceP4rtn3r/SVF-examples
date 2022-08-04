@@ -5,7 +5,6 @@
 #include "SVF-FE/Graph2Json.h"
 #include "Graphs/SVFG.h"
 #include "WPA/Andersen.h"
-#include "WPA/FlowSensitive.h"
 #include "Util/Options.h"
 #include "Util/SVFBasicTypes.h"
 #include "MemoryModel/PointerAnalysisImpl.h"
@@ -41,7 +40,7 @@ namespace mqttactic
     public:
         SVFModule *SvfModule;
         SVFIR *Pag;
-        FlowSensitive *Ander;
+        Andersen *Ander;
         SVFG *Svfg;
 
         PTA(llvm::Module &M)
@@ -56,7 +55,7 @@ namespace mqttactic
             SVFIRBuilder builder;
             this->Pag = builder.build(this->SvfModule);
 
-            this->Ander = new FlowSensitive(this->Pag);
+            this->Ander = new Andersen(this->Pag);
             this->Ander->analyze();
 
             SVFGBuilder svfBuilder;
