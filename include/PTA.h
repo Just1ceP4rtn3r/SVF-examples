@@ -61,7 +61,7 @@ namespace mqttactic
             SVFGBuilder svfBuilder;
             // this->Svfg = svfBuilder.buildPTROnlySVFG(this->Ander);
             this->Svfg = svfBuilder.buildFullSVFG(this->Ander);
-            //  this->Svfg->dump("../tests/PTROnlySvfg");
+            this->Svfg->dump("../tests/Svfg");
         }
 
         void TraverseOnVFG(llvm::Value *key_var, std::set<SemanticKBB *> &SKBBS);
