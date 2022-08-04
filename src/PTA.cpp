@@ -69,7 +69,7 @@ namespace mqttactic
                         // else
                         //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
-                        SVFUtil::errs() << "src: " << *vNode
+                        SVFUtil::errs() << "src: " << *vNode << "\n"
                                         << "dst: " << *succNode << "\n";
 
                         if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MIntraPhi))
