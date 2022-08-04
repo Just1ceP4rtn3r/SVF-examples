@@ -28,10 +28,8 @@ namespace mqttactic
                 {
                     if (this->Ander->alias(*nIter, pNode->getId()) != NoAlias)
                     {
-                        if (targetAliases.find(*nIter) == targetAliases.end())
-                        {
-                            dbgs() << "[+] Alias found:" << *nIter << "\n";
-                        }
+
+                        dbgs() << "[+] Alias found:" << *nIter << "\n";
                     }
                 }
                 worklist.push(vNode);
