@@ -59,6 +59,7 @@ namespace mqttactic
             this->Ander->analyze();
 
             SVFGBuilder svfBuilder;
+            svfBuilder.buildPTROnlySVFG
             this->Svfg = svfBuilder.buildFullSVFG(this->Ander);
         }
 

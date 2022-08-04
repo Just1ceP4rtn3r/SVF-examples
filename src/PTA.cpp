@@ -56,7 +56,7 @@ namespace mqttactic
                     {
                         VFGEdge *edge = *it;
                         VFGNode *succNode = edge->getDstNode();
-                        if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MPhi || succNode->getNodeKind() == VFGNode::MIntraPhi || succNode->getNodeKind() == VFGNode::MInterPhi))
+                        if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MIntraPhi))
                         {
                             continue;
                         }
