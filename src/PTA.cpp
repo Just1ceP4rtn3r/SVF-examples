@@ -61,6 +61,11 @@ namespace mqttactic
                         {
                             continue;
                         }
+                        else
+                        {
+                            dbgs() << "Type: " << succNode->getNodeKind() << "    id: " succNode->getId() << "\n";
+                        }
+
                         if (use_set.find(succNode) == use_set.end())
                         {
                             use_set.insert(succNode);

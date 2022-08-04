@@ -61,8 +61,6 @@ namespace mqttactic
             SVFGBuilder svfBuilder;
             // this->Svfg = svfBuilder.buildPTROnlySVFG(this->Ander);
             this->Svfg = svfBuilder.buildFullSVFG(this->Ander);
-
-            this->Ander->dumpTopLevelPtsTo();
             //  this->Svfg->dump("../tests/PTROnlySvfg");
         }
 
