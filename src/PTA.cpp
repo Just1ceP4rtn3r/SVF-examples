@@ -21,17 +21,6 @@ namespace mqttactic
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
             if (vNode->getValue() != nullptr)
             {
-
-                for (auto nIter = this->Ander->getAllValidPtrs().begin();
-                     nIter != this->Ander->getAllValidPtrs().end();
-                     ++nIter)
-                {
-                    if (this->Ander->alias(*nIter, pNode->getId()) != NoAlias)
-                    {
-                        if (pag->getGNode(*nIter)->getValue())
-                            dbgs() << "[+] Alias found:" << *(pag->getGNode(*nIter)->getValue()) << "\n";
-                    }
-                }
                 worklist.push(vNode);
                 use_set.insert(vNode);
                 pts_set.insert(vNode->getValue());
@@ -67,7 +56,8 @@ namespace mqttactic
                     {
                         VFGEdge *edge = *it;
                         VFGNode *succNode = edge->getDstNode();
-                        if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MIntraPhi))
+                        //(succNode->getNodeKind() == VFGNode::MIntraPhi)
+                        if (succNode->getValue() == nullptr && !(edge->isIntraVFGEdge()))
                         {
                             continue;
                         }
