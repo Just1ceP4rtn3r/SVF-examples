@@ -28,8 +28,8 @@ namespace mqttactic
                 {
                     if (this->Ander->alias(*nIter, pNode->getId()) != NoAlias)
                     {
-
-                        dbgs() << "[+] Alias found:" << *nIter << "\n";
+                        if (pag->getGNode(*nIter)->getValue())
+                            dbgs() << "[+] Alias found:" << *(pag->getGNode(*nIter)->getValue()) << "\n";
                     }
                 }
                 worklist.push(vNode);
