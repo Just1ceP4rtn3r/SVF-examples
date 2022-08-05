@@ -11,6 +11,7 @@
 #include "SVF-FE/SVFIRBuilder.h"
 #include "llvm/Support/raw_ostream.h"
 #include <set>
+#include <map>
 
 using namespace llvm;
 using namespace std;
@@ -18,6 +19,9 @@ using namespace SVF;
 
 namespace mqttactic
 {
+
+    typedef std::vector<const llvm::BasicBlock *> KBBContext;
+
     struct SemanticKBB
     {
         const llvm::BasicBlock *bb;

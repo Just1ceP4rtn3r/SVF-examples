@@ -12,7 +12,7 @@ namespace mqttactic
 
         SVFIR *pag = this->Ander->getPAG();
         FIFOWorkList<const VFGNode *> worklist;
-        Set<const VFGNode *> use_set;
+        std::map<const VFGNode *, std::vector<KBBContext>> svfg_nodes_with_context;
         Set<const Value *> pts_set;
 
         PAGNode *pNode = pag->getGNode(pag->getValueNode(key_var));
@@ -23,7 +23,11 @@ namespace mqttactic
             {
 
                 worklist.push(vNode);
-                use_set.insert(vNode);
+                if (svfg_nodes_with_context.find(vNode) == svfg_nodes_with_context.end())
+                {
+                    std::vector<KBBContext> kbb_contexts;
+                    svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(vNode, kbb_contexts));
+                }
                 pts_set.insert(vNode->getValue());
                 while (!worklist.empty())
                 {
@@ -43,9 +47,9 @@ namespace mqttactic
                     //     {
                     //         const VFGNode *succNode = this->Svfg->getDefSVFGNode(pag_node);
                     //         // dbgs() << *(succNode->getValue()) << "\n";
-                    //         if (succNode->getValue() && use_set.find(succNode) == use_set.end())
+                    //         if (succNode->getValue() && svfg_nodes_with_context.find(succNode) == svfg_nodes_with_context.end())
                     //         {
-                    //             use_set.insert(succNode);
+                    //             svfg_nodes_with_context.insert(succNode);
                     //             worklist.push(succNode);
                     //             pts_set.insert(succNode->getValue());
                     //         }
@@ -72,72 +76,124 @@ namespace mqttactic
                         SVFUtil::errs() << "src: " << *vNode << "\n"
                                         << "dst: " << *succNode << "\n";
 
-                        if (succNode->getValue() == nullptr && !(succNode->getNodeKind() == VFGNode::MIntraPhi))
+                        // MA node
+                        if (succNode->getValue() == nullptr)
                         {
-                            continue;
+                            // ignore other memory region node: FPIN/FPOUT/APIN/APOUT/MPhi/MInterPhi
+                            if (!(succNode->getNodeKind() == VFGNode::MIntraPhi))
+                                continue;
+                        }
+                        // stmt node/param node
+                        else
+                        {
+                            if (succNode->getNodeKind() == VFGNode::Gep)
+                            {
+                                if (GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
+                                {
+                                }
+                            }
                         }
 
-                        if (use_set.find(succNode) == use_set.end())
+                        if (svfg_nodes_with_context.find(succNode) == svfg_nodes_with_context.end())
                         {
-                            use_set.insert(succNode);
+                            if (svfg_nodes_with_context.find(vNode) == svfg_nodes_with_context.end())
+                            {
+                                llvm::errs() << "ERROR: can not find the source svfg node\n";
+                                continue;
+                            }
+                            std::vector<KBBContext> kbb_contexts(svfg_nodes_with_context[vNode]);
+                            if (kbb_contexts.size() == 0)
+                            {
+                                KBBContext kbb_c;
+                                kbb_contexts.push_back(kbb_c);
+                            }
+                            for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                            {
+                                const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
+                                if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
+                                    (*kbb_c).push_back(bb);
+                            }
+                            svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(succNode, kbb_contexts));
                             worklist.push(succNode);
                             if (succNode->getValue() && StmtVFGNode::classof(succNode))
                                 pts_set.insert(succNode->getValue());
                         }
+                        else
+                        {
+                            if (svfg_nodes_with_context.find(vNode) == svfg_nodes_with_context.end())
+                            {
+                                llvm::errs() << "ERROR: can not find the source svfg node\n";
+                                continue;
+                            }
+                            std::vector<KBBContext> kbb_contexts(svfg_nodes_with_context[vNode]);
+                            if (kbb_contexts.size() == 0)
+                            {
+                                KBBContext kbb_c;
+                                kbb_contexts.push_back(kbb_c);
+                            }
+                            for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                            {
+                                const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
+                                if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
+                                    (*kbb_c).push_back(bb);
+                                svfg_nodes_with_context[succNode].push_back(*kbb_c);
+                            }
+                        }
                     }
                 }
-                for (Set<const VFGNode *>::iterator vit = use_set.begin(); vit != use_set.end(); vit++)
+                for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
                 {
-                    if ((*vit)->getValue() && StmtVFGNode::classof(*vit))
+                    if (vit->first->getValue() && StmtVFGNode::classof(vit->first))
                     {
                         int op_type = 0;
                         std::string Str;
                         raw_string_ostream OS(Str);
-                        (*vit)->getValue()->printAsOperand(OS, false);
+                        vit->first->getValue()->printAsOperand(OS, false);
 
-                        if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((*vit)->getICFGNode()))
+                        if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((vit->first)->getICFGNode()))
                         {
                             const Instruction *I = inst->getInst();
-                            op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
+                            op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
 
                             // dbgs()
                             //     << "Value: " << OS.str()
                             //     << "Type: " << op_type << "      " << *I << "\n";
                         }
-                        else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((*vit)->getICFGNode()))
+                        else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((vit->first)->getICFGNode()))
                         {
                             const Instruction *I = call_inst->getCallSite();
-                            op_type = IdentifyOperationType(I, (*vit)->getValue(), pts_set);
+                            op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
                             // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
-                        // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(*vit);
+                        // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(vit->first);
                         // const SVF::Value *val = pN->getValue();
                         // errs() << "Value: "
-                        //        << *((*vit)->getValue()) << "\n"
+                        //        << *((vit->first)->getValue()) << "\n"
                         //        << "Type: "
-                        //        << *((*vit)->getValue()->getType()) << "\n";
+                        //        << *((vit->first)->getValue()->getType()) << "\n";
                         // llvm::errs()
                         //     << "****Pointer Value****\n"
                         //     << OS.str() << "\n"
                         //     << "****KBB****\n"
                         //     << *(vNode->getICFGNode()->getBB()) << "\n";
-                        if (KBBS.find((*vit)->getICFGNode()->getBB()) == KBBS.end())
+                        const llvm::BasicBlock *bb = (vit->first)->getICFGNode()->getBB();
+                        if (KBBS.find(bb) == KBBS.end())
                         {
                             SemanticKBB *sbb = new SemanticKBB();
-                            sbb->bb = (*vit)->getICFGNode()->getBB();
-                            sbb->values.push_back((*vit)->getValue());
+                            sbb->bb = bb;
+                            sbb->values.push_back((vit->first)->getValue());
                             sbb->semantics = op_type;
 
-                            KBBS.insert(KBBS.end(), (*vit)->getICFGNode()->getBB());
+                            KBBS.insert(KBBS.end(), bb);
                             SKBBS.insert(SKBBS.end(), sbb);
                         }
                         else
                         {
                             for (auto sbb : SKBBS)
                             {
-                                if (sbb->bb == (*vit)->getICFGNode()->getBB())
+                                if (sbb->bb == bb)
                                 {
-                                    sbb->values.push_back((*vit)->getValue());
+                                    sbb->values.push_back((vit->first)->getValue());
                                     sbb->semantics |= op_type;
                                     break;
                                 }
@@ -146,7 +202,7 @@ namespace mqttactic
                     }
                 }
                 worklist.clear();
-                use_set.clear();
+                svfg_nodes_with_context.clear();
             }
         }
     }
