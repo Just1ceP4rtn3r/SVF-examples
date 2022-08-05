@@ -88,7 +88,7 @@ namespace mqttactic
                         {
                             if (succNode->getNodeKind() == VFGNode::Gep)
                             {
-                                if (GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
+                                if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
                                 }
                             }
