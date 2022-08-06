@@ -181,7 +181,7 @@ namespace mqttactic
                         {
                             const Instruction *I = call_inst->getCallSite();
                             op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
-                            // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
+                            dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(vit->first);
                         // const SVF::Value *val = pN->getValue();
@@ -315,7 +315,7 @@ namespace mqttactic
     int PTA::IdentifyCallFuncOperation(std::string func_name)
     {
         std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
-        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free"};
+        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv"};
         std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
         // for (auto op : OperationFuncRead)
         // {
