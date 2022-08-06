@@ -75,8 +75,8 @@ namespace mqttactic
                         // else
                         //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
-                        SVFUtil::errs() << "src: " << *vNode << "\n"
-                                        << "dst: " << *succNode << "\n";
+                        // SVFUtil::errs() << "src: " << *vNode << "\n"
+                        //                 << "dst: " << *succNode << "\n";
 
                         // MA node
                         if (succNode->getValue() == nullptr)
@@ -170,6 +170,7 @@ namespace mqttactic
                         }
                     }
                 }
+
                 for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
                 {
                     if (vit->first->getValue() && (StmtVFGNode::classof(vit->first) || ArgumentVFGNode::classof(vit->first)))
@@ -178,6 +179,9 @@ namespace mqttactic
                         std::string Str;
                         raw_string_ostream OS(Str);
                         vit->first->getValue()->printAsOperand(OS, false);
+
+                        dbgs()
+                            << "Value: " << OS.str() << "\n";
 
                         if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((vit->first)->getICFGNode()))
                         {
