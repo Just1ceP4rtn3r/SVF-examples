@@ -59,7 +59,7 @@ namespace
                 {
                     for (auto bb : kbb_c)
                     {
-                        errs() << bb->getParent()->getName() << ":" var_analyzer->getBBLabel(bb) << " --> ";
+                        errs() << bb->getParent()->getName() << ":" << var_analyzer->getBBLabel(bb) << " --> ";
                     }
                     errs() << "\n";
                 }
