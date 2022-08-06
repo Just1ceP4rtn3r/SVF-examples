@@ -89,5 +89,7 @@ int main()
 
     func4(fa->header);
 
+    func5();
+
     return 0;
 }
