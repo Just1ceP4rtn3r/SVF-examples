@@ -85,8 +85,8 @@ namespace mqttactic
                         // else
                         //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
-                        SVFUtil::errs() << "src: " << *vNode << "\n"
-                                        << "dst: " << *succNode << "\n";
+                        // SVFUtil::errs() << "src: " << *vNode << "\n"
+                        //                 << "dst: " << *succNode << "\n";
 
                         // MA node
                         if (succNode->getValue() == nullptr)
@@ -102,7 +102,7 @@ namespace mqttactic
                             {
                                 if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
-
+                                    dbgs() << GEP->getOperand(0)->getType()->getStructName() << "\n";
                                     if (key_var_fields.find(GEP->getOperand(0)) != key_var_fields.end())
                                         continue;
                                     else
