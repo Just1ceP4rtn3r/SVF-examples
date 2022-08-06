@@ -103,7 +103,12 @@ namespace mqttactic
                                 if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
                                     if (GEP->getSourceElementType() != key_var_type)
+                                    {
+                                        dbgs() << "key_var_type: " << *key_var_type << "\n"
+                                               << "type: " << *(GEP->getSourceElementType()) << "\n";
+
                                         continue;
+                                    }
                                 }
                                 else
                                 {
