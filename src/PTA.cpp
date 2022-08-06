@@ -102,11 +102,28 @@ namespace mqttactic
                             {
                                 if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
-                                    if (GEP->getSourceElementType() != key_var_type)
+                                    int type_match = false;
+                                    if (GEP->getSourceElementType() == key_var_type)
+                                        type_match = true;
+                                    else
+                                    {
+                                        llvm::Type *ty = key_var_type;
+                                        while (PointerType *base_type = dyn_cast<PointerType>(ty))
+                                        {
+                                            if (!(base_type->isOpaque()))
+                                                ty = base_type->getElementType();
+
+                                            if (GEP->getSourceElementType() == ty)
+                                            {
+                                                type_match = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (!type_match)
                                     {
                                         dbgs() << "key_var_type: " << *key_var_type << "\n"
                                                << "type: " << *(GEP->getSourceElementType()) << "\n";
-
                                         continue;
                                     }
                                 }
