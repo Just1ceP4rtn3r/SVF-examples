@@ -161,7 +161,7 @@ namespace mqttactic
                 }
                 for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
                 {
-                    if (vit->first->getValue() && StmtVFGNode::classof(vit->first))
+                    if (vit->first->getValue() && (StmtVFGNode::classof(vit->first) || ArgumentVFGNode::classof(vit->first)))
                     {
                         int op_type = 0;
                         std::string Str;
