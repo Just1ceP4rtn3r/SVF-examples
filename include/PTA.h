@@ -26,6 +26,7 @@ namespace mqttactic
     {
         const llvm::BasicBlock *bb;
         std::vector<const llvm::Value *> values;
+        std::vector<KBBContext> contexts;
         int semantics;
     };
 

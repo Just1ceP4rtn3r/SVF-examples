@@ -2,6 +2,16 @@
 
 namespace mqttactic
 {
+    std::string VarAnalysis::getBBLabel(const BasicBlock *Node)
+    {
+        if (!Node->getName().empty())
+            return Node->getName().str();
+        std::string Str;
+        raw_string_ostream OS(Str);
+        Node->printAsOperand(OS, false);
+        return OS.str();
+    }
+
     const DIType *VarAnalysis::GetBasicDIType(const Metadata *MD)
     {
         const DIType *ret = nullptr;

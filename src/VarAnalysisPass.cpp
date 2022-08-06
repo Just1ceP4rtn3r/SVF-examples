@@ -22,11 +22,11 @@ namespace
 
             std::vector<mqttactic::KeyVariable *> key_variables(1);
 
-            // key_variables[0] = new mqttactic::KeyVariable();
-            // key_variables[0]->name = "Father::header";
-
             key_variables[0] = new mqttactic::KeyVariable();
-            key_variables[0]->name = "mosquitto__subhier::subs";
+            key_variables[0]->name = "Father::header";
+
+            // key_variables[0] = new mqttactic::KeyVariable();
+            // key_variables[0]->name = "mosquitto__subhier::subs";
 
             // key_variables[1] = new mqttactic::KeyVariable();
             // key_variables[1]->name = "mosquitto_msg_data::inflight";
@@ -54,6 +54,16 @@ namespace
                 {
                     errs() << *var << "\n";
                 }
+                errs() << "----------------------------------\n";
+                for (auto kbb_c : sbb->contexts)
+                {
+                    for (auto bb : kbb_c)
+                    {
+                        errs() << bb->getParent()->getName() << ":" var_analyzer->getBBLabel(bb) << " --> ";
+                    }
+                    errs() << "\n";
+                }
+
                 errs() << *(sbb->bb) << "\n\n";
             }
 

@@ -40,7 +40,17 @@ public:
     {
         this->e->f = 2;
     }
+
+    void func3()
+    {
+        free(this->header);
+    }
 };
+
+void func4(void *ptr)
+{
+    free(ptr);
+}
 
 int main()
 {
@@ -67,6 +77,10 @@ int main()
     {
         headNode = headNode->next;
     }
+
+    fa->func3();
+
+    func4(fa->header);
 
     return 0;
 }

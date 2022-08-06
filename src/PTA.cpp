@@ -195,12 +195,17 @@ namespace mqttactic
                         //     << "****KBB****\n"
                         //     << *(vNode->getICFGNode()->getBB()) << "\n";
                         const llvm::BasicBlock *bb = (vit->first)->getICFGNode()->getBB();
+
                         if (KBBS.find(bb) == KBBS.end())
                         {
                             SemanticKBB *sbb = new SemanticKBB();
                             sbb->bb = bb;
                             sbb->values.push_back((vit->first)->getValue());
                             sbb->semantics = op_type;
+                            for (auto kbb_c : vit->second)
+                            {
+                                sbb->contexts.push_back(kbb_c);
+                            }
 
                             KBBS.insert(KBBS.end(), bb);
                             SKBBS.insert(SKBBS.end(), sbb);
@@ -213,6 +218,10 @@ namespace mqttactic
                                 {
                                     sbb->values.push_back((vit->first)->getValue());
                                     sbb->semantics |= op_type;
+                                    for (auto kbb_c : vit->second)
+                                    {
+                                        sbb->contexts.push_back(kbb_c);
+                                    }
                                     break;
                                 }
                             }
@@ -306,7 +315,7 @@ namespace mqttactic
     int PTA::IdentifyCallFuncOperation(std::string func_name)
     {
         std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
-        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove"};
+        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free"};
         std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
         // for (auto op : OperationFuncRead)
         // {
