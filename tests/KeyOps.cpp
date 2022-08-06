@@ -47,15 +47,22 @@ public:
     }
 };
 
+Father *fa;
+
 void func4(void *ptr)
 {
-    delete ptr;
+    free(ptr);
+}
+
+void func5()
+{
+    fa->b.push_back(10);
 }
 
 int main()
 {
 
-    Father *fa = new Father();
+    fa = new Father();
     fa->func();
     fa->func2();
 
