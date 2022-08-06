@@ -18,7 +18,9 @@ namespace mqttactic
         PAGNode *pNode = pag->getGNode(pag->getValueNode(key_var));
         if (pNode->hasValue() && pNode->getValue() == key_var && this->Svfg->hasDefSVFGNode(pNode))
         {
+
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
+            dbgs() << "DefSvfgNode id: " << vNode->getId() << "\n";
             if (vNode->getValue() != nullptr)
             {
 
