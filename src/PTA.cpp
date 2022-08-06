@@ -112,12 +112,17 @@ namespace mqttactic
                                 kbb_contexts.push_back(kbb_c);
                             }
                             if (vNode->getNodeKind() != VFGNode::Addr)
-                                for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
-                                {
-                                    const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
-                                    if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
-                                        (*kbb_c).push_back(bb);
-                                }
+                            {
+                                const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
+                                // context represent the condition of succNode. so if src_bb == dest_bb, we skip the insertion
+                                if (bb != succNode->getICFGNode()->getBB())
+                                    for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                                    {
+
+                                        if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
+                                            (*kbb_c).push_back(bb);
+                                    }
+                            }
                             else
                             {
                                 kbb_contexts.clear();
@@ -145,13 +150,17 @@ namespace mqttactic
                                 kbb_contexts.push_back(kbb_c);
                             }
                             if (vNode->getNodeKind() != VFGNode::Addr)
-                                for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
-                                {
-                                    const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
-                                    if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
-                                        (*kbb_c).push_back(bb);
-                                    svfg_nodes_with_context[succNode].push_back(*kbb_c);
-                                }
+                            {
+                                const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
+                                if (bb != succNode->getICFGNode()->getBB())
+                                    for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                                    {
+
+                                        if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
+                                            (*kbb_c).push_back(bb);
+                                        svfg_nodes_with_context[succNode].push_back(*kbb_c);
+                                    }
+                            }
                             else
                             {
                                 svfg_nodes_with_context[succNode].clear();
