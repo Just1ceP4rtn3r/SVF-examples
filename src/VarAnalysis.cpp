@@ -294,9 +294,9 @@ namespace mqttactic
                         }
                         if (ParseVariables(operand, M, F, key_var->name))
                         {
-                            // dbgs() << "Instruction: " << I << "\n\n\n\n";
+                            dbgs() << "Instruction: " << I << "\n\n\n\n";
                             PointerAnalyzer->TraverseOnVFG(operand, SemanticKeyBasicBlocks[key_var]);
-                            // dbgs() << "----------------------------------\n\n\n\n";
+                            dbgs() << "----------------------------------\n\n\n\n";
                         }
                     }
 
