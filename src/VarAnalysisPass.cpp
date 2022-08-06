@@ -49,7 +49,7 @@ namespace
                 var_analyzer->SearchKeyVar(M, f, key_variables);
             }
 
-            for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_variables[1]])
+            for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_variables[0]])
             {
                 errs() << sbb->bb->getParent()->getName() << "\n"
                        << sbb->semantics << "\n";
