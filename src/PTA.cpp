@@ -14,7 +14,7 @@ namespace mqttactic
         FIFOWorkList<const VFGNode *> worklist;
         std::map<const VFGNode *, std::vector<KBBContext>> svfg_nodes_with_context;
         Set<const Value *> pts_set;
-        Set<const Value *> key_var_fields;
+        llvm::Type *key_var_type = key_var->getType();
 
         PAGNode *pNode = pag->getGNode(pag->getValueNode(key_var));
         if (pNode->hasValue() && pNode->getValue() == key_var && this->Svfg->hasDefSVFGNode(pNode))
@@ -102,11 +102,8 @@ namespace mqttactic
                             {
                                 if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
-                                    dbgs() << *(GEP->getSourceElementType()) << "\n";
-                                    if (key_var_fields.find(GEP->getOperand(0)) != key_var_fields.end())
+                                    if (GEP->getSourceElementType() != key_var_type)
                                         continue;
-                                    else
-                                        key_var_fields.insert(key_var_fields.end(), GEP->getOperand(0));
                                 }
                                 else
                                 {
