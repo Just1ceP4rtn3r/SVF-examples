@@ -90,6 +90,7 @@ namespace mqttactic
                             {
                                 if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
+                                    continue;
                                 }
                             }
                         }
@@ -101,18 +102,27 @@ namespace mqttactic
                                 llvm::errs() << "ERROR: can not find the source svfg node\n";
                                 continue;
                             }
-                            std::vector<KBBContext> kbb_contexts(svfg_nodes_with_context[vNode]);
+                            std::vector<KBBContext> kbb_contexts;
+
+                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                                kbb_contexts = std::vector<KBBContext>(svfg_nodes_with_context[vNode]);
                             if (kbb_contexts.size() == 0)
                             {
                                 KBBContext kbb_c;
                                 kbb_contexts.push_back(kbb_c);
                             }
-                            for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                                for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                                {
+                                    const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
+                                    if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
+                                        (*kbb_c).push_back(bb);
+                                }
+                            else
                             {
-                                const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
-                                if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
-                                    (*kbb_c).push_back(bb);
+                                kbb_contexts.clear();
                             }
+
                             svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(succNode, kbb_contexts));
                             worklist.push(succNode);
                             if (succNode->getValue() && StmtVFGNode::classof(succNode))
@@ -125,18 +135,26 @@ namespace mqttactic
                                 llvm::errs() << "ERROR: can not find the source svfg node\n";
                                 continue;
                             }
-                            std::vector<KBBContext> kbb_contexts(svfg_nodes_with_context[vNode]);
+                            std::vector<KBBContext> kbb_contexts;
+
+                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                                kbb_contexts = std::vector<KBBContext>(svfg_nodes_with_context[vNode]);
                             if (kbb_contexts.size() == 0)
                             {
                                 KBBContext kbb_c;
                                 kbb_contexts.push_back(kbb_c);
                             }
-                            for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                                for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
+                                {
+                                    const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
+                                    if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
+                                        (*kbb_c).push_back(bb);
+                                    svfg_nodes_with_context[succNode].push_back(*kbb_c);
+                                }
+                            else
                             {
-                                const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
-                                if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
-                                    (*kbb_c).push_back(bb);
-                                svfg_nodes_with_context[succNode].push_back(*kbb_c);
+                                svfg_nodes_with_context[succNode].clear();
                             }
                         }
                     }
