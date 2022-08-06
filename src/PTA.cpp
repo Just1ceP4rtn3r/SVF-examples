@@ -180,9 +180,6 @@ namespace mqttactic
                         raw_string_ostream OS(Str);
                         vit->first->getValue()->printAsOperand(OS, false);
 
-                        dbgs()
-                            << "Value: " << OS.str() << "\n";
-
                         if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((vit->first)->getICFGNode()))
                         {
                             const Instruction *I = inst->getInst();
