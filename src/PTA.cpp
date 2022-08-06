@@ -345,27 +345,39 @@ namespace mqttactic
         std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
         std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv"};
         std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
+
+        std::string pos = "";
+        int op_type = -1;
+
         for (auto op : OperationFuncRead)
         {
             if (func_name.find(op) != std::string::npos)
             {
-                return mqttactic::READ;
+                pos = op;
+                op_type = mqttactic::READ;
+                break;
             }
         }
         for (auto op : OperationFuncWrite0)
         {
             if (func_name.find(op) != std::string::npos)
             {
-                return mqttactic::WRITE0;
+                if (pos.size() < op.size())
+                    pos = op;
+                op_type = mqttactic::WRITE0;
+                break;
             }
         }
         for (auto op : OperationFuncWrite1)
         {
             if (func_name.find(op) != std::string::npos)
             {
-                return mqttactic::WRITE1;
+                if (pos.size() < op.size())
+                    pos = op;
+                op_type = mqttactic::WRITE1;
+                break;
             }
         }
-        return -1;
+        return op_type;
     }
 }
