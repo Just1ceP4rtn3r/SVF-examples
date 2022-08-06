@@ -14,7 +14,7 @@ namespace mqttactic
         FIFOWorkList<const VFGNode *> worklist;
         std::map<const VFGNode *, std::vector<KBBContext>> svfg_nodes_with_context;
         Set<const Value *> pts_set;
-        Set<const VFGNode *> key_var_fields;
+        Set<const Value *> key_var_fields;
 
         PAGNode *pNode = pag->getGNode(pag->getValueNode(key_var));
         if (pNode->hasValue() && pNode->getValue() == key_var && this->Svfg->hasDefSVFGNode(pNode))
@@ -100,13 +100,18 @@ namespace mqttactic
                         {
                             if (succNode->getNodeKind() == VFGNode::Gep)
                             {
-                                if (key_var_fields.find(vNode) != key_var_fields.end())
-                                    continue;
+                                if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
+                                {
+
+                                    if (key_var_fields.find(GEP->getOperand(0)) != key_var_fields.end())
+                                        continue;
+                                    else
+                                        key_var_fields.insert(key_var_fields.end(), GEP->getOperand(0));
+                                }
                                 else
-                                    key_var_fields.insert(key_var_fields.end(), succNode);
-                                // if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
-                                // {
-                                // }
+                                {
+                                    continue;
+                                }
                             }
                         }
 
@@ -326,7 +331,7 @@ namespace mqttactic
             Value *leftV = store->getOperand(0);
             if (pts_set.find(RightV) != pts_set.end())
             {
-                // Link w- operation
+                // Link w- operation or store null
                 if (pts_set.find(leftV) != pts_set.end())
                 {
                     return KeyOperation::WRITE0;
