@@ -102,7 +102,7 @@ namespace mqttactic
                             {
                                 if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
                                 {
-                                    dbgs() << GEP->getOperand(0)->getType()->getStructName() << "\n";
+                                    dbgs() << GEP->getSourceElementType() << "\n";
                                     if (key_var_fields.find(GEP->getOperand(0)) != key_var_fields.end())
                                         continue;
                                     else
