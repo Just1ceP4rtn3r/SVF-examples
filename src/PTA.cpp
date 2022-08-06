@@ -20,7 +20,7 @@ namespace mqttactic
         {
 
             const VFGNode *vNode = this->Svfg->getDefSVFGNode(pNode);
-            dbgs() << "DefSvfgNode id: " << vNode->getId() << "\n";
+            // dbgs() << "DefSvfgNode id: " << vNode->getId() << "\n";
             if (vNode->getValue() != nullptr)
             {
 
@@ -75,8 +75,8 @@ namespace mqttactic
                         // else
                         //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
-                        // SVFUtil::errs() << "src: " << *vNode << "\n"
-                        //                 << "dst: " << *succNode << "\n";
+                        SVFUtil::errs() << "src: " << *vNode << "\n"
+                                        << "dst: " << *succNode << "\n";
 
                         // MA node
                         if (succNode->getValue() == nullptr)
