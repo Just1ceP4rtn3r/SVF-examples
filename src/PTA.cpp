@@ -97,13 +97,13 @@ namespace mqttactic
                         // stmt node/param node
                         else
                         {
-                            if (succNode->getNodeKind() == VFGNode::Gep)
-                            {
-                                continue;
-                                if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
-                                {
-                                }
-                            }
+                            // if (succNode->getNodeKind() == VFGNode::Gep)
+                            // {
+                            //     continue;
+                            //     if (const GEPOperator *GEP = dyn_cast<GEPOperator>(succNode->getValue()))
+                            //     {
+                            //     }
+                            // }
                         }
 
                         if (svfg_nodes_with_context.find(succNode) == svfg_nodes_with_context.end())
