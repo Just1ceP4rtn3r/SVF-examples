@@ -104,14 +104,14 @@ namespace mqttactic
                             }
                             std::vector<KBBContext> kbb_contexts;
 
-                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                            if (vNode->getNodeKind() != VFGNode::Addr)
                                 kbb_contexts = std::vector<KBBContext>(svfg_nodes_with_context[vNode]);
                             if (kbb_contexts.size() == 0)
                             {
                                 KBBContext kbb_c;
                                 kbb_contexts.push_back(kbb_c);
                             }
-                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                            if (vNode->getNodeKind() != VFGNode::Addr)
                                 for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
                                 {
                                     const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
@@ -137,14 +137,14 @@ namespace mqttactic
                             }
                             std::vector<KBBContext> kbb_contexts;
 
-                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                            if (vNode->getNodeKind() != VFGNode::Addr)
                                 kbb_contexts = std::vector<KBBContext>(svfg_nodes_with_context[vNode]);
                             if (kbb_contexts.size() == 0)
                             {
                                 KBBContext kbb_c;
                                 kbb_contexts.push_back(kbb_c);
                             }
-                            if (edge->isDirectVFGEdge() && vNode->getNodeKind() != VFGNode::Addr)
+                            if (vNode->getNodeKind() != VFGNode::Addr)
                                 for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
                                 {
                                     const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
@@ -181,7 +181,7 @@ namespace mqttactic
                         {
                             const Instruction *I = call_inst->getCallSite();
                             op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
-                            dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
+                            // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
                         // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(vit->first);
                         // const SVF::Value *val = pN->getValue();
