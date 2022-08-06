@@ -64,6 +64,15 @@ namespace mqttactic
                         VFGEdge *edge = *it;
                         VFGNode *succNode = edge->getDstNode();
 
+                        // Don't propagate to the key_operation function defined in "IdentifyCallFuncOperation"
+                        if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>(vNode->getICFGNode()))
+                        {
+                            const Instruction *I = call_inst->getCallSite();
+                            int op_type = IdentifyOperationType(I, vNode->getValue(), pts_set);
+                            if (op_type != -1)
+                                break;
+                        }
+
                         // if (edge->isCallVFGEdge())
                         // {
                         //     vfCond = ComputeInterCallVFGGuard(nodeBB, succBB, getCallSite(edge)->getParent());
@@ -248,7 +257,6 @@ namespace mqttactic
 
     int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set)
     {
-        // Normal store/load
         unsigned int opcode = I->getOpcode();
         switch (opcode)
         {
@@ -271,7 +279,11 @@ namespace mqttactic
 
             if (call->getArgOperand(0) == V && calledFuncName != "")
             {
-                return IdentifyCallFuncOperation(calledFuncName);
+                int op_type = IdentifyCallFuncOperation(calledFuncName);
+                if (op_type != -1)
+                {
+                    return op_type;
+                }
             }
 
             break;
@@ -294,7 +306,11 @@ namespace mqttactic
             }
             if (call->getArgOperand(0) == V && calledFuncName != "")
             {
-                return IdentifyCallFuncOperation(calledFuncName);
+                int op_type = IdentifyCallFuncOperation(calledFuncName);
+                if (op_type != -1)
+                {
+                    return op_type;
+                }
             }
             break;
         }
@@ -329,13 +345,13 @@ namespace mqttactic
         std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
         std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv"};
         std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
-        // for (auto op : OperationFuncRead)
-        // {
-        //     if (func_name.find(op) != std::string::npos)
-        //     {
-        //         return mqttactic::READ;
-        //     }
-        // }
+        for (auto op : OperationFuncRead)
+        {
+            if (func_name.find(op) != std::string::npos)
+            {
+                return mqttactic::READ;
+            }
+        }
         for (auto op : OperationFuncWrite0)
         {
             if (func_name.find(op) != std::string::npos)
@@ -350,6 +366,6 @@ namespace mqttactic
                 return mqttactic::WRITE1;
             }
         }
-        return mqttactic::READ;
+        return -1;
     }
 }
