@@ -43,13 +43,13 @@ public:
 
     void func3()
     {
-        free(this->header);
+        delete this->header;
     }
 };
 
 void func4(void *ptr)
 {
-    free(ptr);
+    delete ptr;
 }
 
 int main()
