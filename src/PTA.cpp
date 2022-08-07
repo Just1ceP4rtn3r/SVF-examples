@@ -217,10 +217,10 @@ namespace mqttactic
                                 ss << (void *)bb;
                                 h += ss.str() + " --> ";
                             }
-
+                            dbgs() << h << "\n";
                             if (contexts_str.find(h) != contexts_str.end())
                             {
-                                dbgs() << h << "\n";
+
                                 std::vector<mqttactic::KBBContext>::iterator tmp = kbbcit;
                                 kbbcit = svfg_nodes_with_context[succNode].erase(tmp);
                             }
