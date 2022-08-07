@@ -215,7 +215,7 @@ namespace mqttactic
                             {
                                 std::stringstream ss;
                                 ss << (void *)bb;
-                                h += ss + " --> ";
+                                h += ss.str() + " --> ";
                             }
 
                             if (contexts_str.find(h) != contexts_str.end())

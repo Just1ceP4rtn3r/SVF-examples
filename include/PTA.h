@@ -1,6 +1,7 @@
 #ifndef ANDERSEN_PTA
 #define ANDERSEN_PTA
 
+#include <sstream>
 #include "SVF-FE/LLVMUtil.h"
 #include "SVF-FE/Graph2Json.h"
 #include "Graphs/SVFG.h"
