@@ -348,6 +348,14 @@ namespace mqttactic
             // If the value is the rvalue of the `store` instruction
             Value *RightV = store->getOperand(1);
             Value *leftV = store->getOperand(0);
+
+            if (leftV && RightV)
+                dbgs() << "store: " << *leftV << "----" << *RightV << "\n";
+            else
+            {
+                dbgs() << "store: " << leftV << "----" << RightV << "\n";
+            }
+
             if (pts_set.find(RightV) != pts_set.end())
             {
                 // Link w- operation or store null
