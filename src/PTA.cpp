@@ -213,10 +213,7 @@ namespace mqttactic
                             std::string h = "";
                             for (const llvm::BasicBlock *bb : *kbbcit)
                             {
-                                std::string Str;
-                                raw_string_ostream OS(Str);
-                                bb->printAsOperand(OS, false);
-                                h += OS.str() + " --> ";
+                                h += string(bb) + " --> ";
                             }
 
                             if (contexts_str.find(h) != contexts_str.end())
