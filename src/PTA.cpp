@@ -287,8 +287,14 @@ namespace mqttactic
                                             h += ss.str() + " --> ";
                                         }
                                         dbgs() << h << "\n";
+                                        for (auto s : KBB_with_context_str[bb])
+                                        {
+                                            dbgs() << s << ", ";
+                                        }
+                                        dbgs() << "\n";
                                         if (KBB_with_context_str[bb].find(h) == KBB_with_context_str[bb].end())
                                         {
+                                            dbgs() << "not found!\n";
                                             sbb->contexts.push_back(kbb_c);
                                             KBB_with_context_str[bb].insert(KBB_with_context_str[bb].end(), h);
                                         }
