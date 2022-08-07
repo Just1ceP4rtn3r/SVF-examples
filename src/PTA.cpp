@@ -211,8 +211,8 @@ namespace mqttactic
                 for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
                 {
                     std::set<std::string> contexts_str;
-                    std::vector<mqttactic::KBBContext>::iterator kbbcit = svfg_nodes_with_context[vit->first].begin();
-                    for (; kbbcit != svfg_nodes_with_context[vit->first].end();)
+                    std::vector<mqttactic::KBBContext>::iterator kbbcit = vit->second.begin();
+                    for (; kbbcit != vit->second.end();)
                     {
                         std::string h = "";
                         for (const llvm::BasicBlock *bb : *kbbcit)
@@ -225,7 +225,7 @@ namespace mqttactic
                         {
                             dbgs() << h << "\n";
                             std::vector<mqttactic::KBBContext>::iterator tmp = kbbcit;
-                            kbbcit = svfg_nodes_with_context[vit->first].erase(tmp);
+                            kbbcit = vit->second.erase(tmp);
                         }
                         else
                         {
