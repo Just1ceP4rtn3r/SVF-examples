@@ -131,8 +131,8 @@ namespace mqttactic
                             }
                         }
 
-                        SVFUtil::errs() << "src: " << *vNode << "\n"
-                                        << "dst: " << *succNode << "\n";
+                        // SVFUtil::errs() << "src: " << *vNode << "\n"
+                        //                 << "dst: " << *succNode << "\n";
 
                         if (svfg_nodes_with_context.find(succNode) == svfg_nodes_with_context.end())
                         {
