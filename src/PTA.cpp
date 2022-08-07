@@ -5,16 +5,18 @@ namespace mqttactic
     void PTA::TraverseOnVFG(llvm::Value *key_var, std::set<SemanticKBB *> &SKBBS)
     {
         std::set<const llvm::BasicBlock *> KBBS;
-        for (auto sbb : SKBBS)
-        {
-            KBBS.insert(KBBS.end(), sbb->bb);
-        }
-
         SVFIR *pag = this->Ander->getPAG();
         FIFOWorkList<const VFGNode *> worklist;
         std::map<const VFGNode *, std::vector<KBBContext>> svfg_nodes_with_context;
         Set<const Value *> pts_set;
         llvm::Type *key_var_type = key_var->getType();
+
+        for (auto sbb : SKBBS)
+        {
+            KBBS.insert(KBBS.end(), sbb->bb);
+            for (auto v : sbb->values)
+                pts_set.insert(pts_set.end(), v);
+        }
 
         PAGNode *pNode = pag->getGNode(pag->getValueNode(key_var));
         if (pNode->hasValue() && pNode->getValue() == key_var && this->Svfg->hasDefSVFGNode(pNode))
@@ -131,8 +133,8 @@ namespace mqttactic
                             }
                         }
 
-                        // SVFUtil::errs() << "src: " << *vNode << "\n"
-                        //                 << "dst: " << *succNode << "\n";
+                        SVFUtil::errs() << "src: " << *vNode << "\n"
+                                        << "dst: " << *succNode << "\n";
 
                         if (svfg_nodes_with_context.find(succNode) == svfg_nodes_with_context.end())
                         {
@@ -169,7 +171,7 @@ namespace mqttactic
 
                             svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(succNode, kbb_contexts));
                             worklist.push(succNode);
-                            if (succNode->getValue() && StmtVFGNode::classof(succNode))
+                            if (succNode->getValue() && StmtVFGNode::classof(succNode) && pts_set.find(succNode->getValue()) == pts_set.end())
                                 pts_set.insert(succNode->getValue());
                         }
                         else
