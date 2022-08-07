@@ -159,7 +159,6 @@ namespace mqttactic
                                 if (bb != succNode->getICFGNode()->getBB())
                                     for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
                                     {
-
                                         if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
                                             (*kbb_c).push_back(bb);
                                     }
@@ -196,7 +195,6 @@ namespace mqttactic
                                 if (bb != succNode->getICFGNode()->getBB())
                                     for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
                                     {
-
                                         if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
                                             (*kbb_c).push_back(bb);
                                         svfg_nodes_with_context[succNode].push_back(*kbb_c);
@@ -207,208 +205,222 @@ namespace mqttactic
                                 svfg_nodes_with_context[succNode].clear();
                             }
                         }
-                    }
-                }
 
-                for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
-                {
-                    if (vit->first->getValue() && (StmtVFGNode::classof(vit->first) || ArgumentVFGNode::classof(vit->first)))
-                    {
-                        int op_type = 0;
-                        std::string Str;
-                        raw_string_ostream OS(Str);
-                        vit->first->getValue()->printAsOperand(OS, false);
-
-                        if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((vit->first)->getICFGNode()))
+                        std::set<std::string> contexts_str;
+                        std::vector<mqttactic::KBBContext>::iterator it = svfg_nodes_with_context[succNode].begin();
+                        for (; it != svfg_nodes_with_context[succNode].end();)
                         {
-                            const Instruction *I = inst->getInst();
-                            op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
-
-                            // dbgs()
-                            //     << "Value: " << OS.str()
-                            //     << "Type: " << op_type << "      " << *I << "\n";
-                        }
-                        else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((vit->first)->getICFGNode()))
-                        {
-                            const Instruction *I = call_inst->getCallSite();
-                            op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
-                            // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
-                        }
-
-                        if (op_type == -1)
-                            op_type = KeyOperation::READ;
-                        // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(vit->first);
-                        // const SVF::Value *val = pN->getValue();
-                        // errs() << "Value: "
-                        //        << *((vit->first)->getValue()) << "\n"
-                        //        << "Type: "
-                        //        << *((vit->first)->getValue()->getType()) << "\n";
-                        // llvm::errs()
-                        //     << "****Pointer Value****\n"
-                        //     << OS.str() << "\n"
-                        //     << "****KBB****\n"
-                        //     << *(vNode->getICFGNode()->getBB()) << "\n";
-                        const llvm::BasicBlock *bb = (vit->first)->getICFGNode()->getBB();
-
-                        if (KBBS.find(bb) == KBBS.end())
-                        {
-                            SemanticKBB *sbb = new SemanticKBB();
-                            sbb->bb = bb;
-                            sbb->values.push_back((vit->first)->getValue());
-                            sbb->semantics = op_type;
-                            for (auto kbb_c : vit->second)
+                            std::string h = "";
+                            for (const llvm::BasicBlock *bb : *it)
                             {
-                                sbb->contexts.push_back(kbb_c);
+                                std::string Str;
+                                raw_string_ostream OS(Str);
+                                bb->printAsOperand(OS, false);
+                                h += OS.str() + " --> ";
+                            }
+                            dbgs() << h << "\n";
+                            if (contexts_str.find(h) != contexts_str.end())
+                            {
+                                std::vector<mqttactic::KBBContext>::iterator tmp = it;
+                                it = svfg_nodes_with_context[succNode].erase(tmp);
+                            }
+                            else
+                            {
+                                contexts_str.insert(contexts_str.end(), h);
+                                it++;
+                            }
+                        }
+                    }
+
+                    for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
+                    {
+                        if (vit->first->getValue() && (StmtVFGNode::classof(vit->first) || ArgumentVFGNode::classof(vit->first)))
+                        {
+                            int op_type = 0;
+                            std::string Str;
+                            raw_string_ostream OS(Str);
+                            vit->first->getValue()->printAsOperand(OS, false);
+
+                            if (const IntraICFGNode *inst = dyn_cast<IntraICFGNode>((vit->first)->getICFGNode()))
+                            {
+                                const Instruction *I = inst->getInst();
+                                op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
+
+                                // dbgs()
+                                //     << "Value: " << OS.str()
+                                //     << "Type: " << op_type << "      " << *I << "\n";
+                            }
+                            else if (const CallICFGNode *call_inst = dyn_cast<CallICFGNode>((vit->first)->getICFGNode()))
+                            {
+                                const Instruction *I = call_inst->getCallSite();
+                                op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
+                                // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                             }
 
-                            KBBS.insert(KBBS.end(), bb);
-                            SKBBS.insert(SKBBS.end(), sbb);
-                        }
-                        else
-                        {
-                            for (auto sbb : SKBBS)
+                            if (op_type == -1)
+                                op_type = KeyOperation::READ;
+
+                            const llvm::BasicBlock *bb = (vit->first)->getICFGNode()->getBB();
+
+                            if (KBBS.find(bb) == KBBS.end())
                             {
-                                if (sbb->bb == bb)
+                                SemanticKBB *sbb = new SemanticKBB();
+                                sbb->bb = bb;
+                                sbb->values.push_back((vit->first)->getValue());
+                                sbb->semantics = op_type;
+                                for (auto kbb_c : vit->second)
                                 {
-                                    sbb->values.push_back((vit->first)->getValue());
-                                    sbb->semantics |= op_type;
-                                    for (auto kbb_c : vit->second)
+                                    sbb->contexts.push_back(kbb_c);
+                                }
+
+                                KBBS.insert(KBBS.end(), bb);
+                                SKBBS.insert(SKBBS.end(), sbb);
+                            }
+                            else
+                            {
+                                for (auto sbb : SKBBS)
+                                {
+                                    if (sbb->bb == bb)
                                     {
-                                        sbb->contexts.push_back(kbb_c);
+                                        sbb->values.push_back((vit->first)->getValue());
+                                        sbb->semantics |= op_type;
+                                        for (auto kbb_c : vit->second)
+                                        {
+                                            sbb->contexts.push_back(kbb_c);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
                     }
+                    worklist.clear();
+                    svfg_nodes_with_context.clear();
                 }
-                worklist.clear();
-                svfg_nodes_with_context.clear();
             }
         }
-    }
 
-    int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set)
-    {
-        unsigned int opcode = I->getOpcode();
-        switch (opcode)
+        int PTA::IdentifyOperationType(const Instruction *I, const Value *V, Set<const Value *> &pts_set)
         {
-        case Instruction::Call:
-        {
-            const CallInst *call = static_cast<const CallInst *>(I);
-            std::string calledFuncName = "";
-            if (call->isIndirectCall() || !(call->getCalledFunction()))
+            unsigned int opcode = I->getOpcode();
+            switch (opcode)
             {
-                const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
-                if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
-                    calledFuncName = GV->getAliasee()->getName().str();
-                else
-                    break;
-            }
-            else
+            case Instruction::Call:
             {
-                calledFuncName = call->getCalledFunction()->getName().str();
-            }
-
-            if (call->getArgOperand(0) == V && calledFuncName != "")
-            {
-                int op_type = IdentifyCallFuncOperation(calledFuncName);
-                return op_type;
-            }
-
-            break;
-        }
-        case Instruction::Invoke:
-        {
-            const InvokeInst *call = static_cast<const InvokeInst *>(I);
-            std::string calledFuncName = "";
-            if (call->isIndirectCall() || !(call->getCalledFunction()))
-            {
-                const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
-                if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
-                    calledFuncName = GV->getAliasee()->getName().str();
-                else
-                    break;
-            }
-            else
-            {
-                calledFuncName = call->getCalledFunction()->getName().str();
-            }
-            if (call->getArgOperand(0) == V && calledFuncName != "")
-            {
-                int op_type = IdentifyCallFuncOperation(calledFuncName);
-                return op_type;
-            }
-            break;
-        }
-        case Instruction::Store:
-        {
-            const StoreInst *store = static_cast<const StoreInst *>(I);
-            // If the value is the rvalue of the `store` instruction
-            Value *RightV = store->getOperand(1);
-            Value *leftV = store->getOperand(0);
-
-            if (pts_set.find(RightV) != pts_set.end())
-            {
-                // Link w- operation or store null
-                if (llvm::ConstantPointerNull::classof(leftV) || pts_set.find(leftV) != pts_set.end())
+                const CallInst *call = static_cast<const CallInst *>(I);
+                std::string calledFuncName = "";
+                if (call->isIndirectCall() || !(call->getCalledFunction()))
                 {
-                    return KeyOperation::WRITE;
+                    const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
+                    if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
+                        calledFuncName = GV->getAliasee()->getName().str();
+                    else
+                        break;
                 }
                 else
                 {
-                    // dbgs() << "store: " << *leftV << "----" << *RightV << "\n";
-                    return KeyOperation::WRITE1;
+                    calledFuncName = call->getCalledFunction()->getName().str();
+                }
+
+                if (call->getArgOperand(0) == V && calledFuncName != "")
+                {
+                    int op_type = IdentifyCallFuncOperation(calledFuncName);
+                    return op_type;
+                }
+
+                break;
+            }
+            case Instruction::Invoke:
+            {
+                const InvokeInst *call = static_cast<const InvokeInst *>(I);
+                std::string calledFuncName = "";
+                if (call->isIndirectCall() || !(call->getCalledFunction()))
+                {
+                    const GlobalAlias *GV = dyn_cast<GlobalAlias>(call->getCalledOperand());
+                    if (GV && GV->getAliasee() && GV->getAliasee()->hasName())
+                        calledFuncName = GV->getAliasee()->getName().str();
+                    else
+                        break;
+                }
+                else
+                {
+                    calledFuncName = call->getCalledFunction()->getName().str();
+                }
+                if (call->getArgOperand(0) == V && calledFuncName != "")
+                {
+                    int op_type = IdentifyCallFuncOperation(calledFuncName);
+                    return op_type;
+                }
+                break;
+            }
+            case Instruction::Store:
+            {
+                const StoreInst *store = static_cast<const StoreInst *>(I);
+                // If the value is the rvalue of the `store` instruction
+                Value *RightV = store->getOperand(1);
+                Value *leftV = store->getOperand(0);
+
+                if (pts_set.find(RightV) != pts_set.end())
+                {
+                    // Link w- operation or store null
+                    if (llvm::ConstantPointerNull::classof(leftV) || pts_set.find(leftV) != pts_set.end())
+                    {
+                        return KeyOperation::WRITE;
+                    }
+                    else
+                    {
+                        // dbgs() << "store: " << *leftV << "----" << *RightV << "\n";
+                        return KeyOperation::WRITE1;
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+            }
+
+            return -1;
+        }
+
+        // Identify operation type of STL function. e.g., vector::push_back
+        int PTA::IdentifyCallFuncOperation(std::string func_name)
+        {
+            std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
+            std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv"};
+            std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
+
+            std::string pos = "";
+            int op_type = -1;
+
+            for (auto op : OperationFuncRead)
+            {
+                if (func_name.find(op) != std::string::npos)
+                {
+                    pos = op;
+                    op_type = mqttactic::READ;
+                    break;
                 }
             }
-            break;
+            for (auto op : OperationFuncWrite0)
+            {
+                if (func_name.find(op) != std::string::npos)
+                {
+                    if (pos.size() < op.size())
+                        pos = op;
+                    op_type = mqttactic::WRITE0;
+                    break;
+                }
+            }
+            for (auto op : OperationFuncWrite1)
+            {
+                if (func_name.find(op) != std::string::npos)
+                {
+                    if (pos.size() < op.size())
+                        pos = op;
+                    op_type = mqttactic::WRITE1;
+                    break;
+                }
+            }
+            return op_type;
         }
-        default:
-            break;
-        }
-
-        return -1;
     }
-
-    // Identify operation type of STL function. e.g., vector::push_back
-    int PTA::IdentifyCallFuncOperation(std::string func_name)
-    {
-        std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
-        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv"};
-        std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
-
-        std::string pos = "";
-        int op_type = -1;
-
-        for (auto op : OperationFuncRead)
-        {
-            if (func_name.find(op) != std::string::npos)
-            {
-                pos = op;
-                op_type = mqttactic::READ;
-                break;
-            }
-        }
-        for (auto op : OperationFuncWrite0)
-        {
-            if (func_name.find(op) != std::string::npos)
-            {
-                if (pos.size() < op.size())
-                    pos = op;
-                op_type = mqttactic::WRITE0;
-                break;
-            }
-        }
-        for (auto op : OperationFuncWrite1)
-        {
-            if (func_name.find(op) != std::string::npos)
-            {
-                if (pos.size() < op.size())
-                    pos = op;
-                op_type = mqttactic::WRITE1;
-                break;
-            }
-        }
-        return op_type;
-    }
-}
