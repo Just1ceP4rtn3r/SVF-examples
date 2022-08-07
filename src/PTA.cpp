@@ -218,6 +218,12 @@ namespace mqttactic
                                 h += ss.str() + " --> ";
                             }
                             dbgs() << h << "\n";
+                            for (auto s : contexts_str)
+                            {
+                                dbgs() << s << ",";
+                            }
+                            dbgs() << "\n";
+
                             if (contexts_str.find(h) != contexts_str.end())
                             {
 
