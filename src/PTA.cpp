@@ -248,7 +248,7 @@ namespace mqttactic
                             sbb->semantics = op_type;
 
                             std::set<std::string> context_str;
-                            KBB_with_context_str.insert(pair<llvm::BasicBlock *, std::set<std::string>>(bb, context_str));
+                            KBB_with_context_str.insert(pair<const llvm::BasicBlock *, std::set<std::string>>(bb, context_str));
                             for (auto kbb_c : vit->second)
                             {
                                 std::string h = "";
