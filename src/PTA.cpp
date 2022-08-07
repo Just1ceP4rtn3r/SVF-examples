@@ -89,7 +89,7 @@ namespace mqttactic
                         if (succNode->getValue() == nullptr)
                         {
                             // ignore other memory region node: FPIN/FPOUT/APIN/APOUT/MPhi/MInterPhi
-                            if (!(succNode->getNodeKind() == VFGNode::MIntraPhi))
+                            if (!(succNode->getNodeKind() == VFGNode::MIntraPhi) || (succNode->getNodeKind() == VFGNode::MIntraPhi && vNode->getNodeKind() == VFGNode::MIntraPhi))
                                 continue;
                         }
                         // stmt node/param node
