@@ -352,14 +352,17 @@ namespace mqttactic
             if (leftV && RightV)
                 dbgs() << "store: " << *leftV << "----" << *RightV << "\n";
             else
-            {
                 dbgs() << "store: " << leftV << "----" << RightV << "\n";
+
+            if (llvm::ConstantPointerNull::classof(leftV))
+            {
+                dbgs() << "fxxk null\n";
             }
 
             if (pts_set.find(RightV) != pts_set.end())
             {
                 // Link w- operation or store null
-                if (leftV == nullptr || pts_set.find(leftV) != pts_set.end())
+                if (pts_set.find(leftV) != pts_set.end())
                 {
                     return KeyOperation::WRITE0;
                 }
