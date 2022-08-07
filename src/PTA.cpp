@@ -87,8 +87,8 @@ namespace mqttactic
                         // else
                         //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
-                        SVFUtil::errs() << "src: " << *vNode << "\n"
-                                        << "dst: " << *succNode << "\n";
+                        // SVFUtil::errs() << "src: " << *vNode << "\n"
+                        //                 << "dst: " << *succNode << "\n";
 
                         // MA node
                         if (succNode->getValue() == nullptr)
@@ -353,7 +353,7 @@ namespace mqttactic
                 // Link w- operation or store null
                 if (llvm::ConstantPointerNull::classof(leftV) || pts_set.find(leftV) != pts_set.end())
                 {
-                    return KeyOperation::WRITE0;
+                    return KeyOperation::WRITE;
                 }
                 else
                 {

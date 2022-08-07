@@ -37,7 +37,9 @@ namespace mqttactic
         // write-
         WRITE0,
         // write+
-        WRITE1
+        WRITE1,
+        // Unknow write(LINK...)
+        WRITE
     };
     // Andersen flow-insensitive pointer analysis
     class PTA
