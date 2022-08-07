@@ -8,7 +8,7 @@ namespace mqttactic
         SVFIR *pag = this->Ander->getPAG();
         FIFOWorkList<const VFGNode *> worklist;
         std::map<const VFGNode *, std::vector<KBBContext>> svfg_nodes_with_context;
-        std::map<const VFGNode *, std::set<std::string>> svfg_nodes_with_context_str;
+        std::map<const llvm::BasicBlock *, std::set<std::string>> KBB_with_context_str;
         Set<const Value *> pts_set;
         llvm::Type *key_var_type = key_var->getType();
 
@@ -32,9 +32,7 @@ namespace mqttactic
                 if (svfg_nodes_with_context.find(vNode) == svfg_nodes_with_context.end())
                 {
                     std::vector<KBBContext> kbb_contexts;
-                    std::set<std::string> kbb_contexts_str;
                     svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(vNode, kbb_contexts));
-                    svfg_nodes_with_context_str.insert(pair<const VFGNode *, std::set<std::string>>(vNode, kbb_contexts_str));
                 }
                 pts_set.insert(vNode->getValue());
                 while (!worklist.empty())
@@ -200,20 +198,7 @@ namespace mqttactic
                                     {
                                         if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
                                             (*kbb_c).push_back(bb);
-
-                                        std::string h = "";
-                                        for (const llvm::BasicBlock *b : *kbb_c)
-                                        {
-                                            std::stringstream ss;
-                                            ss << (void *)b;
-                                            h += ss.str() + " --> ";
-                                        }
-
-                                        if (svfg_nodes_with_context_str[succNode].find(h) == svfg_nodes_with_context_str[succNode].end())
-                                        {
-                                            svfg_nodes_with_context[succNode].push_back(*kbb_c);
-                                            svfg_nodes_with_context_str[succNode].insert(svfg_nodes_with_context_str[succNode].end(), h);
-                                        }
+                                        svfg_nodes_with_context[succNode].push_back(*kbb_c);
                                     }
                                 }
                             }
@@ -261,9 +246,24 @@ namespace mqttactic
                             sbb->bb = bb;
                             sbb->values.push_back((vit->first)->getValue());
                             sbb->semantics = op_type;
+
+                            std::set<std::string> context_str;
+                            KBB_with_context_str.insert(pair<llvm::BasicBlock *, std::set<std::string>>(bb, context_str));
                             for (auto kbb_c : vit->second)
                             {
-                                sbb->contexts.push_back(kbb_c);
+                                std::string h = "";
+                                for (const llvm::BasicBlock *b : kbb_c)
+                                {
+                                    std::stringstream ss;
+                                    ss << (void *)b;
+                                    h += ss.str() + " --> ";
+                                }
+
+                                if (KBB_with_context_str[bb].find(h) == KBB_with_context_str[bb].end())
+                                {
+                                    sbb->contexts.push_back(kbb_c);
+                                    KBB_with_context_str[bb].insert(KBB_with_context_str[bb].end(), h);
+                                }
                             }
 
                             KBBS.insert(KBBS.end(), bb);
@@ -279,7 +279,18 @@ namespace mqttactic
                                     sbb->semantics |= op_type;
                                     for (auto kbb_c : vit->second)
                                     {
-                                        sbb->contexts.push_back(kbb_c);
+                                        std::string h = "";
+                                        for (const llvm::BasicBlock *b : kbb_c)
+                                        {
+                                            std::stringstream ss;
+                                            ss << (void *)b;
+                                            h += ss.str() + " --> ";
+                                        }
+                                        if (KBB_with_context_str[bb].find(h) == KBB_with_context_str[bb].end())
+                                        {
+                                            sbb->contexts.push_back(kbb_c);
+                                            KBB_with_context_str[bb].insert(KBB_with_context_str[bb].end(), h);
+                                        }
                                     }
                                     break;
                                 }
