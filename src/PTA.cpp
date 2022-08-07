@@ -87,6 +87,9 @@ namespace mqttactic
                         // else
                         //     vfCond = ComputeIntraVFGGuard(nodeBB, succBB);
 
+                        SVFUtil::errs() << "src: " << *vNode << "\n"
+                                        << "dst: " << *succNode << "\n";
+
                         // MA node
                         if (succNode->getValue() == nullptr)
                         {
@@ -132,9 +135,6 @@ namespace mqttactic
                                 }
                             }
                         }
-
-                        SVFUtil::errs() << "src: " << *vNode << "\n"
-                                        << "dst: " << *succNode << "\n";
 
                         if (svfg_nodes_with_context.find(succNode) == svfg_nodes_with_context.end())
                         {
@@ -360,7 +360,7 @@ namespace mqttactic
                 }
                 else
                 {
-                    dbgs() << "store: " << *leftV << "----" << *RightV << "\n";
+                    // dbgs() << "store: " << *leftV << "----" << *RightV << "\n";
                     return KeyOperation::WRITE1;
                 }
             }
