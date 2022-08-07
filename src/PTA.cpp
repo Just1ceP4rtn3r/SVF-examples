@@ -213,7 +213,9 @@ namespace mqttactic
                             std::string h = "";
                             for (const llvm::BasicBlock *bb : *kbbcit)
                             {
-                                h += string(bb) + " --> ";
+                                std::stringstream ss;
+                                ss << (void *)bb;
+                                h += ss + " --> ";
                             }
 
                             if (contexts_str.find(h) != contexts_str.end())
