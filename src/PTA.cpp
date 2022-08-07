@@ -234,6 +234,9 @@ namespace mqttactic
                             op_type = IdentifyOperationType(I, (vit->first)->getValue(), pts_set);
                             // dbgs() << "Value: " << OS.str() << "      " << *I << "\n";
                         }
+
+                        if (op_type == -1)
+                            op_type = KeyOperation::READ;
                         // const PAGNode *pN = this->Svfg->getLHSTopLevPtr(vit->first);
                         // const SVF::Value *val = pN->getValue();
                         // errs() << "Value: "
@@ -310,10 +313,7 @@ namespace mqttactic
             if (call->getArgOperand(0) == V && calledFuncName != "")
             {
                 int op_type = IdentifyCallFuncOperation(calledFuncName);
-                if (op_type != -1)
-                {
-                    return op_type;
-                }
+                return op_type;
             }
 
             break;
@@ -337,10 +337,7 @@ namespace mqttactic
             if (call->getArgOperand(0) == V && calledFuncName != "")
             {
                 int op_type = IdentifyCallFuncOperation(calledFuncName);
-                if (op_type != -1)
-                {
-                    return op_type;
-                }
+                return op_type;
             }
             break;
         }
@@ -370,7 +367,7 @@ namespace mqttactic
             break;
         }
 
-        return KeyOperation::READ;
+        return -1;
     }
 
     // Identify operation type of STL function. e.g., vector::push_back
