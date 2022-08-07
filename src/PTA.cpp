@@ -207,11 +207,11 @@ namespace mqttactic
                         }
 
                         std::set<std::string> contexts_str;
-                        std::vector<mqttactic::KBBContext>::iterator it = svfg_nodes_with_context[succNode].begin();
-                        for (; it != svfg_nodes_with_context[succNode].end();)
+                        std::vector<mqttactic::KBBContext>::iterator kbbcit = svfg_nodes_with_context[succNode].begin();
+                        for (; kbbcit != svfg_nodes_with_context[succNode].end();)
                         {
                             std::string h = "";
-                            for (const llvm::BasicBlock *bb : *it)
+                            for (const llvm::BasicBlock *bb : *kbbcit)
                             {
                                 std::string Str;
                                 raw_string_ostream OS(Str);
@@ -221,13 +221,13 @@ namespace mqttactic
                             dbgs() << h << "\n";
                             if (contexts_str.find(h) != contexts_str.end())
                             {
-                                std::vector<mqttactic::KBBContext>::iterator tmp = it;
-                                it = svfg_nodes_with_context[succNode].erase(tmp);
+                                std::vector<mqttactic::KBBContext>::iterator tmp = kbbcit;
+                                kbbcit = svfg_nodes_with_context[succNode].erase(tmp);
                             }
                             else
                             {
                                 contexts_str.insert(contexts_str.end(), h);
-                                it++;
+                                kbbcit++;
                             }
                         }
                     }
