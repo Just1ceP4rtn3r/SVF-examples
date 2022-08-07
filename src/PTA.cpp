@@ -8,6 +8,7 @@ namespace mqttactic
         SVFIR *pag = this->Ander->getPAG();
         FIFOWorkList<const VFGNode *> worklist;
         std::map<const VFGNode *, std::vector<KBBContext>> svfg_nodes_with_context;
+        std::map<const VFGNode *, std::set<std::string>> svfg_nodes_with_context_str;
         Set<const Value *> pts_set;
         llvm::Type *key_var_type = key_var->getType();
 
@@ -31,7 +32,9 @@ namespace mqttactic
                 if (svfg_nodes_with_context.find(vNode) == svfg_nodes_with_context.end())
                 {
                     std::vector<KBBContext> kbb_contexts;
+                    std::set<std::string> kbb_contexts_str;
                     svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(vNode, kbb_contexts));
+                    svfg_nodes_with_context_str.insert(pair<const VFGNode *, std::set<std::string>>(vNode, kbb_contexts_str));
                 }
                 pts_set.insert(vNode->getValue());
                 while (!worklist.empty())
@@ -167,7 +170,6 @@ namespace mqttactic
                             {
                                 kbb_contexts.clear();
                             }
-
                             svfg_nodes_with_context.insert(pair<const VFGNode *, std::vector<KBBContext>>(succNode, kbb_contexts));
                             worklist.push(succNode);
                             if (succNode->getValue() && StmtVFGNode::classof(succNode) && pts_set.find(succNode->getValue()) == pts_set.end())
@@ -193,12 +195,27 @@ namespace mqttactic
                             {
                                 const llvm::BasicBlock *bb = vNode->getICFGNode()->getBB();
                                 if (bb != succNode->getICFGNode()->getBB())
+                                {
                                     for (auto kbb_c = kbb_contexts.begin(); kbb_c != kbb_contexts.end(); kbb_c++)
                                     {
                                         if (find((*kbb_c).begin(), (*kbb_c).end(), bb) == (*kbb_c).end())
                                             (*kbb_c).push_back(bb);
-                                        svfg_nodes_with_context[succNode].push_back(*kbb_c);
+
+                                        std::string h = "";
+                                        for (const llvm::BasicBlock *b : *kbb_c)
+                                        {
+                                            std::stringstream ss;
+                                            ss << (void *)b;
+                                            h += ss.str() + " --> ";
+                                        }
+
+                                        if (svfg_nodes_with_context_str[succNode].find(h) == svfg_nodes_with_context_str[succNode].end())
+                                        {
+                                            svfg_nodes_with_context[succNode].push_back(*kbb_c);
+                                            svfg_nodes_with_context_str[succNode].insert(svfg_nodes_with_context_str[succNode].end(), h);
+                                        }
                                     }
+                                }
                             }
                             else
                             {
@@ -210,30 +227,6 @@ namespace mqttactic
 
                 for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
                 {
-                    std::set<std::string> contexts_str;
-                    std::vector<mqttactic::KBBContext>::iterator kbbcit = vit->second.begin();
-                    for (; kbbcit != vit->second.end();)
-                    {
-                        std::string h = "";
-                        for (const llvm::BasicBlock *bb : *kbbcit)
-                        {
-                            std::stringstream ss;
-                            ss << (void *)bb;
-                            h += ss.str() + " --> ";
-                        }
-                        if (contexts_str.find(h) != contexts_str.end())
-                        {
-                            dbgs() << h << "\n";
-                            std::vector<mqttactic::KBBContext>::iterator tmp = kbbcit;
-                            kbbcit = vit->second.erase(tmp);
-                        }
-                        else
-                        {
-                            contexts_str.insert(contexts_str.end(), h);
-                            kbbcit++;
-                        }
-                    }
-
                     if (vit->first->getValue() && (StmtVFGNode::classof(vit->first) || ArgumentVFGNode::classof(vit->first)))
                     {
                         int op_type = 0;
