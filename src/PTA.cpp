@@ -210,7 +210,6 @@ namespace mqttactic
 
                 for (auto vit = svfg_nodes_with_context.begin(); vit != svfg_nodes_with_context.end(); vit++)
                 {
-
                     std::set<std::string> contexts_str;
                     std::vector<mqttactic::KBBContext>::iterator kbbcit = svfg_nodes_with_context[vit->first].begin();
                     for (; kbbcit != svfg_nodes_with_context[vit->first].end();)
@@ -224,7 +223,7 @@ namespace mqttactic
                         }
                         if (contexts_str.find(h) != contexts_str.end())
                         {
-
+                            dbgs() << h << "\n";
                             std::vector<mqttactic::KBBContext>::iterator tmp = kbbcit;
                             kbbcit = svfg_nodes_with_context[vit->first].erase(tmp);
                         }
