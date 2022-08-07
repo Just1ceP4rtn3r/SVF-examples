@@ -258,7 +258,7 @@ namespace mqttactic
                                     ss << (void *)b;
                                     h += ss.str() + " --> ";
                                 }
-
+                                dbgs() << h << "\n";
                                 if (KBB_with_context_str[bb].find(h) == KBB_with_context_str[bb].end())
                                 {
                                     sbb->contexts.push_back(kbb_c);
@@ -286,6 +286,7 @@ namespace mqttactic
                                             ss << (void *)b;
                                             h += ss.str() + " --> ";
                                         }
+                                        dbgs() << h << "\n";
                                         if (KBB_with_context_str[bb].find(h) == KBB_with_context_str[bb].end())
                                         {
                                             sbb->contexts.push_back(kbb_c);
