@@ -32,16 +32,16 @@ namespace
 
             for (auto key_var : var_analyzer->key_variables)
             {
-                errs() << "----------------------------------\n";
+                errs() << "-----------------KEYVAR-----------------\n"
+                       << key_var->name << "\n\n\n\n";
                 for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_var])
                 {
                     errs() << sbb->bb->getParent()->getName() << "\n"
                            << sbb->semantics << "\n";
-                    for (auto var : sbb->values)
-                    {
-                        errs() << *var << "\n";
-                    }
-                    errs() << "----------------------------------\n";
+                    // for (auto var : sbb->values)
+                    // {
+                    //     errs() << *var << "\n";
+                    // }
                     for (auto kbb_c : sbb->contexts)
                     {
                         for (auto bb : kbb_c)
@@ -50,6 +50,7 @@ namespace
                         }
                         errs() << "\n";
                     }
+                    errs() << "----------------------------------\n";
 
                     errs() << *(sbb->bb) << "\n\n";
                 }
