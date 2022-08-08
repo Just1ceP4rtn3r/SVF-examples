@@ -1,4 +1,4 @@
-#include "../include/PTA.h"
+#include "../Include/PTA.h"
 
 namespace mqttactic
 {
@@ -389,8 +389,8 @@ namespace mqttactic
     int PTA::IdentifyCallFuncOperation(std::string func_name)
     {
         std::string OperationFuncRead[] = {"back", "front", "find", "top", "contain"};
-        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv", "write", "send"};
-        std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront", "write", "send"};
+        std::string OperationFuncWrite0[] = {"pop_back", "erase", "pop", "delete", "Remove", "clear", "free", "_ZdlPv"};
+        std::string OperationFuncWrite1[] = {"push_back", "insert", "push", "PushBack", "PushFront"};
 
         std::string pos = "";
         int op_type = -1;
@@ -424,6 +424,12 @@ namespace mqttactic
                 break;
             }
         }
+
+        if (func_name == "write")
+        {
+            op_type = mqttactic::WRITE;
+        }
+
         return op_type;
     }
 }
