@@ -6,6 +6,7 @@
 #include <map>
 #include <fstream>
 #include <math.h>
+#include <ranges>
 #include "llvm/IR/Function.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -33,12 +34,16 @@
 #include "llvm/IR/GlobalVariable.h"
 #include "llvm/Demangle/Demangle.h"
 
-#include "../include/PTA.h"
+#include "config.h"
+#include "PTA.h"
 
 using namespace llvm;
 
 namespace mqttactic
 {
+    typedef std::vector<const llvm::BasicBlock *> KBBContext;
+
+    // sotre the dbg name of each field
     struct NamedField
     {
         llvm::Type *type;
@@ -47,6 +52,7 @@ namespace mqttactic
         int typeID;
     };
 
+    // store fields' name of a STRUCT
     struct NamedStructType
     {
         llvm::StructType *type;
@@ -58,7 +64,27 @@ namespace mqttactic
     struct KeyVariable
     {
         std::string name;
-        bool completed = 0;
+        std::string varType;
+    };
+
+    struct SemanticKBB
+    {
+        const llvm::BasicBlock *bb;
+        std::vector<const llvm::Value *> values;
+        std::vector<KBBContext> contexts;
+        int semantics;
+    };
+
+    enum KeyOperation
+    {
+        // read
+        READ,
+        // write-
+        WRITE0,
+        // write+
+        WRITE1,
+        // Unknow write(LINK...)
+        WRITE
     };
 
     class VarAnalysis
@@ -71,6 +97,8 @@ namespace mqttactic
         // {"class:key_var":[Basicblock*, semantics]}
         std::map<KeyVariable *, std::set<mqttactic::SemanticKBB *>> SemanticKeyBasicBlocks;
         mqttactic::PTA *PointerAnalyzer;
+
+        std::vector<mqttactic::KeyVariable *> key_variables;
 
         VarAnalysis(Module &M)
         {
@@ -105,15 +133,106 @@ namespace mqttactic
                     GlobalVars.insert(std::pair<std::string, const llvm::Metadata *>(GV->getLinkageName().str(), GV));
                 }
             }
+
+            std::string s;
+            std::vector<std::string> s_split;
+
+            s = mqttactic::subs;
+            s_split = split(s, "+");
+            for (vector<string>::iterator it = s_split.begin(); it != s_split.end(); ++it)
+            {
+                mqttactic::KeyVariable *kv = new mqttactic::KeyVariable();
+                kv->name = *it;
+                kv->varType = "subs";
+                this->key_variables.push_back(kv);
+            }
+            s_split.clear();
+
+            s = mqttactic::RetainedMsg;
+            s_split = split(s, "+");
+            for (vector<string>::iterator it = s_split.begin(); it != s_split.end(); ++it)
+            {
+                mqttactic::KeyVariable *kv = new mqttactic::KeyVariable();
+                kv->name = *it;
+                kv->varType = "RetainedMsg";
+                this->key_variables.push_back(kv);
+            }
+            s_split.clear();
+
+            s = mqttactic::status;
+            s_split = split(s, "+");
+            for (vector<string>::iterator it = s_split.begin(); it != s_split.end(); ++it)
+            {
+                mqttactic::KeyVariable *kv = new mqttactic::KeyVariable();
+                kv->name = *it;
+                kv->varType = "status";
+                this->key_variables.push_back(kv);
+            }
+            s_split.clear();
+
+            s = mqttactic::WillMsg;
+            s_split = split(s, "+");
+            for (vector<string>::iterator it = s_split.begin(); it != s_split.end(); ++it)
+            {
+                mqttactic::KeyVariable *kv = new mqttactic::KeyVariable();
+                kv->name = *it;
+                kv->varType = "WillMsg";
+                this->key_variables.push_back(kv);
+            }
+            s_split.clear();
+
+            s = mqttactic::msgQue;
+            s_split = split(s, "+");
+            for (vector<string>::iterator it = s_split.begin(); it != s_split.end(); ++it)
+            {
+                mqttactic::KeyVariable *kv = new mqttactic::KeyVariable();
+                kv->name = *it;
+                kv->varType = "msgQue";
+                this->key_variables.push_back(kv);
+            }
+            s_split.clear();
+
+            s = mqttactic::msg;
+            s_split = split(s, "+");
+            for (vector<string>::iterator it = s_split.begin(); it != s_split.end(); ++it)
+            {
+                mqttactic::KeyVariable *kv = new mqttactic::KeyVariable();
+                kv->name = *it;
+                kv->varType = "msg";
+                this->key_variables.push_back(kv);
+            }
         }
 
-        std::string getBBLabel(const BasicBlock *Node);
+        vector<string> split(const string &str, const string &delim)
+        {
+            vector<string> res;
+            if ("" == str)
+                return res;
+            char *strs = new char[str.length() + 1];
+            strcpy(strs, str.c_str());
+
+            char *d = new char[delim.length() + 1];
+            strcpy(d, delim.c_str());
+
+            char *p = strtok(strs, d);
+            while (p)
+            {
+                string s = p;
+                res.push_back(s);
+                p = strtok(NULL, d);
+            }
+
+            return res;
+        }
+
+        std::string
+        getBBLabel(const BasicBlock *Node);
         void PrintDbgInfo();
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
         void GetStructDbgInfo(Module &M, DebugInfoFinder *dbgFinder, NamedStructType *named_struct);
         llvm::GlobalVariable *GetStaticDbgInfo(Module &M, DIDerivedType *static_var);
-        void SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *> &key_variables);
+        void SearchKeyVar(Module &M, Function &F);
         bool ParseVariables(Value *V, Module &M, const Function &F, std::string key_var);
     };
 }

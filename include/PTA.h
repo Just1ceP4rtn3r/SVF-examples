@@ -1,6 +1,8 @@
 #ifndef ANDERSEN_PTA
 #define ANDERSEN_PTA
 
+#include <set>
+#include <map>
 #include <sstream>
 #include "SVF-FE/LLVMUtil.h"
 #include "SVF-FE/Graph2Json.h"
@@ -11,8 +13,8 @@
 #include "MemoryModel/PointerAnalysisImpl.h"
 #include "SVF-FE/SVFIRBuilder.h"
 #include "llvm/Support/raw_ostream.h"
-#include <set>
-#include <map>
+
+#include "VarAnalysis.h"
 
 using namespace llvm;
 using namespace std;
@@ -20,28 +22,6 @@ using namespace SVF;
 
 namespace mqttactic
 {
-
-    typedef std::vector<const llvm::BasicBlock *> KBBContext;
-
-    struct SemanticKBB
-    {
-        const llvm::BasicBlock *bb;
-        std::vector<const llvm::Value *> values;
-        std::vector<KBBContext> contexts;
-        int semantics;
-    };
-
-    enum KeyOperation
-    {
-        // read
-        READ,
-        // write-
-        WRITE0,
-        // write+
-        WRITE1,
-        // Unknow write(LINK...)
-        WRITE
-    };
     // Andersen flow-insensitive pointer analysis
     class PTA
     {

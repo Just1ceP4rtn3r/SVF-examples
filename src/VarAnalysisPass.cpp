@@ -18,26 +18,7 @@ namespace
 
             mqttactic::VarAnalysis *var_analyzer = new mqttactic::VarAnalysis(M);
 
-            errs() << "----------------------------------\n";
-
-            std::vector<mqttactic::KeyVariable *> key_variables(1);
-
-            // key_variables[0] = new mqttactic::KeyVariable();
-            // key_variables[0]->name = "Father::header";
-
-            // key_variables[1] = new mqttactic::KeyVariable();
-            // key_variables[1]->name = "Father::b";
-
-            key_variables[0] = new mqttactic::KeyVariable();
-            key_variables[0]->name = "mosquitto__subhier::subs";
-
-            // key_variables[0] = new mqttactic::KeyVariable();
-            // key_variables[0]->name = "mosquitto_msg_data::inflight";
-
-            // key_variables[2] = new mqttactic::KeyVariable();
-            // key_variables[2]->name = "mosquitto_msg_data::queued";
-
-            for (auto key_var : key_variables)
+            for (auto key_var : var_analyzer->key_variables)
             {
                 std::set<mqttactic::SemanticKBB *>
                     bb_array;
@@ -46,28 +27,32 @@ namespace
             for (Module::iterator mi = M.begin(); mi != M.end(); ++mi)
             {
                 Function &f = *mi;
-                var_analyzer->SearchKeyVar(M, f, key_variables);
+                var_analyzer->SearchKeyVar(M, f);
             }
 
-            for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_variables[0]])
+            for (auto key_var : var_analyzer->key_variables)
             {
-                errs() << sbb->bb->getParent()->getName() << "\n"
-                       << sbb->semantics << "\n";
-                for (auto var : sbb->values)
-                {
-                    errs() << *var << "\n";
-                }
                 errs() << "----------------------------------\n";
-                for (auto kbb_c : sbb->contexts)
+                for (auto sbb : var_analyzer->SemanticKeyBasicBlocks[key_var])
                 {
-                    for (auto bb : kbb_c)
+                    errs() << sbb->bb->getParent()->getName() << "\n"
+                           << sbb->semantics << "\n";
+                    for (auto var : sbb->values)
                     {
-                        errs() << bb->getParent()->getName() << ":" << var_analyzer->getBBLabel(bb) << " --> ";
+                        errs() << *var << "\n";
                     }
-                    errs() << "\n";
-                }
+                    errs() << "----------------------------------\n";
+                    for (auto kbb_c : sbb->contexts)
+                    {
+                        for (auto bb : kbb_c)
+                        {
+                            errs() << bb->getParent()->getName() << ":" << var_analyzer->getBBLabel(bb) << " --> ";
+                        }
+                        errs() << "\n";
+                    }
 
-                errs() << *(sbb->bb) << "\n\n";
+                    errs() << *(sbb->bb) << "\n\n";
+                }
             }
 
             return false;

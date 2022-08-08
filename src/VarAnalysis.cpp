@@ -265,7 +265,7 @@ namespace mqttactic
         }
     }
 
-    void VarAnalysis::SearchKeyVar(Module &M, Function &F, std::vector<KeyVariable *> &key_variables)
+    void VarAnalysis::SearchKeyVar(Module &M, Function &F)
     {
         for (BasicBlock &BB : F)
         {
@@ -283,7 +283,7 @@ namespace mqttactic
 
                 for (Value *operand : inst_value_list)
                 {
-                    for (KeyVariable *key_var : key_variables)
+                    for (KeyVariable *key_var : this->key_variables)
                     {
                         for (auto sbb : SemanticKeyBasicBlocks[key_var])
                         {
