@@ -1,22 +1,20 @@
-#ifndef CONFIG
-#define CONFIG
+#ifndef MQTTACTICCONFIG
+#define MQTTACTICCONFIG
 
 #include <iostream>
-
-using namespace std;
 
 namespace mqttactic
 {
 
-    std::string subs = "mosquitto__subhier::subs";
-    std::string RetainedMsg = "mosquitto_db::retains";
-    std::string status = "mosquitto::state";
-    std::string WillMsg = "mosquitto::will";
-    std::string msgQue = "mosquitto_msg_data::inflight+mosquitto_msg_data::queued";
-    std::string msg = "mosquitto::sock";
+    static std::string subs = "mosquitto__subhier::subs";
+    static std::string RetainedMsg = "mosquitto_db::retains";
+    static std::string status = "mosquitto::state";
+    static std::string WillMsg = "mosquitto::will";
+    static std::string msgQue = "mosquitto_msg_data::inflight+mosquitto_msg_data::queued";
+    static std::string msg = "mosquitto::sock";
 
-    // std::string clientID = "mosquitto::id";
-    // std::string permission = "Authentication::aclTree";
+    // static std::string clientID = "mosquitto::id";
+    // static std::string permission = "Authentication::aclTree";
 }
 
 #endif

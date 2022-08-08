@@ -10,6 +10,7 @@
 #include <ranges>
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/DerivedTypes.h"
+#include "config.h"
 
 namespace mqttactic
 {

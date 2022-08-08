@@ -34,7 +34,6 @@
 #include "llvm/IR/GlobalVariable.h"
 #include "llvm/Demangle/Demangle.h"
 
-#include "config.h"
 #include "PTA.h"
 
 using namespace llvm;
