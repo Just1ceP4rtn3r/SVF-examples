@@ -1,3 +1,6 @@
+#ifndef CONFIG
+#define CONFIG
+
 #include <iostream>
 
 using namespace std;
@@ -15,3 +18,5 @@ namespace mqttactic
     // std::string clientID = "mosquitto::id";
     // std::string permission = "Authentication::aclTree";
 }
+
+#endif

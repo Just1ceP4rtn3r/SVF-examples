@@ -1,3 +1,6 @@
+#ifndef MQTTACTIC
+#define MQTTACTIC
+
 #include <iostream>
 #include <set>
 #include <vector>
@@ -57,3 +60,5 @@ namespace mqttactic
     };
 
 }
+
+#endif
