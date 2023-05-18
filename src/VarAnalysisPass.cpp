@@ -1,5 +1,5 @@
 #include "llvm/Pass.h"
-#include "../Include/VarAnalysis.h"
+#include "../include/VarAnalysis.h"
 
 using namespace llvm;
 
@@ -9,6 +9,7 @@ namespace
     {
     public:
         static char ID;
+        
 
         VarAnalysisPass() : ModulePass(ID)
         {
@@ -58,6 +59,8 @@ namespace
 
             return false;
         }
+
+        
     };
 }
 

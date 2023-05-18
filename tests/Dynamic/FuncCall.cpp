@@ -15,6 +15,7 @@ int test2(int a)
 int main()
 {
     int key_var = 10;
-    test(key_var);
+    int result = test(key_var);
+    result == 1;
     return 0;
 }

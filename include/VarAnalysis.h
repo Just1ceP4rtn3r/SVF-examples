@@ -178,8 +178,7 @@ namespace mqttactic
             return res;
         }
 
-        std::string
-        getBBLabel(const BasicBlock *Node);
+        std::string getBBLabel(const BasicBlock *Node);
         void PrintDbgInfo();
         const DIType *GetBasicDIType(const Metadata *MD);
         std::string GetScope(const DIType *MD);
